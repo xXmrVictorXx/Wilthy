@@ -23,7 +23,7 @@ function snapshotPath(): string {
 
 function campusCookie(cookie: Cookie): boolean {
   const domain = cookie.domain?.replace(/^\./, '') ?? '';
-  return domain === 'sjtu.edu.cn' || domain.endsWith('.sjtu.edu.cn');
+  return domain === 'bnuzh.edu.cn' || domain.endsWith('.bnuzh.edu.cn');
 }
 
 function cookieKey(cookie: Cookie): string {
@@ -87,8 +87,6 @@ export async function flushCampusSession(): Promise<void> {
 export interface CampusRequestOptions {
   service: string;
   loginError: string;
-  /** 接口另用此状态码表示未登录（交大视频身份接口返回 500，教学信息服务网返回 901）。 */
-  loginStatus?: number;
   method?: 'GET' | 'POST';
   headers?: Record<string, string>;
   body?: string;
@@ -130,12 +128,7 @@ export function campusRequest(
     request.on('redirect', () => fail(new CampusAuthError(options.loginError)));
     request.on('response', (response) => {
       const status = response.statusCode;
-      if (
-        status === 401 ||
-        status === 403 ||
-        status === options.loginStatus ||
-        (status >= 300 && status < 400)
-      ) {
+      if (status === 401 || status === 403 || (status >= 300 && status < 400)) {
         fail(new CampusAuthError(options.loginError));
         return;
       }
@@ -155,11 +148,14 @@ export function campusRequest(
       const interrupted = () => fail(new Error(`${options.service}响应中断，请稍后重试`), true);
       response.on('error', interrupted);
       response.on('aborted', interrupted);
+      // 教务系统的 HTML 是 GBK，JSON 接口是 UTF-8，按响应头声明的字符集解码。
+      const contentType = [response.headers['content-type'] ?? ''].flat().join(';');
+      const charset = /charset=([\w-]+)/i.exec(contentType)?.[1]?.toLowerCase() ?? 'utf-8';
       response.on('end', () => {
         if (settled) return;
         settled = true;
         clearTimeout(timer);
-        resolve(Buffer.concat(chunks).toString('utf8'));
+        resolve(new TextDecoder(charset).decode(Buffer.concat(chunks)));
       });
     });
     for (const [name, value] of Object.entries(options.headers ?? {}))
@@ -174,14 +170,9 @@ export interface CampusLoginOptions {
   readonly url: string;
   readonly reached: (url: string) => boolean;
   readonly probe: () => Promise<void>;
-  /**
-   * 入口页本身就在目标域时（课堂视频）：首次导航必然尚未登录，
-   * 探测失败不关窗；页内导航及定时重探覆盖 SPA 与异步登录完成。
-   */
-  readonly retryProbe?: boolean;
 }
 
-export function createCampusLoginWindow(sender: WebContents, title: string): BrowserWindow {
+function createCampusLoginWindow(sender: WebContents, title: string): BrowserWindow {
   const parent = BrowserWindow.fromWebContents(sender) ?? undefined;
   const window = new BrowserWindow({
     width: 920,
@@ -240,43 +231,27 @@ export async function openCampusLoginWindow(
   const loginWindow = createCampusLoginWindow(options.sender, options.title);
   const result = new Promise<CampusLoginResult>((resolve) => {
     let completed = false;
-    let retryTimer: ReturnType<typeof setInterval> | undefined;
     const finish = (result: { ok: true } | { ok: false; error: string }) => {
       if (completed) return;
       completed = true;
-      clearInterval(retryTimer);
       resolve(result);
       if (!loginWindow.isDestroyed()) loginWindow.close();
     };
     let checking = false;
-    let currentUrl = '';
     const checkNavigation = async (url: string) => {
-      currentUrl = url;
       if (options.reached(url) && !checking && !completed) {
         checking = true;
         try {
           await options.probe();
           finish({ ok: true });
         } catch (error) {
-          if (options.retryProbe) {
-            checking = false;
-            return;
-          }
           finish({ ok: false, error: error instanceof Error ? error.message : String(error) });
         }
       }
     };
     loginWindow.webContents.on('did-navigate', (_event, url) => void checkNavigation(url));
-    if (options.retryProbe) {
-      loginWindow.webContents.on('did-navigate-in-page', (_event, url, isMainFrame) => {
-        if (isMainFrame) void checkNavigation(url);
-      });
-      // SPA 可能通过异步请求完成登录而不导航。串行探测，窗口关闭即停止。
-      retryTimer = setInterval(() => void checkNavigation(currentUrl), 1000);
-    }
     loginWindow.on('closed', () => {
       if (loginWindows.get(key)?.window === loginWindow) loginWindows.delete(key);
-      clearInterval(retryTimer);
       if (!completed) {
         completed = true;
         resolve({ ok: false, error: '未完成登录' });
