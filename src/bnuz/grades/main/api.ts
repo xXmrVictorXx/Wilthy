@@ -31,6 +31,8 @@ async function fetchGrades() {
       form: { ...FORM, ysyx: 'yxcj' },
     }),
   );
+  // 没有任何成绩时原始报表同样是「没有检索到记录」，这时不能当成口令失效。
+  if (valid.records.length === 0) return { records: valid.records, summary: valid.summary };
   const token = await jwxtToken('xscj.stuckcj.my.jsp');
   const raw = parseRawGrades(
     await jwxtRequest('/student/xscj.stuckcj_data.jsp', {
