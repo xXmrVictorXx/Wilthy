@@ -1,9 +1,15 @@
-// 教务部通知：抓取教务部网站的通知列表，附件是公开链接，交给浏览器打开。
+// 教务部通知：抓取教务部网站的通知列表；正文与附件里的 PDF 登记为资料，在应用内预览。
 import { defineModule } from '../../app/module';
 import { implement } from '../../core/protocol/contract';
 import { registerNoticeSource } from '../../modules/notifications';
+import { registerPreviewHost, registerWorkspaceSource } from '../../modules/workspace';
 import { jwcContract } from './contract';
-import { getJwcNotice, jwcNoticeSource } from './main/jwc';
+import {
+  getJwcNotice,
+  handleJwcPreviewRequest,
+  jwcNoticeSource,
+  jwcWorkspaceSource,
+} from './main/jwc';
 
 export const jwcModule = defineModule({
   id: 'jwc',
@@ -12,5 +18,7 @@ export const jwcModule = defineModule({
   }),
   register() {
     registerNoticeSource(jwcNoticeSource);
+    registerWorkspaceSource(jwcWorkspaceSource);
+    registerPreviewHost('jwc', handleJwcPreviewRequest);
   },
 });

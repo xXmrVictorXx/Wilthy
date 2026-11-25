@@ -140,7 +140,7 @@ it('列表读取失败不推进基线，下次成功仍可发现新增', async (
   });
 });
 
-it('保留正文表格图片，识别正文里的附件链接', async () => {
+it('保留正文表格图片；内嵌的 PDF 正文与附件列表都可在应用内打开', async () => {
   const id = `jwc:${hex(991)}`;
   db.prepare(
     'INSERT INTO notifications (id, source, account_key, title, created_at, href) VALUES (?, ?, ?, ?, ?, ?)',
@@ -150,17 +150,25 @@ it('保留正文表格图片，识别正文里的附件链接', async () => {
     'students',
     '通知',
     '2026-10-28',
-    JSON.stringify({ kind: 'jwc', url: `${origin}/tzgg/${hex(991)}.htm` }),
+    JSON.stringify({ kind: 'jwc', url: `${origin}/sjjx/xkjs/${hex(991)}.htm` }),
   );
   request.mockResolvedValueOnce(
     page(
-      '<div class="contenttxt"><table><tr><td>考试</td></tr></table><img src="/image.png"><a href="../docs//2026-11/b57.pdf">说明.pdf</a><a href="https://example.com/x">外链</a></div>',
+      '<div class="contenttxt"><table><tr><td>考试</td></tr></table><img src="/image.png"><iframe src="../../pdf_view/viewer.html" data-src="../../docs/2026-11/f5d.pdf"></iframe><a href="https://example.com/x">外链</a></div>' +
+        '<div class="post-attatch"><ul><li><a href="../../docs//2026-11/7da.pdf"><span>说明.pdf</span></a></li><li><a href="../../docs//2026-11/b57.docx">表格.docx</a></li></ul></div>',
     ),
   );
   const notice = await getJwcNotice(id);
   expect(notice.html).toContain('<table>');
   expect(notice.html).toContain('/image.png');
+  expect(notice.documents).toEqual([{ name: '通知', sourceId: 'jwc-file:/docs/2026-11/f5d.pdf' }]);
   expect(notice.attachments).toEqual([
-    { id: 'b57.pdf', name: '说明.pdf', url: `${origin}/docs//2026-11/b57.pdf` },
+    {
+      id: '7da.pdf',
+      name: '说明.pdf',
+      url: `${origin}/docs//2026-11/7da.pdf`,
+      sourceId: 'jwc-file:/docs/2026-11/7da.pdf',
+    },
+    { id: 'b57.docx', name: '表格.docx', url: `${origin}/docs//2026-11/b57.docx`, sourceId: null },
   ]);
 });

@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Download, ExternalLink, Paperclip } from 'lucide-react';
+import { ArrowLeft, Download, ExternalLink, FileText, Paperclip } from 'lucide-react';
 import type { Navigate } from '../../../app/module';
 import { createClient, errorMessage } from '../../../core/protocol/contract';
 import { Button } from '../../../ui/button';
@@ -82,6 +82,20 @@ export function JwcNoticeView({
         </p>
       ) : (
         <>
+          {notice.documents.map((document) => (
+            <button
+              key={document.sourceId}
+              type="button"
+              className="mt-5 flex w-full items-center gap-3 rounded-card border border-line bg-paper px-4 py-3 text-left text-sm outline-none transition-colors hover:bg-inset focus-visible:outline-2 focus-visible:outline-accent"
+              onClick={() => navigate({ page: 'sources', sourceId: document.sourceId })}
+            >
+              <FileText className="size-5 shrink-0 text-ink-3" />
+              <span className="min-w-0 flex-1">
+                <span className="block font-medium text-ink">正文是 PDF 文件</span>
+                <span className="block text-xs text-ink-3">点击在 Wilthy 中阅读</span>
+              </span>
+            </button>
+          ))}
           <HtmlFrame
             baseUrl={notice.url}
             className="mt-5 overflow-hidden rounded-card bg-paper"
@@ -102,7 +116,11 @@ export function JwcNoticeView({
                     <button
                       type="button"
                       className="group flex w-full items-start gap-2 rounded-control px-2 py-1.5 text-left text-sm text-ink-2 outline-none transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-accent"
-                      onClick={() => window.open(file.url)}
+                      onClick={() =>
+                        file.sourceId
+                          ? navigate({ page: 'sources', sourceId: file.sourceId })
+                          : window.open(file.url)
+                      }
                     >
                       <Paperclip className="mt-0.5 size-3.5 shrink-0 text-ink-3" />
                       <span className="min-w-0 flex-1 break-words group-hover:underline group-hover:underline-offset-2">

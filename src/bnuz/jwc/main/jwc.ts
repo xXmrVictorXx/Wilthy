@@ -1,6 +1,11 @@
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
+import { mkdir, rename, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { load } from 'cheerio';
 import { hostPorts } from '../../../core/ports';
+import type { DocumentContent } from '../../../core/protocol/workbench';
+import { previewFileResponse, type WorkspaceSource } from '../../../modules/workspace';
 import {
   insertNotificationIfAbsent,
   saveNotificationRefresh,
@@ -8,7 +13,7 @@ import {
   systemNotifyItem,
   type NoticeSource,
 } from '../../../modules/notifications';
-import type { JwcNotice } from '../contract';
+import { JWC_FILE_PREFIX, type JwcNotice } from '../contract';
 
 const origin = 'https://jwb.bnuzh.edu.cn';
 const listUrl = `${origin}/tzgg/index.htm`;
@@ -163,15 +168,26 @@ export async function getJwcNotice(id: string): Promise<JwcNotice> {
   const $ = load(await response.text());
   const content = $('.contenttxt');
   if (!content.length) throw new Error('未能读取通知正文，请查看原文');
+  const documents: JwcNotice['documents'] = [];
+  content.find('iframe[data-src]').each((_, element) => {
+    const sourceId = jwcFileSource(new URL($(element).attr('data-src')!, url));
+    if (sourceId) documents.push({ name: row.title, sourceId });
+  });
+  content.find('iframe').remove();
   const attachments: JwcNotice['attachments'] = [];
-  content.find('a[href]').each((_, element) => {
+  $('.contenttxt a[href], .post-attatch a[href]').each((_, element) => {
     const link = $(element);
     const target = new URL(link.attr('href')!, url);
     if (target.origin !== origin || !/\.(pdf|docx?|xlsx?|pptx?|zip|rar)$/i.test(target.pathname))
       return;
     const fileId = target.pathname.split('/').at(-1)!;
     if (attachments.some((attachment) => attachment.id === fileId)) return;
-    attachments.push({ id: fileId, name: link.text().trim() || '附件', url: target.href });
+    attachments.push({
+      id: fileId,
+      name: link.text().trim() || '附件',
+      url: target.href,
+      sourceId: jwcFileSource(target),
+    });
   });
   const notice = {
     id,
@@ -179,11 +195,70 @@ export async function getJwcNotice(id: string): Promise<JwcNotice> {
     publishedAt: row.createdAt,
     url,
     html: content.html()!,
+    documents,
     attachments,
   };
   notices.set(id, notice);
   return notice;
 }
+
+/** 教务部网站上的 PDF 文件对应的资料 ID；路径里重复的斜杠统一折叠。 */
+function jwcFileSource(target: URL): string | null {
+  const path = target.pathname.replace(/\/{2,}/g, '/');
+  return target.origin === origin && /^\/docs\/[\w/-]+\.pdf$/i.test(path)
+    ? `${JWC_FILE_PREFIX}${path}`
+    : null;
+}
+
+function validateJwcFile(sourceId: string) {
+  if (!/^jwc-file:\/docs\/[\w/-]+\.pdf$/i.test(sourceId)) throw new Error('教务部文件地址无效');
+}
+
+/** PDF 阅读器按需分段读取，文件先缓存到本机，再经 wilthy-resource://jwc/ 提供。 */
+async function cachedJwcFile(sourceId: string): Promise<string> {
+  validateJwcFile(sourceId);
+  const directory = join(hostPorts().paths.userData(), 'jwc-files');
+  const path = join(
+    directory,
+    `${createHash('sha256').update(sourceId).digest('hex').slice(0, 32)}.pdf`,
+  );
+  if (existsSync(path)) return path;
+  const response = await fetch(`${origin}${sourceId.slice(JWC_FILE_PREFIX.length)}`, {
+    signal: AbortSignal.timeout(60_000),
+  });
+  if (!response.ok) throw new Error(`教务部文件请求失败（${response.status}）`);
+  await mkdir(directory, { recursive: true });
+  await writeFile(`${path}.tmp`, new Uint8Array(await response.arrayBuffer()));
+  await rename(`${path}.tmp`, path);
+  return path;
+}
+
+export async function readJwcFile(sourceId: string): Promise<DocumentContent> {
+  await cachedJwcFile(sourceId);
+  const path = sourceId.slice(JWC_FILE_PREFIX.length);
+  return {
+    title: path.split('/').at(-1)!,
+    format: 'pdf',
+    previewUrl: `wilthy-resource://jwc/${encodeURIComponent(sourceId)}`,
+    url: `${origin}${path}`,
+  };
+}
+
+export async function handleJwcPreviewRequest(request: Request, url: URL): Promise<Response> {
+  const path = await cachedJwcFile(decodeURIComponent(url.pathname.slice(1)));
+  return previewFileResponse(path, request);
+}
+
+export const jwcWorkspaceSource: WorkspaceSource = {
+  prefix: JWC_FILE_PREFIX,
+  validate: validateJwcFile,
+  preview: readJwcFile,
+  read: async (sourceId) => ({
+    title: sourceId.split('/').at(-1)!,
+    format: 'file',
+    url: `${origin}${sourceId.slice(JWC_FILE_PREFIX.length)}`,
+  }),
+};
 
 export const jwcNoticeSource: NoticeSource = {
   id: 'jwc',
