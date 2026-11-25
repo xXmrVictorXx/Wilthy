@@ -4,7 +4,11 @@ import type { DocumentContent, TabId } from '../../../core/protocol/workbench';
 
 export interface LoadedDocument {
   content: DocumentContent;
-  source?: { id: string; document: ComponentType<SourceDocumentProps> };
+  source?: {
+    id: string;
+    document?: ComponentType<SourceDocumentProps>;
+    header?: ComponentType<SourceDocumentProps>;
+  };
   watchesDisk?: boolean;
 }
 

@@ -246,10 +246,13 @@ export function WorkbenchShell({ home }: { home?: boolean }) {
       const content: DocumentContent = sourceId
         ? await workspaceClient.readSource(sourceId)
         : await workspaceClient.read(entryId!);
-      const document = sourceId ? sources.of(sourceId)?.document : undefined;
+      const definition = sourceId ? sources.of(sourceId) : undefined;
       return {
         content,
-        source: sourceId && document ? { id: sourceId, document } : undefined,
+        source:
+          sourceId && (definition?.document || definition?.header)
+            ? { id: sourceId, document: definition.document, header: definition.header }
+            : undefined,
         watchesDisk: entry?.kind === 'file',
       };
     },

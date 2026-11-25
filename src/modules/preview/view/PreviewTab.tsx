@@ -23,8 +23,8 @@ const OfficePreview = lazy(() =>
 export type PreviewBranch =
   'source' | 'html' | 'pdf' | 'image' | 'docx' | 'xlsx' | 'pptx' | 'text' | 'binary';
 
-function previewBranchOf(doc: LoadedDocument): PreviewBranch {
-  if (doc.source) return 'source';
+export function previewBranchOf(doc: LoadedDocument): PreviewBranch {
+  if (doc.source?.document) return 'source';
   const { format } = doc.content;
   if (
     format === 'html' ||
@@ -101,6 +101,7 @@ export function PreviewTab({ tabId, groupId }: { tabId: TabId; groupId: string }
 
   const branch = previewBranchOf(doc);
   const SourceDocument = doc.source?.document;
+  const SourceHeader = doc.source?.header;
   const bytes = content.bytes;
   const openLink = (url: string) => loader.openLink(url);
 
@@ -109,6 +110,14 @@ export function PreviewTab({ tabId, groupId }: { tabId: TabId; groupId: string }
       className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
       aria-label={`文档：${content.title}`}
     >
+      {SourceHeader && (
+        <SourceHeader
+          content={content}
+          navigate={loader.navigate}
+          onReload={load}
+          sourceId={doc.source!.id}
+        />
+      )}
       {SourceDocument && (
         <SourceDocument
           content={content}

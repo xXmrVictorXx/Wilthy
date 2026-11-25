@@ -112,6 +112,8 @@ export interface SourceDefinition {
   badge?: ComponentType<{ sourceId: string }>;
   /** 预览标签里的正文；不提供时按内容格式通用预览。 */
   document?: ComponentType<SourceDocumentProps>;
+  /** 通用预览上方的页眉（如日期、附件）；正文仍按内容格式预览。 */
+  header?: ComponentType<SourceDocumentProps>;
   /** 标签页与「添加到项目」用的资料名；资料尚未同步时返回 undefined。 */
   title?(sourceId: string, client: QueryClient): string | undefined;
   /** 预览正文里的链接若指向已同步的资料，返回它的 sourceId，改在标签页打开。 */

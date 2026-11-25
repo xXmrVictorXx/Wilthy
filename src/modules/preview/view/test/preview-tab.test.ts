@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest';
+import { previewBranchOf } from '../PreviewTab';
 import { parsePreviewTabId, type PreviewTabTarget } from '../tab-id';
 
 describe('parsePreviewTabId', () => {
@@ -27,5 +28,19 @@ describe('parsePreviewTabId', () => {
     expect(parsePreviewTabId('note:00000000-0000-4000-8000-000000000002')).toBeNull();
     expect(parsePreviewTabId('chat:abc')).toBeNull();
     expect(parsePreviewTabId('review:abc')).toBeNull();
+  });
+});
+
+describe('previewBranchOf', () => {
+  const pdf = { title: '通知', format: 'pdf' as const, previewUrl: 'wilthy-resource://x/1' };
+
+  it('只提供页眉的资料仍按内容格式预览', () => {
+    expect(previewBranchOf({ content: pdf, source: { id: 'x', header: () => null } })).toBe('pdf');
+  });
+
+  it('提供整篇正文组件的资料由模块自己渲染', () => {
+    expect(previewBranchOf({ content: pdf, source: { id: 'x', document: () => null } })).toBe(
+      'source',
+    );
   });
 });
