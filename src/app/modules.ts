@@ -11,6 +11,7 @@ import { terminalModule } from '../modules/terminal';
 import { todoModule } from '../modules/todo';
 import { updateModule } from '../modules/update';
 import { workspaceModule } from '../modules/workspace';
+import { gradesModule } from '../bnuz/grades';
 import { jwcModule } from '../bnuz/jwc';
 import { timetableModule } from '../bnuz/timetable';
 
@@ -28,5 +29,6 @@ export const modules: ModuleDefinition[] = [
   todoModule,
   notificationsModule,
   timetableModule,
+  gradesModule,
   jwcModule,
 ];
