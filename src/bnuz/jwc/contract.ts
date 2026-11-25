@@ -14,15 +14,10 @@ export interface JwcNotice {
 }
 
 export const JWC_FILE_PREFIX = 'jwc-file:';
+export const JWC_NOTICE_PREFIX = 'jwc-notice:';
 
 const noticeId = z.string().regex(/^jwc:[0-9a-f]{32}$/);
 
 export const jwcContract = defineContract('jwc', {
   notice: { input: noticeId, output: z.custom<JwcNotice>() },
 });
-
-declare module '../../app/module' {
-  interface NavTargets {
-    jwc: { noticeId: string };
-  }
-}

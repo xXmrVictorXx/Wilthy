@@ -8,6 +8,7 @@ import {
   getJwcNotice,
   handleJwcPreviewRequest,
   jwcNoticeSource,
+  jwcNoticeWorkspaceSource,
   jwcWorkspaceSource,
 } from './main/jwc';
 
@@ -19,6 +20,7 @@ export const jwcModule = defineModule({
   register() {
     registerNoticeSource(jwcNoticeSource);
     registerWorkspaceSource(jwcWorkspaceSource);
+    registerWorkspaceSource(jwcNoticeWorkspaceSource);
     registerPreviewHost('jwc', handleJwcPreviewRequest);
   },
 });

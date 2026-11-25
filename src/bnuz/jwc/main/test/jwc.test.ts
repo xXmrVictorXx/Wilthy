@@ -19,7 +19,7 @@ vi.mock('../../../../modules/notifications', async (importOriginal) => ({
 
 import { app } from 'electron';
 import { notificationsModule, systemNotifyItem } from '../../../../modules/notifications';
-import { parseJwcList, refreshJwc, getJwcNotice } from '../jwc';
+import { parseJwcList, refreshJwc, getJwcNotice, readJwcNotice } from '../jwc';
 
 let db: Database.Database;
 const request = vi.fn<typeof fetch>();
@@ -161,14 +161,51 @@ it('保留正文表格图片；内嵌的 PDF 正文与附件列表都可在应�
   const notice = await getJwcNotice(id);
   expect(notice.html).toContain('<table>');
   expect(notice.html).toContain('/image.png');
-  expect(notice.documents).toEqual([{ name: '通知', sourceId: 'jwc-file:/docs/2026-11/f5d.pdf' }]);
+  expect(notice.documents).toEqual([
+    { name: '通知', sourceId: 'jwc-file:/docs/2026-11/f5d.pdf#%E9%80%9A%E7%9F%A5.pdf' },
+  ]);
   expect(notice.attachments).toEqual([
     {
       id: '7da.pdf',
       name: '说明.pdf',
       url: `${origin}/docs//2026-11/7da.pdf`,
-      sourceId: 'jwc-file:/docs/2026-11/7da.pdf',
+      sourceId: 'jwc-file:/docs/2026-11/7da.pdf#%E8%AF%B4%E6%98%8E.pdf',
     },
     { id: 'b57.docx', name: '表格.docx', url: `${origin}/docs//2026-11/b57.docx`, sourceId: null },
   ]);
+});
+
+it('点开通知即预览正文 PDF；没有 PDF 的通知按网页显示', async () => {
+  const insert = db.prepare(
+    'INSERT INTO notifications (id, source, account_key, title, created_at, href) VALUES (?, ?, ?, ?, ?, ?)',
+  );
+  for (const [id, title] of [
+    [992, 'PDF 通知'],
+    [993, '文字通知'],
+  ] as const)
+    insert.run(
+      `jwc:${hex(id)}`,
+      'jwc',
+      'students',
+      title,
+      '2026-10-28',
+      JSON.stringify({ kind: 'jwc', url: `${origin}/tzgg/${hex(id)}.htm` }),
+    );
+  request
+    .mockResolvedValueOnce(
+      page('<div class="contenttxt"><iframe data-src="../docs/2026-11/f5d.pdf"></iframe></div>'),
+    )
+    .mockResolvedValueOnce(new Response(new Uint8Array([37, 80, 68, 70])))
+    .mockResolvedValueOnce(page('<div class="contenttxt"><p>正文</p></div>'));
+
+  await expect(readJwcNotice(`jwc-notice:${hex(992)}`)).resolves.toMatchObject({
+    title: 'PDF 通知',
+    format: 'pdf',
+    previewUrl: `wilthy-resource://jwc/${encodeURIComponent('jwc-file:/docs/2026-11/f5d.pdf#PDF%20%E9%80%9A%E7%9F%A5.pdf')}`,
+  });
+  await expect(readJwcNotice(`jwc-notice:${hex(993)}`)).resolves.toMatchObject({
+    title: '文字通知',
+    format: 'html',
+    text: '<p>正文</p>',
+  });
 });

@@ -13,7 +13,7 @@ import {
   systemNotifyItem,
   type NoticeSource,
 } from '../../../modules/notifications';
-import { JWC_FILE_PREFIX, type JwcNotice } from '../contract';
+import { JWC_FILE_PREFIX, JWC_NOTICE_PREFIX, type JwcNotice } from '../contract';
 
 const origin = 'https://jwb.bnuzh.edu.cn';
 const listUrl = `${origin}/tzgg/index.htm`;
@@ -170,7 +170,7 @@ export async function getJwcNotice(id: string): Promise<JwcNotice> {
   if (!content.length) throw new Error('未能读取通知正文，请查看原文');
   const documents: JwcNotice['documents'] = [];
   content.find('iframe[data-src]').each((_, element) => {
-    const sourceId = jwcFileSource(new URL($(element).attr('data-src')!, url));
+    const sourceId = jwcFileSource(new URL($(element).attr('data-src')!, url), `${row.title}.pdf`);
     if (sourceId) documents.push({ name: row.title, sourceId });
   });
   content.find('iframe').remove();
@@ -182,12 +182,8 @@ export async function getJwcNotice(id: string): Promise<JwcNotice> {
       return;
     const fileId = target.pathname.split('/').at(-1)!;
     if (attachments.some((attachment) => attachment.id === fileId)) return;
-    attachments.push({
-      id: fileId,
-      name: link.text().trim() || '附件',
-      url: target.href,
-      sourceId: jwcFileSource(target),
-    });
+    const name = link.text().trim() || '附件';
+    attachments.push({ id: fileId, name, url: target.href, sourceId: jwcFileSource(target, name) });
   });
   const notice = {
     id,
@@ -202,30 +198,38 @@ export async function getJwcNotice(id: string): Promise<JwcNotice> {
   return notice;
 }
 
-/** 教务部网站上的 PDF 文件对应的资料 ID；路径里重复的斜杠统一折叠。 */
-function jwcFileSource(target: URL): string | null {
+/**
+ * 教务部网站上的 PDF 对应的资料 ID：路径里重复的斜杠统一折叠，# 后是显示用的文件名。
+ * 同一份文件可以有不同名字（正文与附件），缓存只按路径区分。
+ */
+function jwcFileSource(target: URL, name: string): string | null {
   const path = target.pathname.replace(/\/{2,}/g, '/');
   return target.origin === origin && /^\/docs\/[\w/-]+\.pdf$/i.test(path)
-    ? `${JWC_FILE_PREFIX}${path}`
+    ? `${JWC_FILE_PREFIX}${path}#${encodeURIComponent(name)}`
     : null;
 }
 
-function validateJwcFile(sourceId: string) {
-  if (!/^jwc-file:\/docs\/[\w/-]+\.pdf$/i.test(sourceId)) throw new Error('教务部文件地址无效');
+function jwcFilePath(sourceId: string): string {
+  const match = /^jwc-file:(\/docs\/[\w/-]+\.pdf)(#.*)?$/i.exec(sourceId);
+  if (!match) throw new Error('教务部文件地址无效');
+  return match[1]!;
+}
+
+function jwcFileName(sourceId: string): string {
+  const fragment = sourceId.split('#')[1];
+  return fragment ? decodeURIComponent(fragment) : sourceId.split('/').at(-1)!;
 }
 
 /** PDF 阅读器按需分段读取，文件先缓存到本机，再经 wilthy-resource://jwc/ 提供。 */
 async function cachedJwcFile(sourceId: string): Promise<string> {
-  validateJwcFile(sourceId);
+  const filePath = jwcFilePath(sourceId);
   const directory = join(hostPorts().paths.userData(), 'jwc-files');
   const path = join(
     directory,
-    `${createHash('sha256').update(sourceId).digest('hex').slice(0, 32)}.pdf`,
+    `${createHash('sha256').update(filePath).digest('hex').slice(0, 32)}.pdf`,
   );
   if (existsSync(path)) return path;
-  const response = await fetch(`${origin}${sourceId.slice(JWC_FILE_PREFIX.length)}`, {
-    signal: AbortSignal.timeout(60_000),
-  });
+  const response = await fetch(`${origin}${filePath}`, { signal: AbortSignal.timeout(60_000) });
   if (!response.ok) throw new Error(`教务部文件请求失败（${response.status}）`);
   await mkdir(directory, { recursive: true });
   await writeFile(`${path}.tmp`, new Uint8Array(await response.arrayBuffer()));
@@ -233,15 +237,18 @@ async function cachedJwcFile(sourceId: string): Promise<string> {
   return path;
 }
 
-export async function readJwcFile(sourceId: string): Promise<DocumentContent> {
-  await cachedJwcFile(sourceId);
-  const path = sourceId.slice(JWC_FILE_PREFIX.length);
+function pdfContent(sourceId: string, title: string): DocumentContent {
   return {
-    title: path.split('/').at(-1)!,
+    title,
     format: 'pdf',
     previewUrl: `wilthy-resource://jwc/${encodeURIComponent(sourceId)}`,
-    url: `${origin}${path}`,
+    url: `${origin}${jwcFilePath(sourceId)}`,
   };
+}
+
+export async function readJwcFile(sourceId: string): Promise<DocumentContent> {
+  await cachedJwcFile(sourceId);
+  return pdfContent(sourceId, jwcFileName(sourceId));
 }
 
 export async function handleJwcPreviewRequest(request: Request, url: URL): Promise<Response> {
@@ -251,22 +258,52 @@ export async function handleJwcPreviewRequest(request: Request, url: URL): Promi
 
 export const jwcWorkspaceSource: WorkspaceSource = {
   prefix: JWC_FILE_PREFIX,
-  validate: validateJwcFile,
+  validate: jwcFilePath,
   preview: readJwcFile,
   read: async (sourceId) => ({
-    title: sourceId.split('/').at(-1)!,
+    title: jwcFileName(sourceId),
     format: 'file',
-    url: `${origin}${sourceId.slice(JWC_FILE_PREFIX.length)}`,
+    url: `${origin}${jwcFilePath(sourceId)}`,
   }),
+};
+
+function noticeIdOf(sourceId: string): string {
+  const match = /^jwc-notice:([0-9a-f]{32})$/.exec(sourceId);
+  if (!match) throw new Error('通知地址无效');
+  return `jwc:${match[1]}`;
+}
+
+/** 打开通知即预览：正文内嵌 PDF 时直接显示这份 PDF，否则显示网页正文。 */
+export async function readJwcNotice(sourceId: string): Promise<DocumentContent> {
+  const notice = await getJwcNotice(noticeIdOf(sourceId));
+  const document = notice.documents[0];
+  if (!document) return { title: notice.title, format: 'html', text: notice.html, url: notice.url };
+  await cachedJwcFile(document.sourceId);
+  return { ...pdfContent(document.sourceId, notice.title), url: notice.url };
+}
+
+export const jwcNoticeWorkspaceSource: WorkspaceSource = {
+  prefix: JWC_NOTICE_PREFIX,
+  validate: noticeIdOf,
+  preview: readJwcNotice,
+  read: async (sourceId) => {
+    const notice = await getJwcNotice(noticeIdOf(sourceId));
+    return { title: notice.title, format: 'html', text: notice.html, url: notice.url };
+  },
 };
 
 export const jwcNoticeSource: NoticeSource = {
   id: 'jwc',
   account: () => accountKey,
   refresh: (_account, force) => refreshJwc(force),
-  // 教务部网站的通知在应用内阅读，转载到外部网站的交给浏览器。
+  // 教务部网站的通知在预览标签里阅读，转到信息门户等外部网站的交给浏览器。
   link: ({ url }, id) =>
     typeof url === 'string'
-      ? { target: new URL(url).origin === origin ? { page: 'jwc', noticeId: id } : { url } }
+      ? {
+          target:
+            new URL(url).origin === origin
+              ? { page: 'sources', sourceId: `${JWC_NOTICE_PREFIX}${id.slice(4)}` }
+              : { url },
+        }
       : null,
 };
