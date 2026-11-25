@@ -27,7 +27,7 @@ export function TimetableView() {
   if (!window.wilthy) {
     return (
       <DesktopOnlyNotice
-        description="教学信息服务网的登录会话和本地课表缓存不会暴露给浏览器。"
+        description="数字京师·珠海的登录会话和本地课表缓存不会暴露给浏览器。"
         title="课表仅在 Wilthy 桌面端可用"
       />
     );

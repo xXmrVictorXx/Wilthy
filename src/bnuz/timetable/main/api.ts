@@ -7,45 +7,15 @@ import {
   type TimetableResult,
   type TimetableState,
 } from '../contract';
-import { fetchGraduateTimetable } from './graduate';
 import { lessonOccurrences } from './schedule';
+import { parseTimetableList } from './parse';
 import {
   CampusAuthError,
-  campusRequest,
   flushCampusSession,
-  getCampusSession,
-  openCampusLoginWindow,
+  jwxtRequest,
+  openJwxtLoginWindow,
+  toJwxtTerm,
 } from '../../campus';
-
-const CAMPUS_ORIGIN = 'https://i.sjtu.edu.cn';
-const LOGIN_URL = `${CAMPUS_ORIGIN}/jaccountlogin`;
-const TIMETABLE_URL = `${CAMPUS_ORIGIN}/kbcx/xskbcx_cxXsgrkb.html?gnmkdm=N2151`;
-
-const rawLessonSchema = z
-  .object({
-    cdmc: z.string().optional(),
-    jc: z.string().optional(),
-    jcs: z.string().optional(),
-    jxb_id: z.string().optional(),
-    jxbmc: z.string().optional(),
-    kch: z.string().optional(),
-    kch_id: z.string().optional(),
-    kcmc: z.string().optional(),
-    xf: z.string().optional(),
-    xkbz: z.string().optional(),
-    xm: z.string().optional(),
-    xqj: z.string().optional(),
-    xqmc: z.string().optional(),
-    zcd: z.string().optional(),
-  })
-  .passthrough();
-
-const responseSchema = z
-  .object({
-    kbList: z.array(rawLessonSchema),
-    rqazcList: z.array(z.unknown()).optional(),
-  })
-  .passthrough();
 
 type LessonRow = {
   id: number;
@@ -66,27 +36,6 @@ type LessonRow = {
   note: string | null;
 };
 
-export function parseSemesterStart(values: readonly unknown[] | undefined): string | null {
-  const dates = (values ?? [])
-    .flatMap((value) => {
-      const text = typeof value === 'string' ? value : (JSON.stringify(value) ?? '');
-      return text.match(/20\d{2}[-/.]\d{1,2}[-/.]\d{1,2}/g) ?? [];
-    })
-    .map((value) => {
-      const [year, month, day] = value.split(/[-/.]/).map(Number);
-      if (!year || !month || !day) return null;
-      const date = new Date(year, month - 1, day);
-      if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day)
-        return null;
-      return `${year.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${day
-        .toString()
-        .padStart(2, '0')}`;
-    })
-    .filter((value): value is string => value !== null)
-    .sort();
-  return dates[0] ?? null;
-}
-
 export function currentSemester(now = new Date()): string {
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
@@ -103,43 +52,6 @@ function syncRow(
     .database()
     .prepare('SELECT last_synced_at, semester_start FROM timetable_sync WHERE semester = ?')
     .get(semester) as { last_synced_at: string; semester_start: string | null } | undefined;
-}
-
-function semesterParams(semester: string): { xnm: string; xqm: string } {
-  const parsed = semesterSchema.safeParse(semester);
-  if (!parsed.success) throw new Error('学期格式无效');
-  const [year, , term] = parsed.data.split('-');
-  const termCodes: Record<string, string> = { '1': '3', '2': '12', '3': '16' };
-  return { xnm: year!, xqm: termCodes[term!]! };
-}
-
-function parsePeriods(value: string | undefined): { start: number; end: number; text: string } {
-  const numbers = (value ?? '').match(/\d+/g)?.map(Number) ?? [];
-  const start = numbers[0] ?? 1;
-  const end = numbers.at(-1) ?? start;
-  return {
-    start: Math.min(20, Math.max(1, start)),
-    end: Math.min(20, Math.max(start, end)),
-    text: value?.trim() || `${start}-${end}节`,
-  };
-}
-
-export function parseWeekNumbers(value: string | undefined): number[] {
-  if (!value) return [];
-  const odd = /单/.test(value);
-  const even = /双/.test(value);
-  const result = new Set<number>();
-  for (const part of value.replace(/[周()（）单双]/g, '').split(/[,，、]/)) {
-    const numbers = part.match(/\d+/g)?.map(Number) ?? [];
-    if (numbers.length === 0) continue;
-    const start = numbers[0]!;
-    const end = numbers[1] ?? start;
-    for (let week = start; week <= end && week <= 30; week += 1) {
-      if ((odd && week % 2 === 0) || (even && week % 2 === 1)) continue;
-      result.add(week);
-    }
-  }
-  return [...result].sort((a, b) => a - b);
 }
 
 function mapRow(row: LessonRow): TimetableLesson {
@@ -171,85 +83,27 @@ function mapRow(row: LessonRow): TimetableLesson {
   };
 }
 
-export function openLoginWindow(sender: WebContents): Promise<TimetableResult> {
-  return openCampusLoginWindow({
-    sender,
-    title: '登录教学信息服务网',
-    url: LOGIN_URL,
-    reached: (url) =>
-      (url.startsWith('https://i.sjtu.edu.cn/') || url.startsWith('http://i.sjtu.edu.cn/')) &&
-      !url.includes('/jaccountlogin'),
-    probe: async () => {
-      await fetchTimetable(currentSemester());
-      await flushCampusSession();
-    },
-  });
+export async function openLoginWindow(sender: WebContents): Promise<TimetableResult> {
+  return openJwxtLoginWindow(sender);
 }
 
-async function fetchTimetable(semester: string) {
-  const { xnm, xqm } = semesterParams(semester);
-  const body = new URLSearchParams({ xnm, xqm, kzlx: 'ck', xsdm: '' });
-  const text = await campusRequest(await getCampusSession(), TIMETABLE_URL, {
-    service: '课表',
-    loginError: '登录已失效，请重新登录',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      'X-Requested-With': 'XMLHttpRequest',
-      Referer: `${CAMPUS_ORIGIN}/kbcx/xskbcx_cxXsgrkbIndex.html?gnmkdm=N2151`,
-    },
-    body: body.toString(),
-  });
-  let payload: unknown;
-  try {
-    payload = JSON.parse(text);
-  } catch {
-    throw new Error('课表接口没有返回预期的数据，请重新登录后再试');
-  }
-  const parsed = responseSchema.safeParse(payload);
-  if (!parsed.success) throw new Error('课表返回了无法识别的数据');
-  return parsed.data;
+async function fetchSemesterStart(semester: string): Promise<string | null> {
+  const { xn, xq } = toJwxtTerm(semester);
+  const text = await jwxtRequest(
+    `/public/getDateByTeachingWeek.action?hidOption=FOW&xn=${xn}&xq=${xq}&zc=1&xnq=1`,
+    { method: 'POST' },
+  );
+  return /^\d{4}-\d{2}-\d{2}$/.test(text.trim()) ? text.trim() : null;
 }
 
-// 研究生在教学信息服务网能登录但课表为空，此时改读研究生教学信息平台。
 async function fetchTimetableData(semester: string) {
-  const data = await fetchTimetable(semester);
-  if (data.kbList.length === 0) {
-    const graduate = await fetchGraduateTimetable(semester);
-    if (graduate.lessons.length === 0)
-      throw new Error('本科和研究生课表均为空，请确认学期；原有课表不会被清除');
-    return graduate;
-  }
-  const lessons = data.kbList.flatMap((raw, index) => {
-    const courseName = raw.kcmc?.trim();
-    const weekday = Number(raw.xqj);
-    if (!courseName || !Number.isInteger(weekday) || weekday < 1 || weekday > 7) return [];
-    const periods = parsePeriods(raw.jcs || raw.jc);
-    const weeksText = raw.zcd?.trim() || '周次未提供';
-    const credits = raw.xf ? Number(raw.xf) : null;
-    return [
-      {
-        semester,
-        sourceId: raw.jxb_id || raw.kch_id || `${raw.kch ?? courseName}-${index}`,
-        courseCode: raw.kch?.trim() || '',
-        courseName,
-        className: raw.jxbmc?.trim() || null,
-        teacher: raw.xm?.trim() || null,
-        campus: raw.xqmc?.trim() || null,
-        classroom: raw.cdmc?.trim() || null,
-        weekday,
-        startPeriod: periods.start,
-        endPeriod: periods.end,
-        periodsText: raw.jc?.trim() || periods.text,
-        weeksText,
-        weekNumbers: JSON.stringify(parseWeekNumbers(raw.zcd)),
-        credits: Number.isFinite(credits) ? credits : null,
-        note: raw.xkbz?.trim() || null,
-      },
-    ];
-  });
-  if (lessons.length === 0) throw new Error('课表没有有效课程，原有课表不会被清除');
-  return { lessons, semesterStart: parseSemesterStart(data.rqazcList) };
+  const { xn, xq } = toJwxtTerm(semester);
+  const params = Buffer.from(`xn=${xn}&xq=${xq}`).toString('base64');
+  const html = await jwxtRequest(
+    `/wsxk/xkjg.ckdgxsxdkchj_data10319.jsp?params=${encodeURIComponent(params)}`,
+  );
+  const lessons = parseTimetableList(html, semester);
+  return { lessons, semesterStart: await fetchSemesterStart(semester) };
 }
 
 export async function syncTimetable(semester: string): Promise<TimetableResult> {

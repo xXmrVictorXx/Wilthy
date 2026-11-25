@@ -1,6 +1,6 @@
 ---
 name: curriculum
-description: 课表：查询从教学信息服务网同步的课程安排
+description: 课表：查询从教务系统同步的课程安排
 ---
 
 # 课表

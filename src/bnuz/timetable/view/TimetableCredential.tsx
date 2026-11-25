@@ -10,7 +10,7 @@ export function TimetableCredential({ navigate }: { navigate: Navigate }) {
     <CredentialRow
       connected={Boolean(syncedAt)}
       icon={CalendarDays}
-      name="教学信息服务网"
+      name="数字京师·珠海"
       settingId="timetable"
       status={syncedAt ? '已同步' : '未同步'}
     >

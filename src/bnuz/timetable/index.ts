@@ -1,4 +1,4 @@
-// 课表：从教学信息网同步个人课表，只读；个人安排归待办。
+// 课表：从教务系统同步个人课表，只读；个人安排归待办。
 import type { WebContents } from 'electron';
 import { defineModule } from '../../app/module';
 import { registerCommandDomain } from '../../core/capabilities/commands';
@@ -32,8 +32,8 @@ export const timetableModule = defineModule({
     registerSettingsSearch({
       id: 'timetable',
       section: 'connections',
-      title: '教学信息服务网',
-      keywords: ['连接', '教务', '课表', 'timetable', '课程表', 'jaccount'],
+      title: '数字京师·珠海',
+      keywords: ['连接', '教务', '课表', 'timetable', '课程表', '数字京师', 'cas'],
     });
     registerCommandDomain(timetableDomain);
   },

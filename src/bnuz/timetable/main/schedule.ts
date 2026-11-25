@@ -1,4 +1,4 @@
-import { classPeriods, type TimetableLesson } from '../contract';
+import { periodTime, type TimetableLesson } from '../contract';
 
 export function lessonOccurrences(
   lessons: readonly TimetableLesson[],
@@ -24,8 +24,8 @@ export function lessonOccurrences(
   const rangeStart = Date.parse(startAt),
     rangeEnd = Date.parse(endAt);
   for (const lesson of lessons) {
-    const start = classPeriods[lesson.startPeriod - 1]?.[0];
-    const end = classPeriods[lesson.endPeriod - 1]?.[1];
+    const start = periodTime(lesson.startPeriod)?.[0];
+    const end = periodTime(lesson.endPeriod)?.[1];
     if (
       !lesson.weekNumbers.length ||
       start === undefined ||

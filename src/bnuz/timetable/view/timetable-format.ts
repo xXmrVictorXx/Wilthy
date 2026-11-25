@@ -1,4 +1,4 @@
-import { classPeriods, type TimetableLesson } from '../contract';
+import { periodTime, type TimetableLesson } from '../contract';
 import type { CSSProperties } from 'react';
 import { addDays, dayMilliseconds, mondayOf } from '../../../ui/lib/dates';
 
@@ -59,7 +59,7 @@ export function formatSyncTime(value: string | null): string {
 }
 
 export function periodBoundary(period: number, edge: 'start' | 'end'): number {
-  const known = classPeriods[period - 1];
+  const known = periodTime(period);
   if (known) return edge === 'start' ? known[0] : known[1];
   const start = timelineStart + (period - 1) * 55;
   return edge === 'start' ? start : start + 45;

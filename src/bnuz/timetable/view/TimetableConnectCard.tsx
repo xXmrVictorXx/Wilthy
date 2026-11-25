@@ -29,7 +29,7 @@ export function TimetableConnectCard({ semester }: { semester: string }) {
         className="m-auto"
         description="登录后读取课程、教师、教室、节次和教学周。登录在独立窗口完成。"
         icon={CalendarDays}
-        title="连接教学信息服务网"
+        title="连接数字京师·珠海"
       >
         <Button disabled={busy} onClick={() => void connectAndSync()}>
           <LogIn className="size-4" />

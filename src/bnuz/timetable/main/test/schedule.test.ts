@@ -41,6 +41,28 @@ describe('campus lesson dates', () => {
         .items,
     ).toEqual([]);
   });
+  it('第 12 周周三第 1–2 节对应 BNUZ 作息时间', () => {
+    const result = lessonOccurrences(
+      [{ ...lesson, weekday: 3, weekNumbers: [12] }],
+      '2026-09-07',
+      '2026-11-25T00:00:00+08:00',
+      '2026-11-26T00:00:00+08:00',
+    );
+    expect(result.items.map((item) => [item.startAt, item.endAt])).toEqual([
+      ['2026-11-25T00:00:00.000Z', '2026-11-25T01:40:00.000Z'],
+    ]);
+  });
+  it('第 99 节是中午 11:50–13:20', () => {
+    const result = lessonOccurrences(
+      [{ ...lesson, startPeriod: 99, endPeriod: 99, weekNumbers: [1] }],
+      '2026-09-07',
+      '2026-09-07T00:00:00+08:00',
+      '2026-09-08T00:00:00+08:00',
+    );
+    expect(result.items.map((item) => [item.startAt, item.endAt])).toEqual([
+      ['2026-09-07T03:50:00.000Z', '2026-09-07T05:20:00.000Z'],
+    ]);
+  });
   it('does not invent dates for missing weeks or unsupported periods', () => {
     const result = lessonOccurrences(
       [
