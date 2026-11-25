@@ -26,6 +26,10 @@ export const timetableSchema: Schema = {
       credits REAL,
       note TEXT
     )`,
+    `CREATE TABLE IF NOT EXISTS timetable_profile (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      enrollment_year INTEGER NOT NULL
+    )`,
     `CREATE INDEX IF NOT EXISTS idx_timetable_lessons_semester_day ON timetable_lessons(semester, weekday, start_period)`,
   ],
 };

@@ -24,6 +24,25 @@ export interface TimetableState {
   readonly semester: string;
   readonly lastSyncedAt: string | null;
   readonly semesterStart: string | null;
+  /** 可选的学期：入学学年起到当前学期，最近的在前。 */
+  readonly semesters: readonly string[];
+}
+
+export function semesterRange(enrollmentYear: number | null, current: string): string[] {
+  const [startText, , termText] = current.split('-');
+  const range = [current];
+  if (enrollmentYear === null) return range;
+  let year = Number(startText);
+  let term = Number(termText);
+  while (year > enrollmentYear || term > 1) {
+    term -= 1;
+    if (term === 0) {
+      term = 3;
+      year -= 1;
+    }
+    range.push(`${year}-${year + 1}-${term}`);
+  }
+  return range;
 }
 
 export interface TimetableResult {

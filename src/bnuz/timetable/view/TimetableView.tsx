@@ -12,10 +12,9 @@ import { WeekCalendar, type CalendarItemDetail } from './WeekCalendar';
 import { EventDetailDialog } from './EventDetailDialog';
 import {
   activeInWeek,
+  defaultWeek,
   formatSyncTime,
   semesterLabel,
-  semesterOptions,
-  weekForDate,
   weekStartFor,
 } from './timetable-format';
 import { addDays, formatMonthDay, mondayOf } from '../../../ui/lib/dates';
@@ -53,13 +52,16 @@ function DesktopTimetableView() {
   const [busy, setBusy] = useState(false);
   const [detail, setDetail] = useState<CalendarItemDetail | null>(null);
 
-  const currentWeek = weekForDate(state?.semesterStart ?? null, new Date());
+  const foundWeeks = [...new Set(lessons.flatMap((lesson) => lesson.weekNumbers))].sort(
+    (a, b) => a - b,
+  );
+  const weeks = foundWeeks.length
+    ? foundWeeks
+    : Array.from({ length: 18 }, (_, index) => index + 1);
   const selectedWeek =
     weekChoice && weekChoice.semester === state?.semester
       ? weekChoice.week
-      : currentWeek && currentWeek > 0
-        ? currentWeek
-        : 1;
+      : defaultWeek(state?.semesterStart ?? null, weeks, new Date());
   const selectWeek = (week: number) => {
     if (state) setWeekChoice({ semester: state.semester, week });
   };
@@ -67,12 +69,6 @@ function DesktopTimetableView() {
   const semesterWeekStart = weekStartFor(state?.semesterStart ?? null, selectedWeek);
   const visibleWeekStart = semesterWeekStart ?? mondayOf(new Date());
 
-  const foundWeeks = [...new Set(lessons.flatMap((lesson) => lesson.weekNumbers))].sort(
-    (a, b) => a - b,
-  );
-  const weeks = foundWeeks.length
-    ? foundWeeks
-    : Array.from({ length: 18 }, (_, index) => index + 1);
   const weekLessons = lessons.filter((lesson) => activeInWeek(lesson, selectedWeek));
   const loadError = stateQuery.error ?? lessonsQuery.error;
 
@@ -132,10 +128,7 @@ function DesktopTimetableView() {
     if (weeks.includes(next)) selectWeek(next);
   };
 
-  const goToday = () => {
-    const current = weekForDate(state.semesterStart, new Date());
-    selectWeek(current && weeks.includes(current) ? current : (weeks[0] ?? 1));
-  };
+  const goToday = () => selectWeek(defaultWeek(state.semesterStart, weeks, new Date()));
 
   return (
     <div className="relative flex h-full min-h-0 flex-col bg-surface">
@@ -187,7 +180,7 @@ function DesktopTimetableView() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {semesterOptions(semester).map((option) => (
+              {state.semesters.map((option) => (
                 <SelectItem key={option} value={option}>
                   {semesterLabel(option)}
                 </SelectItem>

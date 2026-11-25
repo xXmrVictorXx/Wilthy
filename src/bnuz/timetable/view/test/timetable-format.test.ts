@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest';
-import { layoutDayColumns } from '../timetable-format';
+import { defaultWeek, layoutDayColumns } from '../timetable-format';
 
 // 时间用一天内的分钟数表示，样例不对应任何真实课程。
 describe('layoutDayColumns', () => {
@@ -45,5 +45,15 @@ describe('layoutDayColumns', () => {
     expect(layout.get('b')).toEqual({ left: 50, width: 50 });
     expect(layout.get('c')).toEqual({ left: 0, width: 50 });
     expect(layout.get('d')).toEqual({ left: 50, width: 50 });
+  });
+});
+
+describe('defaultWeek', () => {
+  it('今天落在学期内时选本周', () => {
+    expect(defaultWeek('2026-09-07', [1, 2, 12, 16], new Date('2026-11-25T12:00:00'))).toBe(12);
+  });
+
+  it('查看往学期时回到该学期第一个有课的周，而不是按今天算出的周次', () => {
+    expect(defaultWeek('2023-08-28', [2, 3, 17], new Date('2026-11-25T12:00:00'))).toBe(2);
   });
 });

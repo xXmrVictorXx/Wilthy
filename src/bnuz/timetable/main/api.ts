@@ -2,6 +2,7 @@ import type { WebContents } from 'electron';
 import { z } from 'zod';
 import { hostPorts } from '../../../core/ports';
 import {
+  semesterRange,
   semesterSchema,
   type TimetableLesson,
   type TimetableResult,
@@ -11,6 +12,7 @@ import { lessonOccurrences } from './schedule';
 import { parseTimetableList } from './parse';
 import {
   CampusAuthError,
+  currentTerm,
   flushCampusSession,
   jwxtRequest,
   openJwxtLoginWindow,
@@ -96,6 +98,19 @@ async function fetchSemesterStart(semester: string): Promise<string | null> {
   return /^\d{4}-\d{2}-\d{2}$/.test(text.trim()) ? text.trim() : null;
 }
 
+// 学号前四位是入学年份，用来限定可选学期的下限。
+async function saveEnrollmentYear() {
+  const year = Number((await currentTerm()).studentId.slice(0, 4));
+  if (!Number.isInteger(year) || year < 2000) return;
+  hostPorts()
+    .database()
+    .prepare(
+      `INSERT INTO timetable_profile (id, enrollment_year) VALUES (1, ?)
+       ON CONFLICT(id) DO UPDATE SET enrollment_year = excluded.enrollment_year`,
+    )
+    .run(year);
+}
+
 async function fetchTimetableData(semester: string) {
   const { xn, xq } = toJwxtTerm(semester);
   const params = Buffer.from(`xn=${xn}&xq=${xq}`).toString('base64');
@@ -109,6 +124,7 @@ async function fetchTimetableData(semester: string) {
 export async function syncTimetable(semester: string): Promise<TimetableResult> {
   try {
     const { lessons, semesterStart } = await fetchTimetableData(semester);
+    await saveEnrollmentYear();
     await flushCampusSession();
 
     const db = hostPorts().database();
@@ -192,10 +208,15 @@ export function querySchedule(input: unknown) {
 
 export function getTimetableState(semester = currentSemester()): TimetableState {
   const row = syncRow(semester);
+  const profile = hostPorts()
+    .database()
+    .prepare('SELECT enrollment_year FROM timetable_profile WHERE id = 1')
+    .get() as { enrollment_year: number } | undefined;
   return {
     semester,
     lastSyncedAt: row?.last_synced_at || null,
     semesterStart: row?.semester_start ?? null,
+    semesters: semesterRange(profile?.enrollment_year ?? null, currentSemester()),
   };
 }
 

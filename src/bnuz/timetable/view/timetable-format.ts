@@ -29,25 +29,6 @@ export function semesterLabel(semester: string): string {
   return `${start}-${end} ${names[term ?? ''] ?? `第 ${term} 学期`}`;
 }
 
-export function semesterOptions(current: string): string[] {
-  const [startText, , termText] = current.split('-');
-  const start = Number(startText);
-  const term = Number(termText);
-  if (!Number.isInteger(start) || !Number.isInteger(term)) return [current];
-  const options = [current];
-  let year = start;
-  let semester = term;
-  while (options.length < 6) {
-    semester -= 1;
-    if (semester === 0) {
-      semester = 3;
-      year -= 1;
-    }
-    options.push(`${year}-${year + 1}-${semester}`);
-  }
-  return options;
-}
-
 export function formatSyncTime(value: string | null): string {
   if (!value) return '尚未同步';
   return `同步于 ${new Intl.DateTimeFormat('zh-CN', {
@@ -126,6 +107,12 @@ export function weekForDate(semesterStart: string | null, date: Date): number | 
         (7 * dayMilliseconds),
     ) + 1
   );
+}
+
+/** 今天落在学期的教学周里就选本周，否则（如查看往学期）回到该学期第一个有课的周。 */
+export function defaultWeek(semesterStart: string | null, weeks: readonly number[], today: Date) {
+  const current = weekForDate(semesterStart, today);
+  return current !== null && weeks.includes(current) ? current : (weeks[0] ?? 1);
 }
 
 export function activeInWeek(lesson: TimetableLesson, week: number): boolean {
