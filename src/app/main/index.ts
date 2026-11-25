@@ -383,9 +383,13 @@ function showMainWindow(window: BrowserWindow): void {
 
 function createTray(window: BrowserWindow): void {
   tray?.destroy();
-  const icon = nativeImage
-    .createFromPath(join(app.getAppPath(), 'assets', `Wilthy_${savedIcon()}_bg.png`))
-    .resize({ width: 16, height: 16 });
+  // Windows 托盘按缩放比取 16–48px；单张 16px 位图会被系统放大发糊，改给多尺寸 ICO。
+  const icon =
+    process.platform === 'win32'
+      ? join(app.getAppPath(), 'assets', `Wilthy_${savedIcon()}_tray.ico`)
+      : nativeImage
+          .createFromPath(join(app.getAppPath(), 'assets', `Wilthy_${savedIcon()}_bg.png`))
+          .resize({ width: 16, height: 16 });
   tray = new Tray(icon);
   tray.setToolTip('Wilthy');
   tray.setContextMenu(

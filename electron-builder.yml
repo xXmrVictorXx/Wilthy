@@ -12,6 +12,8 @@ files:
   - package.json
   - assets/Wilthy_white_bg.png
   - assets/Wilthy_black_bg.png
+  - assets/Wilthy_white_tray.ico
+  - assets/Wilthy_black_tray.ico
   # 渲染层依赖已移入 devDependencies，由 Vite 打进 out/；
   # 下面只兜底排除依赖收集中漏进产物或带全平台 prebuild 的部分。
   # esbuild 是 Vite 的构建期工具，electron-builder 的 pnpm 依赖收集会漏收它。
