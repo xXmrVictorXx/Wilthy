@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { GraduationCap, LogIn, RefreshCw } from 'lucide-react';
+import { GraduationCap, RefreshCw } from 'lucide-react';
 import { errorMessage } from '../../../core/protocol/contract';
 import { Alert } from '../../../ui/alert';
 import { Button } from '../../../ui/button';
@@ -88,13 +88,13 @@ function DesktopGradesView() {
         <div className="flex min-h-0 flex-1 overflow-y-auto p-6">
           <ConnectCard
             className="m-auto"
-            description="登录后读取有效成绩、平时与期末分项，以及学校给出的学分与绩点。登录在独立窗口完成。"
+            description="读取有效成绩、平时与期末分项，以及学校给出的学分与绩点。登录失效时会打开数字京师·珠海登录窗口。"
             icon={GraduationCap}
             title="同步成绩"
           >
             <Button disabled={busy} onClick={() => void sync()}>
-              <LogIn className="size-4" />
-              {busy ? '正在同步…' : '登录并同步'}
+              <RefreshCw className="size-4" />
+              {busy ? '正在同步…' : '立即同步'}
             </Button>
           </ConnectCard>
         </div>

@@ -4,7 +4,7 @@ import { CalendarDays, LogIn } from 'lucide-react';
 import { Button } from '../../../ui/button';
 import { ConnectCard } from '../../../ui/connect-card';
 import { showToast } from '../../../ui/toast';
-import { connectAndSyncTimetable } from './use-timetable';
+import { connectAndSyncCampus } from './use-timetable';
 
 export function TimetableConnectCard({ semester }: { semester: string }) {
   const queryClient = useQueryClient();
@@ -13,12 +13,8 @@ export function TimetableConnectCard({ semester }: { semester: string }) {
   const connectAndSync = async () => {
     setBusy(true);
     const connect = async () => {
-      const failure = await connectAndSyncTimetable(semester);
-      if (failure) {
-        showToast({ variant: 'error', title: '登录同步失败', description: failure });
-        return;
-      }
-      await queryClient.invalidateQueries({ queryKey: ['timetable'] });
+      const failure = await connectAndSyncCampus(queryClient, semester);
+      if (failure) showToast({ variant: 'error', title: '登录同步失败', description: failure });
     };
     await connect().finally(() => setBusy(false));
   };

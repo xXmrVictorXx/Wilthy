@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { DesktopOnlyNotice } from '../../../ui/desktop-only-notice';
 import { ErrorText } from '../../../ui/error-text';
 import { StepButton, type StepButtonState } from '../../../modules/onboarding/view';
-import { connectAndSyncTimetable } from './use-timetable';
+import { connectAndSyncCampus } from './use-timetable';
 
 export function TimetableOnboardingStep({ onDone }: { onDone: () => void }) {
   const queryClient = useQueryClient();
@@ -24,13 +24,12 @@ export function TimetableOnboardingStep({ onDone }: { onDone: () => void }) {
     if (state === 'busy') return;
     setState('busy');
     setError(null);
-    const failure = await connectAndSyncTimetable();
+    const failure = await connectAndSyncCampus(queryClient);
     if (failure) {
       setError(failure);
       setState('idle');
       return;
     }
-    void queryClient.invalidateQueries({ queryKey: ['timetable'] });
     setState('success');
   };
 

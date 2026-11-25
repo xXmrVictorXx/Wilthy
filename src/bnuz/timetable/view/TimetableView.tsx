@@ -7,7 +7,7 @@ import { DesktopOnlyNotice } from '../../../ui/desktop-only-notice';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../ui/select';
 import { SemesterStartPicker } from './SemesterStartPicker';
 import { TimetableConnectCard } from './TimetableConnectCard';
-import { connectAndSyncTimetable, timetableClient, useTimetableState } from './use-timetable';
+import { connectAndSyncCampus, timetableClient, useTimetableState } from './use-timetable';
 import { WeekCalendar, type CalendarItemDetail } from './WeekCalendar';
 import { EventDetailDialog } from './EventDetailDialog';
 import {
@@ -77,12 +77,8 @@ function DesktopTimetableView() {
   const connectAndSync = async () => {
     setBusy(true);
     const connect = async () => {
-      const failure = await connectAndSyncTimetable(state?.semester);
-      if (failure) {
-        showToast({ variant: 'error', title: '登录同步失败', description: failure });
-        return;
-      }
-      await reload();
+      const failure = await connectAndSyncCampus(queryClient, state?.semester);
+      if (failure) showToast({ variant: 'error', title: '登录同步失败', description: failure });
     };
     await connect().finally(() => setBusy(false));
   };

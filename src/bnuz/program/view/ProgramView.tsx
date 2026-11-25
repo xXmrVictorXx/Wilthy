@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ListChecks, LogIn, RefreshCw } from 'lucide-react';
+import { ListChecks, RefreshCw } from 'lucide-react';
 import { errorMessage } from '../../../core/protocol/contract';
 import { Alert } from '../../../ui/alert';
 import { Badge } from '../../../ui/badge';
@@ -86,13 +86,13 @@ function DesktopProgramView() {
         <div className="flex min-h-0 flex-1 overflow-y-auto p-6">
           <ConnectCard
             className="m-auto"
-            description="登录后读取培养方案的计划课程，以及各课程模块的修读情况。登录在独立窗口完成。"
+            description="读取培养方案的计划课程，以及各课程模块的修读情况。登录失效时会打开数字京师·珠海登录窗口。"
             icon={ListChecks}
             title="同步培养方案"
           >
             <Button disabled={busy} onClick={() => void sync()}>
-              <LogIn className="size-4" />
-              {busy ? '正在同步…' : '登录并同步'}
+              <RefreshCw className="size-4" />
+              {busy ? '正在同步…' : '立即同步'}
             </Button>
           </ConnectCard>
         </div>
