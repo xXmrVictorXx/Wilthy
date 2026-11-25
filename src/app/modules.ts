@@ -13,6 +13,7 @@ import { updateModule } from '../modules/update';
 import { workspaceModule } from '../modules/workspace';
 import { gradesModule } from '../bnuz/grades';
 import { jwcModule } from '../bnuz/jwc';
+import { programModule } from '../bnuz/program';
 import { timetableModule } from '../bnuz/timetable';
 
 export const modules: ModuleDefinition[] = [
@@ -30,5 +31,6 @@ export const modules: ModuleDefinition[] = [
   notificationsModule,
   timetableModule,
   gradesModule,
+  programModule,
   jwcModule,
 ];
