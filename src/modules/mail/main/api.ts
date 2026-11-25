@@ -27,11 +27,17 @@ import {
   type FolderRow,
   type MessageRow,
 } from './store';
-import { mailSyncStatus, SYNC_WINDOW } from './sync';
+import { emitMailCacheChanged, mailSyncStatus, SYNC_WINDOW } from './sync';
 
 export { downloadHtmlImages } from './parse';
 export { friendlyError, getMailTrashRetention, setMailTrashRetention } from './store';
-export { configureMailAccount, disconnectMailAccount, mailSyncStatus, startMailSync } from './sync';
+export {
+  configureMailAccount,
+  disconnectMailAccount,
+  onMailCacheChanged,
+  mailSyncStatus,
+  startMailSync,
+} from './sync';
 
 function getMessageRow(
   db: SqlDatabase,
@@ -337,6 +343,69 @@ export async function markMailSeen(messageId: unknown): Promise<MailResult> {
        WHERE id = ?`,
     ).run(row.folder_id);
   });
+  emitMailCacheChanged();
+  return { ok: true };
+}
+
+/** 通知中心「全部已读」：收件箱全部未读（未本地删除）在服务器标记 \\Seen，一次连接完成。 */
+export async function markAllMailSeen(): Promise<MailResult> {
+  const account = getAccountRow();
+  const credential = account ? loadMailCredentials() : null;
+  if (!account || !credential) return { ok: false, error: '邮箱未配置' };
+  const db = hostPorts().database();
+  const rows = db
+    .prepare(
+      `SELECT m.id, m.uid, m.folder_id FROM mail_messages m
+       JOIN mail_folders f ON f.id = m.folder_id
+       WHERE f.account_id = ? AND f.special_use = '\\Inbox'
+         AND m.deleted_at IS NULL AND m.seen = 0`,
+    )
+    .all(account.id) as { id: number; uid: number; folder_id: number }[];
+  if (rows.length === 0) return { ok: true };
+  const byFolder = new Map<number, { uids: number[]; ids: number[]; path: string }>();
+  for (const row of rows) {
+    let group = byFolder.get(row.folder_id);
+    if (!group) {
+      const folder = db.prepare('SELECT path FROM mail_folders WHERE id = ?').get(row.folder_id) as
+        { path: string } | undefined;
+      if (!folder) continue;
+      group = { uids: [], ids: [], path: folder.path };
+      byFolder.set(row.folder_id, group);
+    }
+    group.uids.push(row.uid);
+    group.ids.push(row.id);
+  }
+  const client = connectImap(account.address, credential.password);
+  try {
+    await client.connect();
+    for (const group of byFolder.values()) {
+      const lock = await client.getMailboxLock(group.path);
+      try {
+        await client.messageFlagsAdd({ uid: group.uids.join(',') }, ['\\Seen'], { uid: true });
+      } finally {
+        lock.release();
+      }
+    }
+    client.close();
+  } catch (error) {
+    client.close();
+    return { ok: false, error: friendlyError(error) };
+  }
+  inTransaction(db, () => {
+    for (const [folderId, group] of byFolder) {
+      const placeholders = group.ids.map(() => '?').join(', ');
+      db.prepare(`UPDATE mail_messages SET seen = 1 WHERE id IN (${placeholders})`).run(
+        ...group.ids,
+      );
+      db.prepare(
+        `UPDATE mail_folders SET unread =
+          (SELECT COUNT(*) FROM mail_messages
+           WHERE folder_id = mail_folders.id AND deleted_at IS NULL AND seen = 0)
+         WHERE id = ?`,
+      ).run(folderId);
+    }
+  });
+  emitMailCacheChanged();
   return { ok: true };
 }
 
@@ -364,6 +433,7 @@ export function deleteMailMessage(messageId: unknown): MailResult {
     }
   });
   // 删除会让对应邮件通知从列表消失（派生查询按未删除过滤）。
+  emitMailCacheChanged();
   return { ok: true };
 }
 
@@ -389,6 +459,7 @@ export function restoreMailMessage(messageId: unknown): MailResult {
       ).run(row.folder_id);
     }
   });
+  emitMailCacheChanged();
   return { ok: true };
 }
 

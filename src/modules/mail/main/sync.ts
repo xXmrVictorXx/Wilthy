@@ -46,6 +46,17 @@ let syncStatus: MailSyncStatus = {
 let syncGeneration = 0;
 let activeSync: Promise<void> | null = null;
 
+// 邮件缓存变化会改变派生的通知状态，通知来源据此重播。
+const mailCacheListeners = new Set<() => void>();
+
+export function onMailCacheChanged(listener: () => void): void {
+  mailCacheListeners.add(listener);
+}
+
+export function emitMailCacheChanged(): void {
+  for (const listener of mailCacheListeners) listener();
+}
+
 export function mailSyncStatus(): MailSyncStatus {
   return syncStatus;
 }
@@ -301,6 +312,7 @@ async function runSync(account: AccountRow, password: string): Promise<void> {
   } finally {
     client.close();
     // 同步会改写 seen 标志（含他端已读），通知面板的派生已读需随之刷新。
+    emitMailCacheChanged();
   }
 }
 

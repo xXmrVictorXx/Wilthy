@@ -41,6 +41,7 @@ import {
   openEmailDraft,
   saveLocalDraft,
 } from './main/drafts';
+import { registerMailNotices } from './main/notice-source';
 import { attachmentResourceResolver, mailResourceResolver } from './main/resources';
 import { mailSearch } from './main/search';
 import { addComposeImage, releaseComposeFiles } from './main/send';
@@ -111,6 +112,7 @@ export const mailModule = defineModule({
     registerResourceResolver('mail', mailResourceResolver);
     registerResourceResolver('attachment', attachmentResourceResolver);
     registerSearchProvider(mailSearch);
+    registerMailNotices();
   },
   start() {
     syncInBackground();

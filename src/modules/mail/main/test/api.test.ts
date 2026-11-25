@@ -11,7 +11,9 @@ import {
   getMailTrashRetention,
   listMailMessages,
   listMailTrash,
+  markAllMailSeen,
   markMailSeen,
+  onMailCacheChanged,
   purgeMailMessage,
   restoreMailMessage,
   setMailTrashRetention,
@@ -372,6 +374,43 @@ describe('mail local trash and folder sync', () => {
     imapHarness.flagAdds = [];
     expect(await markMailSeen(readId)).toEqual({ ok: true });
     expect(await markMailSeen(unreadId)).toEqual({ ok: true });
+    expect(imapHarness.flagAdds).toHaveLength(0);
+  });
+
+  it('markAllMailSeen flags only inbox unread rows and notifies cache listeners', async () => {
+    const inboxId = insertFolder(db, 'INBOX', '\\Inbox', 2);
+    const archiveId = insertFolder(db, 'Archive', '\\Archive', 1);
+    const unreadInbox = insertMessage(db, inboxId, 1, 0);
+    insertMessage(db, inboxId, 2, 1);
+    const deletedInbox = insertMessage(db, inboxId, 3, 0, daysAgo(1));
+    const unreadArchive = insertMessage(db, archiveId, 1, 0);
+    let cacheChanges = 0;
+    onMailCacheChanged(() => {
+      cacheChanges += 1;
+    });
+
+    expect(await markAllMailSeen()).toEqual({ ok: true });
+    expect(imapHarness.flagAdds).toEqual([{ range: { uid: '1' }, flags: ['\\Seen'] }]);
+    expect(imapHarness.lockedPaths).toEqual(['INBOX']);
+    expect(db.prepare('SELECT seen FROM mail_messages WHERE id = ?').get(unreadInbox)).toEqual({
+      seen: 1,
+    });
+    expect(db.prepare('SELECT seen FROM mail_messages WHERE id = ?').get(deletedInbox)).toEqual({
+      seen: 0,
+    });
+    expect(db.prepare('SELECT seen FROM mail_messages WHERE id = ?').get(unreadArchive)).toEqual({
+      seen: 0,
+    });
+    expect(db.prepare('SELECT unread FROM mail_folders WHERE id = ?').get(inboxId)).toEqual({
+      unread: 0,
+    });
+    expect(db.prepare('SELECT unread FROM mail_folders WHERE id = ?').get(archiveId)).toEqual({
+      unread: 1,
+    });
+    expect(cacheChanges).toBe(1);
+
+    imapHarness.flagAdds = [];
+    expect(await markAllMailSeen()).toEqual({ ok: true });
     expect(imapHarness.flagAdds).toHaveLength(0);
   });
 
