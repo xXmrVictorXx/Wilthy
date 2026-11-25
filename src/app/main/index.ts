@@ -187,7 +187,7 @@ app
     applyTheme(savedTheme());
     if (process.platform === 'darwin') {
       app.dock?.setIcon(
-        nativeImage.createFromPath(join(__dirname, 'icons', `Dela_${savedIcon()}_bg.png`)),
+        nativeImage.createFromPath(join(__dirname, 'icons', `Wilthy_${savedIcon()}_bg.png`)),
       );
     }
     registerModuleIpc(modules, registerAgentIpc());
@@ -233,7 +233,7 @@ async function createWindow(): Promise<void> {
     show: !smokeTest && !startHidden,
     backgroundColor: '#f7f7f8',
     icon: nativeImage.createFromPath(
-      join(app.getAppPath(), 'assets', `Dela_${savedIcon()}_bg.png`),
+      join(app.getAppPath(), 'assets', `Wilthy_${savedIcon()}_bg.png`),
     ),
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'hidden',
     titleBarOverlay: process.platform === 'darwin',
@@ -325,7 +325,7 @@ async function createWindow(): Promise<void> {
 
   if (smokeTest && !terminalSmokeTest) {
     for (const name of ['white', 'black']) {
-      const iconPath = join(app.getAppPath(), 'assets', `Dela_${name}_bg.png`);
+      const iconPath = join(app.getAppPath(), 'assets', `Wilthy_${name}_bg.png`);
       if (nativeImage.createFromPath(iconPath).isEmpty()) {
         throw new Error(`Application icon failed to load: ${iconPath}`);
       }
@@ -381,7 +381,7 @@ function showMainWindow(window: BrowserWindow): void {
 function createTray(window: BrowserWindow): void {
   tray?.destroy();
   const icon = nativeImage
-    .createFromPath(join(app.getAppPath(), 'assets', `Dela_${savedIcon()}_bg.png`))
+    .createFromPath(join(app.getAppPath(), 'assets', `Wilthy_${savedIcon()}_bg.png`))
     .resize({ width: 16, height: 16 });
   tray = new Tray(icon);
   tray.setToolTip('Dela');

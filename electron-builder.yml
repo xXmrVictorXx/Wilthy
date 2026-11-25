@@ -1,7 +1,7 @@
-appId: io.dela.desktop
-productName: Dela
+appId: io.wilthy.desktop
+productName: Wilthy
 artifactName: '${productName}-${version}-${os}-${arch}.${ext}'
-icon: assets/Dela_white_bg.png
+icon: assets/Wilthy_white_bg.png
 asar: true
 directories:
   output: dist
@@ -10,8 +10,8 @@ files:
   - out/preload/**/*
   - out/renderer/**/*
   - package.json
-  - assets/Dela_white_bg.png
-  - assets/Dela_black_bg.png
+  - assets/Wilthy_white_bg.png
+  - assets/Wilthy_black_bg.png
   # 渲染层依赖已移入 devDependencies，由 Vite 打进 out/；
   # 下面只兜底排除依赖收集中漏进产物或带全平台 prebuild 的部分。
   # esbuild 是 Vite 的构建期工具，electron-builder 的 pnpm 依赖收集会漏收它。
@@ -54,11 +54,6 @@ extraResources:
 # better-sqlite3 与 node-pty 用随包预编译产物，不在打包时源码重建。
 npmRebuild: false
 win:
-  publish:
-    provider: generic
-    url: https://openlist.frameneo.com/sd/Dela_latest_release/
-    channel: latest
-    useMultipleRangeRequest: false
   extraResources:
     - from: vendor/openssh
       to: openssh
@@ -79,15 +74,8 @@ win:
       arch:
         - x64
 mac:
-  icon: out/main/icons/Dela_white_bg.png
+  icon: out/main/icons/Wilthy_white_bg.png
   category: public.app-category.productivity
-  # 与 Windows 同一个 CDN 目录：electron-updater 据此生成 latest-mac.yml 并把
-  # app-update.yml 打进 .app；mac 更新走 zip，dmg 仅供首次安装。
-  publish:
-    provider: generic
-    url: https://openlist.frameneo.com/sd/Dela_latest_release/
-    channel: latest
-    useMultipleRangeRequest: false
   target:
     - target: dmg
       arch:

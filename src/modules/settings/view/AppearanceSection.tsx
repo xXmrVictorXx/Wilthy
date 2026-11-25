@@ -11,8 +11,8 @@ import {
 } from '../contract';
 import { cn } from '../../../ui/lib/cn';
 import { Stepper } from '../../../ui/stepper';
-import blackLogo from '../../../../assets/Dela_black_bg.svg';
-import whiteLogo from '../../../../assets/Dela_white_bg.svg';
+import blackLogo from '../../../../assets/Wilthy_black_bg.svg';
+import whiteLogo from '../../../../assets/Wilthy_white_bg.svg';
 import { SectionHeader } from './SectionHeader';
 import { SettingRow } from './SettingRow';
 import { SettingsGroup } from './SettingsGroup';

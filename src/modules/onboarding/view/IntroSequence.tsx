@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import logo from '../../../../assets/Dela_Logo.png';
+import logo from '../../../../assets/Wilthy_Logo.png';
 import { HandwritingLine } from './intro-handwriting';
 import { OnboardingWindowBar } from './onboarding-window-bar';
 import { cn } from '../../../ui/lib/cn';

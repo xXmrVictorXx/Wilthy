@@ -7,16 +7,16 @@ import {
   type UpdateSnapshot,
   type UpdateStep,
 } from '../contract';
+import { updateFeed } from './feed';
 import { savedPendingInstall, setPendingInstall } from './pending';
 import { failureEvent, initialUpdateState, reduceUpdate, type UpdateEvent } from './state';
 
-const DOWNLOAD_PAGE_URL = 'https://openlist.frameneo.com/@s/Dela_latest_release';
 export const BACKGROUND_CHECK_INTERVAL = 2 * 60 * 60 * 1000;
 export const BACKGROUND_CHECK_DELAY = 30_000;
 export const PENDING_INSTALL_DELAY = 5_000;
-// 目前只有 Windows 与 macOS 发布更新产物；其余平台保持 unsupported，不发起任何更新请求。
+// 没有更新源，或不是 Windows 与 macOS 时保持 unsupported，不发起任何更新请求。
 function updatesAvailable(): boolean {
-  return process.platform === 'win32' || process.platform === 'darwin';
+  return updateFeed !== null && (process.platform === 'win32' || process.platform === 'darwin');
 }
 
 let snapshot: UpdateSnapshot | null = null;
@@ -141,7 +141,7 @@ export function deferInstall(): void {
 }
 
 export async function openDownloadPage(): Promise<void> {
-  if (updatesAvailable()) await shell.openExternal(DOWNLOAD_PAGE_URL);
+  if (updatesAvailable() && updateFeed) await shell.openExternal(updateFeed.downloadPage);
 }
 
 function hasWindow(): boolean {
