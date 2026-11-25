@@ -69,6 +69,19 @@ it('标题取完整 title，跨栏目链接解析为绝对地址，并找到下�
   expect(() => parseJwcList('<html>维护中</html>', listUrl)).toThrow('未能读取');
 });
 
+it('转到信息门户的通知用链接派生稳定 ID，不阻断整页', () => {
+  const portal = 'https://one.bnuzh.edu.cn/up/view?m=pim#act=up/pim/showpim&id=34780173750120448';
+  const html = list(
+    row(1) +
+      `<li class="line"><a href="${portal.replace('&', '&amp;')}" title="期末考试安排" target="_self"><span>【教务学务】期末考试安排</span></a><span class="fr text-muted">2026-10-14</span></li>`,
+  );
+  const items = parseJwcList(html, listUrl).items;
+  expect(items).toHaveLength(2);
+  expect(items[1]!.id).toMatch(/^jwc:url-[0-9a-f]{32}$/);
+  expect(items[1]!.href.url).toBe(portal);
+  expect(parseJwcList(html, listUrl).items[1]!.id).toBe(items[1]!.id);
+});
+
 it('首次导入历史不提醒，此后同日新增文章仅收集一次，304 不清除数据', async () => {
   request.mockResolvedValueOnce(page(list(row(1))));
   await refreshJwc(true);

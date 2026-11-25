@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { load } from 'cheerio';
 import { hostPorts } from '../../../core/ports';
 import {
@@ -39,7 +40,11 @@ export function parseJwcList(html: string, pageUrl: string) {
     const row = $(element);
     const link = row.children('a[href]').first();
     const url = new URL(link.attr('href')!, pageUrl);
-    const articleId = url.pathname.match(/\/([0-9a-f]{32})\.htm$/)?.[1];
+    // 部分通知转到信息门户（one.bnuzh.edu.cn），没有文章 ID，改用链接派生的稳定 ID。
+    const articleId =
+      url.origin === origin
+        ? url.pathname.match(/\/([0-9a-f]{32})\.htm$/)?.[1]
+        : `url-${createHash('sha256').update(url.href).digest('hex').slice(0, 32)}`;
     const title = link.attr('title')?.replace(/\s+/g, ' ').trim();
     const date = row.children('span').last().text().trim();
     if (!articleId || !title || !/^\d{4}-\d{2}-\d{2}$/.test(date))
