@@ -4,5 +4,5 @@ import { JwcNoticeView } from './JwcNoticeView';
 
 export const jwcView = defineView({
   pages: { jwc: { component: JwcNoticeView } },
-  notices: { jwc: { label: '教务处', icon: GraduationCap } },
+  notices: { jwc: { label: '教务部', icon: GraduationCap } },
 });

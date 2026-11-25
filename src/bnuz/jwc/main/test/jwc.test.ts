@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { provideTestHostPorts } from '../../../../core/test/host-mock';
 
-vi.mock('electron', () => ({ app: { isPackaged: true }, dialog: { showSaveDialog: vi.fn() } }));
+vi.mock('electron', () => ({ app: { isPackaged: true } }));
 vi.mock('../../../../modules/todo', () => ({
   getTodoState: () => ({ items: [], sources: [], syncing: false }),
   todoSyncedAt: () => null,
@@ -16,27 +16,21 @@ vi.mock('../../../../modules/notifications', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../../../modules/notifications')>()),
   systemNotifyItem: vi.fn(),
 }));
-vi.mock('node:fs/promises', () => ({ writeFile: vi.fn() }));
 
-import { app, dialog } from 'electron';
-import { writeFile } from 'node:fs/promises';
+import { app } from 'electron';
 import { notificationsModule, systemNotifyItem } from '../../../../modules/notifications';
-import {
-  parseJwcList,
-  refreshJwc,
-  getJwcNotice,
-  getJwcCaptcha,
-  downloadJwcAttachment,
-} from '../jwc';
+import { parseJwcList, refreshJwc, getJwcNotice } from '../jwc';
 
 let db: Database.Database;
 const request = vi.fn<typeof fetch>();
-const origin = 'https://jwc.sjtu.edu.cn';
-const row = (id: number, day = '28', month = '2026.10', dynamic = false) =>
-  `<li><div class="sj"><h2>${day}</h2><p>${month}</p></div><div class="wz"><a href="${dynamic ? `/content.jsp?urltype=news.NewsContentUrl&wbnewsid=${id}` : `/info/1222/${id}.htm`}"><h2>通知 ${id}</h2></a><p>摘要 &amp; 内容</p></div></li>`;
+const origin = 'https://jwb.bnuzh.edu.cn';
+const hex = (id: number) => id.toString(16).padStart(32, '0');
+const row = (id: number, date = '2026-10-28', path = '') =>
+  `<li class="line"><a href="${path}${hex(id)}.htm" title="通知 ${id}" target="_self"><span>【教务学务】通知 ${id}…</span></a><span class="fr text-muted">${date}</span></li>`;
 const list = (rows: string, next = '') =>
-  `<div class="ny_right_con"><div class="Newslist"><ul>${rows}</ul></div></div>${next ? `<span class="p_next"><a href="${next}">下页</a></span>` : ''}`;
+  `<ul class="list">${rows}</ul><div class="pagenav-btn fr">${next ? `<a href="${next}">下一页</a>` : ''}</div>`;
 const page = (html: string) => new Response(html, { headers: { ETag: '"v1"' } });
+const listUrl = `${origin}/tzgg/index.htm`;
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -58,28 +52,21 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-it('识别两种文章地址、日期、摘要与真实下页地址', () => {
+it('标题取完整 title，跨栏目链接解析为绝对地址，并找到下一页', () => {
   const result = parseJwcList(
-    list(row(1) + row(2, '28', '2026.10', true), 'mxxsdtz/98.htm'),
-    `${origin}/index/mxxsdtz.htm`,
+    list(row(1) + row(2, '2026-10-27', '../sjjx/xkjs/'), 'index1.htm'),
+    listUrl,
   );
-  expect(result.items.map((item) => item.id)).toEqual(['jwc:1', 'jwc:2']);
+  expect(result.items.map((item) => item.id)).toEqual([`jwc:${hex(1)}`, `jwc:${hex(2)}`]);
   expect(result.items[0]).toMatchObject({
+    title: '通知 1',
+    body: '教务学务',
     createdAt: '2026-10-27T16:00:00.000Z',
-    body: '摘要 & 内容',
+    href: { kind: 'jwc', url: `${origin}/tzgg/${hex(1)}.htm` },
   });
-  expect(result.next).toBe(`${origin}/index/mxxsdtz/98.htm`);
-  expect(() => parseJwcList('<html>维护中</html>', origin)).toThrow('未能读取');
-});
-
-it('学校列表中的公众号外链沿用学校文章 ID，不阻断其他通知', () => {
-  const html =
-    list(row(3).replace('/info/1222/3.htm', 'https://mp.weixin.qq.com/s/example')) +
-    `<script>_showDynClickBatch(['dynclicks_u9_3'],[3],"wbnews",1707467176)</script>`;
-  expect(parseJwcList(html, origin).items[0]).toMatchObject({
-    id: 'jwc:3',
-    href: { kind: 'jwc', url: 'https://mp.weixin.qq.com/s/example' },
-  });
+  expect(result.items[1]!.href.url).toBe(`${origin}/sjjx/xkjs/${hex(2)}.htm`);
+  expect(result.next).toBe(`${origin}/tzgg/index1.htm`);
+  expect(() => parseJwcList('<html>维护中</html>', listUrl)).toThrow('未能读取');
 });
 
 it('首次导入历史不提醒，此后同日新增文章仅收集一次，304 不清除数据', async () => {
@@ -90,8 +77,8 @@ it('首次导入历史不提醒，此后同日新增文章仅收集一次，304 
   request.mockResolvedValueOnce(page(list(row(2) + row(1))));
   await refreshJwc(true);
   expect(db.prepare('SELECT id FROM notifications ORDER BY id').all()).toEqual([
-    { id: 'jwc:1' },
-    { id: 'jwc:2' },
+    { id: `jwc:${hex(1)}` },
+    { id: `jwc:${hex(2)}` },
   ]);
   expect(systemNotifyItem).toHaveBeenCalledTimes(1);
   request.mockResolvedValueOnce(new Response(null, { status: 304 }));
@@ -106,12 +93,12 @@ it.each([true, false])('首次导入近两个月通知且不提醒（正式版�
   Object.defineProperty(app, 'isPackaged', { value: isPackaged });
   vi.stubEnv('WILTHY_DEV_URL', isPackaged ? '' : 'http://127.0.0.1:5173');
   request
-    .mockResolvedValueOnce(page(list(row(10), 'mxxsdtz/98.htm')))
-    .mockResolvedValueOnce(page(list(row(9, '02', '2026.09') + row(8, '01', '2026.09'), '97.htm')));
+    .mockResolvedValueOnce(page(list(row(10), 'index1.htm')))
+    .mockResolvedValueOnce(page(list(row(9, '2026-09-02') + row(8, '2026-09-01'), 'index2.htm')));
   await refreshJwc(true);
   expect(db.prepare('SELECT id FROM notifications ORDER BY id').all()).toEqual([
-    { id: 'jwc:10' },
-    { id: 'jwc:9' },
+    { id: `jwc:${hex(9)}` },
+    { id: `jwc:${hex(10)}` },
   ]);
   expect(request).toHaveBeenCalledTimes(2);
   expect(systemNotifyItem).not.toHaveBeenCalled();
@@ -122,9 +109,9 @@ it.each([true, false])('首次导入近两个月通知且不提醒（正式版�
 
 it('北京时间刚跨日时按当地日期保留两个月前当天的通知', async () => {
   vi.setSystemTime(new Date('2026-11-01T16:30:00Z'));
-  request.mockResolvedValueOnce(page(list(row(9, '02', '2026.09') + row(8, '01', '2026.09'))));
+  request.mockResolvedValueOnce(page(list(row(9, '2026-09-02') + row(8, '2026-09-01'))));
   await refreshJwc(true);
-  expect(db.prepare('SELECT id FROM notifications').all()).toEqual([{ id: 'jwc:9' }]);
+  expect(db.prepare('SELECT id FROM notifications').all()).toEqual([{ id: `jwc:${hex(9)}` }]);
   expect(systemNotifyItem).not.toHaveBeenCalled();
 });
 
@@ -136,59 +123,31 @@ it('列表读取失败不推进基线，下次成功仍可发现新增', async (
   await refreshJwc(true);
   expect(db.prepare('SELECT value FROM workspace_settings').get()).toEqual(before);
   expect(db.prepare('SELECT error FROM notification_refreshes').get()).toMatchObject({
-    error: '未能读取教务处通知列表',
+    error: '未能读取教务部通知列表',
   });
 });
 
-it('保留正文表格图片、识别附件，并在同一会话提交验证码后保存真实文件', async () => {
+it('保留正文表格图片，识别正文里的附件链接', async () => {
+  const id = `jwc:${hex(991)}`;
   db.prepare(
     'INSERT INTO notifications (id, source, account_key, title, created_at, href) VALUES (?, ?, ?, ?, ?, ?)',
   ).run(
-    'jwc:991',
+    id,
     'jwc',
     'students',
     '通知',
     '2026-10-28',
-    JSON.stringify({ kind: 'jwc', url: `${origin}/info/1222/991.htm` }),
+    JSON.stringify({ kind: 'jwc', url: `${origin}/tzgg/${hex(991)}.htm` }),
   );
   request.mockResolvedValueOnce(
     page(
-      '<div class="v_news_content"><table><tr><td>考试</td></tr></table><img src="/image.png"></div><div class="Newslist2"><a href="/system/_content/download.jsp?wbfileid=ABC">说明.pdf</a></div>',
+      '<div class="contenttxt"><table><tr><td>考试</td></tr></table><img src="/image.png"><a href="../docs//2026-11/b57.pdf">说明.pdf</a><a href="https://example.com/x">外链</a></div>',
     ),
   );
-  const notice = await getJwcNotice('jwc:991');
+  const notice = await getJwcNotice(id);
   expect(notice.html).toContain('<table>');
   expect(notice.html).toContain('/image.png');
-  expect(notice.attachments[0]).toMatchObject({ id: 'ABC', name: '说明.pdf' });
-  request
-    .mockResolvedValueOnce(
-      new Response('验证码页面', {
-        headers: { 'Set-Cookie': 'JSESSIONID=test-session; Path=/; HttpOnly' },
-      }),
-    )
-    .mockResolvedValueOnce(
-      new Response(new Uint8Array([255, 216, 255]), { headers: { 'Content-Type': 'image/jpeg' } }),
-    );
-  const captcha = await getJwcCaptcha('jwc:991', 'ABC');
-  expect(captcha.image).toContain('data:image/jpeg;base64,');
-  request.mockResolvedValueOnce(
-    new Response('<h1>验证码错误</h1>', { headers: { 'Content-Type': 'text/html' } }),
-  );
-  expect(await downloadJwcAttachment(captcha.token, '0000')).toEqual({ status: 'invalid-code' });
-  expect(dialog.showSaveDialog).not.toHaveBeenCalled();
-  request.mockResolvedValueOnce(
-    new Response('%PDF-1.7\n%%EOF', {
-      headers: {
-        'Content-Type': 'application/octet-stream',
-        'Content-Disposition': 'attachment; filename=guide.pdf',
-      },
-    }),
-  );
-  vi.mocked(dialog.showSaveDialog).mockResolvedValue({ canceled: false, filePath: 'saved.pdf' });
-  expect(await downloadJwcAttachment(captcha.token, '1234')).toEqual({ status: 'saved' });
-  expect(request.mock.calls.at(-1)![0]!.toString()).toContain('codeValue=1234');
-  expect(request.mock.calls.at(-1)![1]!.headers).toMatchObject({
-    Cookie: 'JSESSIONID=test-session',
-  });
-  expect(writeFile).toHaveBeenCalledWith('saved.pdf', Buffer.from('%PDF-1.7\n%%EOF'));
+  expect(notice.attachments).toEqual([
+    { id: 'b57.pdf', name: '说明.pdf', url: `${origin}/docs//2026-11/b57.pdf` },
+  ]);
 });

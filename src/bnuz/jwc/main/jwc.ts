@@ -1,6 +1,3 @@
-import { dialog } from 'electron';
-import { randomUUID } from 'node:crypto';
-import { writeFile } from 'node:fs/promises';
 import { load } from 'cheerio';
 import { hostPorts } from '../../../core/ports';
 import {
@@ -12,13 +9,12 @@ import {
 } from '../../../modules/notifications';
 import type { JwcNotice } from '../contract';
 
-const origin = 'https://jwc.sjtu.edu.cn';
-const listUrl = `${origin}/index/mxxsdtz.htm`;
+const origin = 'https://jwb.bnuzh.edu.cn';
+const listUrl = `${origin}/tzgg/index.htm`;
 const syncKey = 'jwc-sync';
 const accountKey = 'students';
 let nextCheckAt = 0;
 const notices = new Map<string, JwcNotice>();
-let challenge: { token: string; url: string; name: string; cookie: string } | null = null;
 
 interface JwcListItem {
   id: string;
@@ -38,36 +34,29 @@ interface JwcSync {
 
 export function parseJwcList(html: string, pageUrl: string) {
   const $ = load(html);
-  const articleIds = [...html.matchAll(/['"]dynclicks_u\d+_(\d+)['"]/g)].map((match) => match[1]);
   const items: JwcListItem[] = [];
-  $('.ny_right_con .Newslist > ul > li').each((index, element) => {
+  $('li.line').each((_, element) => {
     const row = $(element);
-    const link = row.find('.wz a');
+    const link = row.children('a[href]').first();
     const url = new URL(link.attr('href')!, pageUrl);
-    const articleId =
-      articleIds[index] ??
-      url.searchParams.get('wbnewsid') ??
-      url.pathname.match(/\/(\d+)\.htm$/)?.[1];
-    const title = link.find('h2').text().trim();
-    const date = `${row.find('.sj p').text().trim().replace('.', '-')}-${row.find('.sj h2').text().trim().padStart(2, '0')}`;
-    if (
-      !['https:', 'http:'].includes(url.protocol) ||
-      !articleId ||
-      !title ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(date)
-    )
-      throw new Error('教务处通知列表内容不完整');
+    const articleId = url.pathname.match(/\/([0-9a-f]{32})\.htm$/)?.[1];
+    const title = link.attr('title')?.replace(/\s+/g, ' ').trim();
+    const date = row.children('span').last().text().trim();
+    if (!articleId || !title || !/^\d{4}-\d{2}-\d{2}$/.test(date))
+      throw new Error('教务部通知列表内容不完整');
     items.push({
       id: `jwc:${articleId}`,
       source: 'jwc',
       title,
-      body: row.find('.wz p').text().trim(),
+      body: link.text().match(/【([^】]+)】/)?.[1] ?? '',
       createdAt: new Date(`${date}T00:00:00+08:00`).toISOString(),
       href: { kind: 'jwc', url: url.href },
     });
   });
-  if (!items.length) throw new Error('未能读取教务处通知列表');
-  const next = $('.p_next a').attr('href');
+  if (!items.length) throw new Error('未能读取教务部通知列表');
+  const next = $('a')
+    .filter((_, element) => $(element).text().trim() === '下一页')
+    .attr('href');
   return { items, next: next ? new URL(next, pageUrl).href : null };
 }
 
@@ -97,7 +86,7 @@ export async function refreshJwc(force = false): Promise<void> {
     };
     const added: JwcListItem[] = [];
     if (response.status !== 304) {
-      if (!response.ok) throw new Error(`教务处请求失败（${response.status}）`);
+      if (!response.ok) throw new Error(`教务部请求失败（${response.status}）`);
       let page = parseJwcList(await response.text(), listUrl);
       const candidates = [...page.items];
       let cutoff: Date | null = null;
@@ -112,9 +101,9 @@ export async function refreshJwc(force = false): Promise<void> {
           page.items.every((item) => Date.parse(item.createdAt) >= cutoff!.getTime())
         ) {
           const pageUrl = page.next;
-          if (new URL(pageUrl).origin !== origin) throw new Error('教务处分页地址无效');
+          if (new URL(pageUrl).origin !== origin) throw new Error('教务部分页地址无效');
           const older = await fetch(pageUrl, { signal: AbortSignal.timeout(20_000) });
-          if (!older.ok) throw new Error(`教务处历史通知请求失败（${older.status}）`);
+          if (!older.ok) throw new Error(`教务部历史通知请求失败（${older.status}）`);
           page = parseJwcList(await older.text(), pageUrl);
           candidates.push(...page.items);
         }
@@ -165,17 +154,17 @@ export async function getJwcNotice(id: string): Promise<JwcNotice> {
   const { url } = row.href as { url: string };
   if (new URL(url).origin !== origin) throw new Error('此通知发布在外部网站，请查看原文');
   const response = await fetch(url, { signal: AbortSignal.timeout(20_000) });
-  if (!response.ok) throw new Error(`教务处正文请求失败（${response.status}）`);
+  if (!response.ok) throw new Error(`教务部正文请求失败（${response.status}）`);
   const $ = load(await response.text());
-  const content = $('.v_news_content');
+  const content = $('.contenttxt');
   if (!content.length) throw new Error('未能读取通知正文，请查看原文');
   const attachments: JwcNotice['attachments'] = [];
-  $('.Newslist2 a[href], .v_news_content a[href]').each((_, element) => {
+  content.find('a[href]').each((_, element) => {
     const link = $(element);
     const target = new URL(link.attr('href')!, url);
-    const fileId = target.searchParams.get('wbfileid');
-    if (target.origin !== origin || target.pathname !== '/system/_content/download.jsp' || !fileId)
+    if (target.origin !== origin || !/\.(pdf|docx?|xlsx?|pptx?|zip|rar)$/i.test(target.pathname))
       return;
+    const fileId = target.pathname.split('/').at(-1)!;
     if (attachments.some((attachment) => attachment.id === fileId)) return;
     attachments.push({ id: fileId, name: link.text().trim() || '附件', url: target.href });
   });
@@ -191,70 +180,11 @@ export async function getJwcNotice(id: string): Promise<JwcNotice> {
   return notice;
 }
 
-export async function getJwcCaptcha(id: string, attachmentId: string) {
-  const notice = await getJwcNotice(id);
-  const attachment = notice.attachments.find((item) => item.id === attachmentId);
-  if (!attachment) throw new Error('附件不存在');
-  const response = await fetch(attachment.url, { signal: AbortSignal.timeout(20_000) });
-  if (!response.ok) throw new Error('无法打开附件下载页');
-  const cookie = response.headers
-    .getSetCookie()
-    .map((value) => value.split(';')[0])
-    .join('; ');
-  await response.body?.cancel();
-  const image = await fetch(
-    `${origin}/system/resource/js/filedownload/createimage.jsp?randnum=${Date.now()}`,
-    {
-      headers: { Cookie: cookie, Referer: attachment.url },
-      signal: AbortSignal.timeout(20_000),
-    },
-  );
-  if (!image.ok || !image.headers.get('content-type')?.startsWith('image/'))
-    throw new Error('验证码加载失败，请重试');
-  const imageCookie = image.headers
-    .getSetCookie()
-    .map((value) => value.split(';')[0])
-    .join('; ');
-  const token = randomUUID();
-  const bytes = Buffer.from(await image.arrayBuffer());
-  challenge = { token, url: attachment.url, name: attachment.name, cookie: imageCookie || cookie };
-  return { token, image: `data:image/jpeg;base64,${bytes.toString('base64')}` };
-}
-
-export async function downloadJwcAttachment(
-  token: string,
-  code: string,
-): Promise<{ status: 'saved' | 'canceled' | 'invalid-code' }> {
-  const current = challenge;
-  if (!current || current.token !== token) throw new Error('验证码已过期，请换一张');
-  const url = new URL(current.url);
-  url.searchParams.set('codeValue', code);
-  const response = await fetch(url, {
-    headers: { Cookie: current.cookie, Referer: current.url },
-    signal: AbortSignal.timeout(60_000),
-  });
-  if (!response.ok) throw new Error(`附件下载失败（${response.status}）`);
-  if (response.headers.get('content-type')?.includes('text/html')) {
-    await response.body?.cancel();
-    return { status: 'invalid-code' };
-  }
-  if (!response.headers.get('content-disposition')?.includes('attachment'))
-    throw new Error('服务器没有返回附件文件');
-  const bytes = Buffer.from(await response.arrayBuffer());
-  const { canceled, filePath } = await dialog.showSaveDialog({
-    defaultPath: current.name.replace(/[<>:"/\\|?*]/g, '_'),
-  });
-  if (canceled || !filePath) return { status: 'canceled' };
-  await writeFile(filePath, bytes);
-  if (challenge?.token === token) challenge = null;
-  return { status: 'saved' };
-}
-
 export const jwcNoticeSource: NoticeSource = {
   id: 'jwc',
   account: () => accountKey,
   refresh: (_account, force) => refreshJwc(force),
-  // 教务处官网的通知在应用内阅读，转载到外部网站的交给浏览器。
+  // 教务部网站的通知在应用内阅读，转载到外部网站的交给浏览器。
   link: ({ url }, id) =>
     typeof url === 'string'
       ? { target: new URL(url).origin === origin ? { page: 'jwc', noticeId: id } : { url } }

@@ -10,24 +10,10 @@ export interface JwcNotice {
   attachments: { id: string; name: string; url: string }[];
 }
 
-const noticeId = z.string().regex(/^jwc:\d+$/);
+const noticeId = z.string().regex(/^jwc:[0-9a-f]{32}$/);
 
 export const jwcContract = defineContract('jwc', {
   notice: { input: noticeId, output: z.custom<JwcNotice>() },
-  captcha: {
-    input: z.object({ noticeId, attachmentId: z.string().min(1) }),
-    output: z.custom<{ token: string; image: string }>(),
-  },
-  download: {
-    input: z.object({
-      token: z.string().uuid(),
-      code: z
-        .string()
-        .trim()
-        .regex(/^\d{4}$/, '请输入四位验证码'),
-    }),
-    output: z.custom<{ status: 'saved' | 'canceled' | 'invalid-code' }>(),
-  },
 });
 
 declare module '../../app/module' {
