@@ -56,21 +56,26 @@ async function submit() {
   );
 }
 
-it('connects a preset account with the preset servers only when the address is on its domain', async () => {
+it('预设邮箱只填 @ 前面的部分，域名固定补上', async () => {
   const onSubmit = vi.fn();
   await act(async () =>
     root.render(<MailAccountForm error={null} onSubmit={onSubmit} submit={null} />),
   );
-  await fill('input[type=email]', 'me@example.com');
+  expect(container.textContent).toContain('@school.edu');
+  await fill('input[name=address]', 'me@example.com');
   await fill('input[type=password]', 'pw');
   await submit();
   expect(onSubmit).not.toHaveBeenCalled();
 
-  await fill('input[type=email]', ' Me@School.edu ');
+  await fill('input[name=address]', ' 202311079045 ');
   await submit();
-  expect(onSubmit).toHaveBeenCalledWith({
-    address: 'Me@School.edu',
+  expect(onSubmit).toHaveBeenLastCalledWith({
+    address: '202311079045@school.edu',
     password: 'pw',
     server: preset.server,
   });
+
+  await fill('input[name=address]', 'Me@School.edu');
+  await submit();
+  expect(onSubmit).toHaveBeenLastCalledWith(expect.objectContaining({ address: 'Me@School.edu' }));
 });

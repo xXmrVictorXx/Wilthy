@@ -42,13 +42,15 @@ export function MailAccountForm({
       onSubmit={(event) => {
         event.preventDefault();
         const trimmed = address.trim();
-        if (preset && !trimmed.toLowerCase().endsWith(`@${preset.domain}`)) {
+        // 预设邮箱只填 @ 前面的部分；粘贴整段地址时原样使用。
+        const full = preset && !trimmed.includes('@') ? `${trimmed}@${preset.domain}` : trimmed;
+        if (preset && !full.toLowerCase().endsWith(`@${preset.domain}`)) {
           setAddressError(`${preset.label}地址需以 @${preset.domain} 结尾，或改选${OTHER}`);
           return;
         }
         setAddressError(null);
         onSubmit({
-          address: trimmed,
+          address: full,
           password,
           server: preset?.server ?? {
             imapHost: imapHost.trim(),
@@ -64,15 +66,32 @@ export function MailAccountForm({
       )}
       <label className="grid gap-2">
         <span className={label}>邮箱地址</span>
-        <Input
-          autoComplete="off"
-          className={field}
-          onChange={(event) => setAddress(event.target.value)}
-          placeholder={preset ? `name@${preset.domain}` : 'name@example.com'}
-          required
-          type="email"
-          value={address}
-        />
+        {preset ? (
+          <div className="flex items-center gap-2">
+            <Input
+              autoComplete="off"
+              className={cn(field, 'min-w-0 flex-1')}
+              name="address"
+              onChange={(event) => setAddress(event.target.value)}
+              placeholder={preset.userHint ?? '用户名'}
+              required
+              type="text"
+              value={address}
+            />
+            <span className="shrink-0 text-sm text-ink-3">@{preset.domain}</span>
+          </div>
+        ) : (
+          <Input
+            autoComplete="off"
+            className={field}
+            name="address"
+            onChange={(event) => setAddress(event.target.value)}
+            placeholder="name@example.com"
+            required
+            type="email"
+            value={address}
+          />
+        )}
       </label>
       <div>
         <label className="grid gap-2">

@@ -5,6 +5,8 @@ export interface MailPreset {
   readonly domain: string;
   readonly server: MailServerConfig;
   readonly passwordHint: string;
+  /** 地址 @ 前面那部分的提示，例如「学号」。 */
+  readonly userHint?: string;
 }
 
 const presets: MailPreset[] = [];

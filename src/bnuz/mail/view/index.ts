@@ -15,6 +15,7 @@ export const bnuzMailView = defineView({
         smtpPort: 465,
       },
       passwordHint: '客户端授权码（在网页邮箱设置里生成）',
+      userHint: '学号',
     });
   },
 });
