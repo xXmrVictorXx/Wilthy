@@ -14,7 +14,6 @@ export const mailView = defineView({
   pages: {
     mail: { component: MailPage, nav: { label: '邮箱', icon: Mail }, drawer: true },
   },
-  notices: { mail: { label: '邮件', icon: Mail } },
   settings: { credentials: MailCredential, storage: MailStorage },
   onboarding: MailOnboardingStep,
   leaveGuard: leaveComposer,
