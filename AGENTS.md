@@ -112,7 +112,7 @@
 ### 目录与分层
 
 ```text
-Dela/
+Wilthy/
 ├─ src/
 │  ├─ core/                   Agent 内核，不依赖 Electron、React 与业务
 │  │  ├─ protocol/            Agent 协议、模块契约工具与桌面私有视图类型（只依赖 zod）
@@ -120,21 +120,20 @@ Dela/
 │  │  ├─ capabilities/        工具、Skills、MCP、联网与注册表
 │  │  ├─ remote/              远程执行后端与 helper 通道
 │  │  ├─ data/                会话表的结构与迁移
-│  │  ├─ config-files.ts      ~/.dela 下的 JSON 配置（模型服务、联网搜索、MCP）
+│  │  ├─ config-files.ts      ~/.wilthy（原~/.dela）下的 JSON 配置（模型服务、联网搜索、MCP）
 │  │  └─ ports.ts             宿主端口（HostPorts）
 │  ├─ ui/                     Design System（fork 自 beautiful-ui），零业务依赖
 │  │  └─ agent/               Agent 对话外观组件（消息、工具卡片、输入框）
 │  ├─ modules/                通用模块，没有交大也成立（chat、mail、note、notifications、
 │  │                          onboarding、preview、remotes、search、settings、terminal、
 │  │                          todo、update、workspace）
-│  ├─ sjtu/                   交大模块，离开交大就没有意义，经 register() 向通用模块登记
-│  │  ├─ campus/              校园统一身份认证会话（课表、课堂视频、水源共用）
-│  │  ├─ canvas/              Canvas 课程资料、作业与公告
-│  │  ├─ classroom/           课堂视频回看（v.sjtu.edu.cn）
-│  │  ├─ jwc/                 教务处通知
-│  │  ├─ mail/                交大邮箱的服务器预设，登记给通用邮件模块
-│  │  ├─ shuiyuan/            水源社区
-│  │  └─ timetable/           课表（只读）
+│  ├─ bnuz/                  BNUZ模块，仅属于BNUZ的内容，经 register() 向通用模块登记
+│  │  ├─ campus/              校园统一身份认证会话
+│  │  ├─ grades/              成绩
+│  │  ├─ program/              培养方案
+│  │  ├─ jwc/             教务通知
+│  │  ├─ mail/             邮箱
+│  │  └─ timetable/           课表
 │  └─ app/                    宿主与外壳
 │     ├─ module.ts            模块与视图定义，模块唯一可引用的 app 文件
 │     ├─ modules.ts           主进程模块清单
