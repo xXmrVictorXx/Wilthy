@@ -33,7 +33,7 @@ export function ComposerContextBar({ context }: { context: ComposerContext }) {
   const [branchOpen, setBranchOpen] = useState(false);
 
   // 当前分支要一直显示在胶囊上，进新对话就读一次；远端仓库在另一台机器上，通用池没有项目。
-  const hasLocalRepo = Boolean(projectId) && !remote && Boolean(window.dela);
+  const hasLocalRepo = Boolean(projectId) && !remote && Boolean(window.wilthy);
   const current =
     useQuery({
       queryKey: ['workspace', 'projectBranch', projectId],
@@ -64,7 +64,7 @@ export function ComposerContextBar({ context }: { context: ComposerContext }) {
 
   const switchBranch = (branch: string) => {
     setBranchOpen(false);
-    if (!projectId || branch === current || !window.dela) return;
+    if (!projectId || branch === current || !window.wilthy) return;
     void workspaceClient
       .switchProjectBranch({ id: projectId, branch })
       .then(() =>

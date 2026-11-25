@@ -1,7 +1,7 @@
 package main
 
 // 文件查找与内容搜索：agent 的 find / grep 工具。有 ripgrep 就交给它（快、懂 .gitignore），
-// 没有就在 Go 里遍历——两条路返回同一种结构，Dela 不需要知道远端装没装 rg。
+// 没有就在 Go 里遍历——两条路返回同一种结构，Wilthy 不需要知道远端装没装 rg。
 // 两条路的忽略规则不完全一样：rg 额外遵守 .gitignore，Go 遍历只跳过 .git 与 node_modules。
 
 import (
@@ -36,7 +36,7 @@ const (
 
 var skippedDirs = map[string]bool{".git": true, "node_modules": true}
 
-// bundledRg 是 Dela 随 helper 上传的 rg（--rg）：远端没装 rg 也能按 .gitignore 搜索。
+// bundledRg 是 Wilthy 随 helper 上传的 rg（--rg）：远端没装 rg 也能按 .gitignore 搜索。
 var bundledRg string
 
 // rgPath 在每次请求时查：随包的 rg 被删了就退回 PATH，远端用户也可能中途装上 rg，helper 又会常驻一小时。

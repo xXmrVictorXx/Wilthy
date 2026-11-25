@@ -14,22 +14,22 @@ import (
 	"time"
 )
 
-// 任务与请求连接解耦：隧道断了任务照跑，Dela 重连后按字节偏移续读输出。
+// 任务与请求连接解耦：隧道断了任务照跑，Wilthy 重连后按字节偏移续读输出。
 // 只有显式取消、任务自己的超时、或 helper 退出（空闲到期）才会终止进程组。
 const (
 	// 每个任务的输出缓冲（stdout/stderr 交织写入同一个缓冲）。有流在读时它只是背压窗口，一个字节都不丢；
 	// 断线期间没人读才会写满并覆盖最旧的部分——Pi 的 bash 工具截断时留的也是尾部。
 	taskBufferBytes = 8 << 20
 	// 已结束任务的保留：条数与时长都设上限，先到先清。1 小时与 helper 的空闲上限一致——
-	// Dela 断线最久就是这么长，再久没人回来接，结果也没人看了。
+	// Wilthy 断线最久就是这么长，再久没人回来接，结果也没人看了。
 	taskRetention    = 100
 	taskRetentionAge = time.Hour
 	taskMaxIDLength  = 128
 	killGracePeriod  = 5 * time.Second
-	// 创建后替还没接上的第一条流占住偏移 0，Dela 迟迟不来才退回断线时的覆盖语义。
+	// 创建后替还没接上的第一条流占住偏移 0，Wilthy 迟迟不来才退回断线时的覆盖语义。
 	taskAttachGrace = 30 * time.Second
 	pumpBufferSize  = 32 * 1024
-	// 流上安静时的保活：Dela 侧以「多久没有字节」判断隧道半死。
+	// 流上安静时的保活：Wilthy 侧以「多久没有字节」判断隧道半死。
 	taskKeepAlive = 30 * time.Second
 )
 
@@ -257,7 +257,7 @@ type taskRequest struct {
 }
 
 // startTask 按客户端给的 id 去重：同一个 id 再来只返回已有任务（created=false），不会再执行一遍。
-// 重连时 Dela 不知道上一次创建请求有没有落地，就靠这一条保证 `git push` 不跑两遍。
+// 重连时 Wilthy 不知道上一次创建请求有没有落地，就靠这一条保证 `git push` 不跑两遍。
 func (s *server) startTask(req taskRequest) (*task, bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

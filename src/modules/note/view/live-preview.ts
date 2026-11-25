@@ -84,7 +84,7 @@ class MermaidWidget extends WidgetType {
     const element = document.createElement('div');
     element.className = 'cm-md-mermaid';
     element.textContent = '正在渲染图表…';
-    renderMermaid(`dela-note-mermaid-${crypto.randomUUID()}`, this.chart, mermaidConfig()).then(
+    renderMermaid(`wilthy-note-mermaid-${crypto.randomUUID()}`, this.chart, mermaidConfig()).then(
       ({ svg }) => {
         element.innerHTML = svg;
       },

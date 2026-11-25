@@ -11,7 +11,7 @@ import {
 } from '../../../../core/capabilities/domain-tools';
 
 export const listWorkspaceEntriesTool = tool(
-  '浏览或按名称弱过滤工作区条目（项目、文件夹、笔记、快捷方式、本地文件）。只读。query 为空即浏览；parentId 限定直接子条目，缺省列全部。返回条目与可经 dela read_resource 命令读取的资源地址。',
+  '浏览或按名称弱过滤工作区条目（项目、文件夹、笔记、快捷方式、本地文件）。只读。query 为空即浏览；parentId 限定直接子条目，缺省列全部。返回条目与可经 wilthy read_resource 命令读取的资源地址。',
   z
     .object({ query, parentId: workspaceEntryIdSchema.nullable().optional(), offset, limit })
     .strict(),

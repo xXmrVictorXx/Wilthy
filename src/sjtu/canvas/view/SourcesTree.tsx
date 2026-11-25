@@ -16,7 +16,7 @@ import { Button } from '../../../ui/button';
 import { compareCanvasTerms, latestTermOf } from '../contract';
 import { canvasClient, stateKey, useCanvasState, useLibraryGrouping } from './use-canvas';
 
-const fileManagerName = window.dela?.platform === 'darwin' ? 'Finder' : '资源管理器';
+const fileManagerName = window.wilthy?.platform === 'darwin' ? 'Finder' : '资源管理器';
 
 export function SourcesTree({
   expanded,

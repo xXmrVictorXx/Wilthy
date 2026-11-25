@@ -53,7 +53,7 @@ import type { NavTargets } from '../../../app/module';
 
 const views = ['calendar', 'list'] as const;
 
-const todo = createClient(todoContract, window.dela?.bridge);
+const todo = createClient(todoContract, window.wilthy?.bridge);
 
 /** 待办状态的唯一副本：主进程推送 todo:state 时直接写入这一键。 */
 export function useTodoState() {
@@ -391,7 +391,7 @@ export function TodoView({ target }: { target: NavTargets['todo'] }) {
             </Button>
             <Button
               size="sm"
-              disabled={!window.dela}
+              disabled={!window.wilthy}
               onClick={() => {
                 const today = startOfDay(new Date());
                 startCreating({ start: today, end: today });
@@ -445,14 +445,14 @@ export function TodoView({ target }: { target: NavTargets['todo'] }) {
       <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:none]">
         {!state ? (
           <p className="py-8 text-center text-sm text-ink-3">
-            {window.dela ? '正在加载…' : '请在 Dela 桌面端使用 TODO'}
+            {window.wilthy ? '正在加载…' : '请在 Wilthy 桌面端使用 TODO'}
           </p>
         ) : view === 'calendar' ? (
           <TodoCalendar
             items={items}
             month={month}
             onCreate={(start, end) => {
-              if (window.dela) startCreating({ start, end });
+              if (window.wilthy) startCreating({ start, end });
             }}
             onOpenItem={(item) => openItem(item.id)}
           />

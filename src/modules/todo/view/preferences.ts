@@ -5,7 +5,7 @@ type TodoPreferences = { showCompleted: boolean };
 
 export const useTodoPreferences = create<TodoPreferences>()(
   persist((): TodoPreferences => ({ showCompleted: true }), {
-    name: 'dela.todo.preferences',
+    name: 'wilthy.todo.preferences',
     version: 1,
   }),
 );

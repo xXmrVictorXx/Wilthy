@@ -99,7 +99,7 @@ export function useChat(
   // 缓存被清（会话在别处被删）后再次尝试读取，读到「会话不存在」即就地报错。
   useQuery({
     queryKey: ['chat-session-seed', sessionId],
-    enabled: !chat && Boolean(window.dela),
+    enabled: !chat && Boolean(window.wilthy),
     queryFn: async () => {
       try {
         useSessions.getState().putChat(sessionId, await agentClient['open-session']({ sessionId }));
@@ -116,7 +116,7 @@ export function useChat(
 
   // 附件暂存：与内联图片共用主进程通道，上限在主进程与这里各校验一次。
   const addAttachmentFile = async (file: File) => {
-    if (!window.dela) throw new Error('附件仅在桌面端可用');
+    if (!window.wilthy) throw new Error('附件仅在桌面端可用');
     if (attachments.length >= CHAT_ATTACHMENT_MAX)
       throw new Error(`附件最多 ${CHAT_ATTACHMENT_MAX} 个`);
     const limit =
@@ -149,7 +149,7 @@ export function useChat(
     const draft = useChatDrafts.getState().drafts[sessionId] ?? emptyDraft;
     const text = draft.prompt;
     const comments = draft.comments ?? [];
-    if (!window.dela || !canSendInput(text, false, attachments.length, comments.length)) return;
+    if (!window.wilthy || !canSendInput(text, false, attachments.length, comments.length)) return;
     const requested = sessionId;
     const command = parseSessionCommand(text);
     if (command) {
@@ -207,7 +207,7 @@ export function useChat(
 
   // 会话命令不发给模型；失败时恢复输入，/compact 期间算作忙，停止按钮可取消压缩。
   const runCommand = async (name: SessionCommandName, args: string, text: string) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     const requested = sessionId;
     if (attachments.length) {
       setError('命令不能附带文件，请先移除附件');
@@ -285,7 +285,7 @@ export function useChat(
 
   // 编辑重发说明原提问不合适，不带回原评论；重试按原消息重发，带上原评论。
   const editLast = async (text: string, comments: ChatComment[] = []) => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     const requested = sessionId;
     setPending((count) => count + 1);
     setError(null);
@@ -313,7 +313,7 @@ export function useChat(
   };
 
   const selectModel = (provider: LlmProviderView, model: string) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     optimisticChat({
       providerId: provider.id,
       providerName: provider.name,
@@ -328,7 +328,7 @@ export function useChat(
   };
 
   const selectEffort = (level: string) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     optimisticChat({ effort: level });
     void agentClient['set-effort']({ sessionId, level })
       .then(() => refresh())
@@ -338,7 +338,7 @@ export function useChat(
   };
 
   const fork = (entryId: string) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     void agentClient
       .fork({ sessionId, entryId })
       .then((forked) => {
@@ -351,7 +351,7 @@ export function useChat(
   };
 
   const refresh = () => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     void agentClient['open-session']({ sessionId })
       .then((value) => useSessions.getState().putChat(sessionId, value))
       .catch(() => {});

@@ -70,7 +70,7 @@ type Store = {
 };
 
 function saveLayoutNow() {
-  if (typeof window === 'undefined' || !window.dela) return Promise.resolve(false);
+  if (typeof window === 'undefined' || !window.wilthy) return Promise.resolve(false);
   const { projectId, root, focus, maximized } = useWorkbenchLayout.getState();
   const pending = workspaceClient
     .saveLayout({ projectId, layout: { root, focus, maximized } })
@@ -167,7 +167,7 @@ export const useWorkbenchLayout = create<Store>((set, get) => ({
     let saved: WorkbenchLayout | null = null;
     // 读取失败时保留磁盘上的已存布局：把默认布局写回会覆盖掉实际存在的保存。
     let loadFailed = false;
-    if (typeof window !== 'undefined' && window.dela) {
+    if (typeof window !== 'undefined' && window.wilthy) {
       try {
         saved = await workspaceClient.layout(projectId);
       } catch (cause) {

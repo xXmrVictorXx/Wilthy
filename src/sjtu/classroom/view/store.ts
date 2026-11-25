@@ -33,7 +33,7 @@ type ClassroomPreferences = { sidebarWidth: number; sidebarCollapsed: boolean };
 
 export const useClassroomPreferences = create<ClassroomPreferences>()(
   persist((): ClassroomPreferences => ({ sidebarWidth: 300, sidebarCollapsed: false }), {
-    name: 'dela.classroom.preferences',
+    name: 'wilthy.classroom.preferences',
     version: 1,
   }),
 );

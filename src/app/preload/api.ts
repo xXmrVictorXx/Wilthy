@@ -1,6 +1,6 @@
 import type { Bridge } from '../../core/protocol/contract';
 
-export interface DelaApi {
+export interface WilthyApi {
   readonly bridge: Bridge;
   readonly platform: string;
   /** 拖进窗口的文件在本机磁盘上的路径；没有本地路径时为空字符串。 */

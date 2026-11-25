@@ -55,7 +55,7 @@ function stubCanvas(topics: unknown[], announcements: unknown[]) {
 }
 
 beforeEach(() => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-canvas-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-canvas-'));
   provideTestHostPorts({ database: getDatabase });
   openDatabase([{ id: 'canvas', schema: canvasSchema }])
     .prepare('INSERT INTO canvas_courses(id, data, items) VALUES (?, ?, ?)')

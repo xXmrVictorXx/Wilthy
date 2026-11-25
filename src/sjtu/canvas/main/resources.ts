@@ -45,7 +45,7 @@ export const canvasWorkspaceSource: WorkspaceSource = {
   read: readCanvasResource,
 };
 
-/** dela-resource://canvas/<资料 id>：Canvas 文件的缓存副本，只放行 PDF 与可识别的 OOXML。 */
+/** wilthy-resource://canvas/<资料 id>：Canvas 文件的缓存副本，只放行 PDF 与可识别的 OOXML。 */
 export async function handleCanvasPreviewRequest(request: Request, url: URL): Promise<Response> {
   const path = await canvasPreviewPath(decodeURIComponent(url.pathname.slice(1)));
   return previewFileResponse(path, request);

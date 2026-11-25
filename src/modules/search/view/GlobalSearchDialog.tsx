@@ -25,7 +25,7 @@ import {
   DialogClose,
 } from '../../../ui/dialog';
 
-const search = createClient(searchContract, window.dela?.bridge);
+const search = createClient(searchContract, window.wilthy?.bridge);
 
 const groupIcons: Record<SearchIcon, LucideIcon> = {
   folder: FolderKanban,

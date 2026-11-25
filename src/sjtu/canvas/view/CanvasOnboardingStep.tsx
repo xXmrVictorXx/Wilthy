@@ -13,11 +13,11 @@ export function CanvasOnboardingStep({ onDone }: { onDone: () => void }) {
   const [state, setState] = useState<StepButtonState>('idle');
   const [error, setError] = useState<string | null>(null);
 
-  if (!window.dela) {
+  if (!window.wilthy) {
     return (
       <DesktopOnlyNotice
         description="Canvas Token 与课程缓存不会暴露给浏览器。"
-        title="Canvas 仅在 Dela 桌面端可用"
+        title="Canvas 仅在 Wilthy 桌面端可用"
       />
     );
   }

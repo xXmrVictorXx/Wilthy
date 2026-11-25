@@ -47,8 +47,8 @@ export function ConsentStep({ canBackup, onAgree }: ConsentStepProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const current = documents[index]!;
   const isLast = index === documents.length - 1;
-  // 界面里能拿到 window.dela 才谈得上导出；浏览器预览下这一页仍然只是只读正文。
-  const offersBackup = canBackup && Boolean(window.dela);
+  // 界面里能拿到 window.wilthy 才谈得上导出；浏览器预览下这一页仍然只是只读正文。
+  const offersBackup = canBackup && Boolean(window.wilthy);
 
   // 文本框与正文都要观察：窗口仅横向拉宽时文本框高度不变而正文重排，没有滚动事件可听。
   // 换条款时把焦点交给正文：禁用的按钮会丢焦点，键盘与读屏用户就此失去位置；首屏不抢焦点。
@@ -81,7 +81,7 @@ export function ConsentStep({ canBackup, onAgree }: ConsentStepProps) {
   };
 
   const runBackup = async () => {
-    if (!window.dela || backup.kind === 'running') return;
+    if (!window.wilthy || backup.kind === 'running') return;
     setBackup({ kind: 'running' });
     try {
       const result = await settingsClient.exportData();
@@ -161,7 +161,7 @@ export function ConsentStep({ canBackup, onAgree }: ConsentStepProps) {
             <Button
               disabled={backup.kind === 'running'}
               onClick={() => {
-                window.dela?.window.quit();
+                window.wilthy?.window.quit();
               }}
               size="lg"
               variant="outline"

@@ -45,7 +45,7 @@ export function BindCard() {
     <div className="flex h-full min-h-0 flex-1 overflow-y-auto p-6">
       <ConnectCard
         className="m-auto"
-        description="授权 Dela 读取你的水源数据并支持回复、私信（读取 + 写入）。登录与授权在独立窗口完成。"
+        description="授权 Wilthy 读取你的水源数据并支持回复、私信（读取 + 写入）。登录与授权在独立窗口完成。"
         icon={ShuiyuanIcon}
         title="连接水源社区"
       >

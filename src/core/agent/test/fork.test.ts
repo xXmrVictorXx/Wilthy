@@ -6,7 +6,7 @@ import type Database from 'better-sqlite3';
 import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import type { MockOpenAiServer } from './mock-openai-server';
 
-const root = mkdtempSync(join(tmpdir(), 'dela-fork-'));
+const root = mkdtempSync(join(tmpdir(), 'wilthy-fork-'));
 const state = vi.hoisted(() => ({
   db: null as Database.Database | null,
   provider: null as unknown,

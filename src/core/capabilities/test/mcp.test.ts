@@ -1,4 +1,4 @@
-// 用本地 echo 服务器（stdio JSON-RPC）与环回 HTTP 服务器走真实的 ~/.dela/mcp.json。
+// 用本地 echo 服务器（stdio JSON-RPC）与环回 HTTP 服务器走真实的 ~/.wilthy/mcp.json。
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
@@ -49,7 +49,7 @@ async function until(assertion: () => void, timeoutMs = 5000) {
 }
 
 beforeAll(() => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-mcp-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-mcp-'));
   provideTestHostPorts({ paths: { userData: () => state.root, home: () => state.root } });
 });
 
@@ -115,7 +115,7 @@ describe('MCP 连接与工具发现', () => {
 
   // 工具名归一化后冲突时按登记路由到先到的服务器，不猜最长前缀。
   it('归一化同名冲突：路由按登记执行', async () => {
-    await addMcpServer({ ...echoConfig, name: 'a', env: { DELA_TOOL_NAME: 'b_echo' } });
+    await addMcpServer({ ...echoConfig, name: 'a', env: { WILTHY_TOOL_NAME: 'b_echo' } });
     const views = await addMcpServer({ ...echoConfig, name: 'a-b' });
     expect(views.find((view) => view.name === 'a-b')!.error).toContain('已跳过');
     expect(mcpToolDefinitions()).toHaveLength(5);
@@ -154,7 +154,7 @@ describe('MCP 配置管理与持久化', () => {
     expect(enabled[0]).toMatchObject({ status: 'connected', toolCount: 3 });
   }, 30000);
 
-  it('读入手写的服务器；改名时保留 Dela 不认识的字段', async () => {
+  it('读入手写的服务器；改名时保留 Wilthy 不认识的字段', async () => {
     writeFileSync(
       configFilePath('mcp.json'),
       JSON.stringify({
@@ -249,23 +249,23 @@ describe('Streamable HTTP', () => {
   }, 20000);
 
   it('连接时展开环境变量，文件里保留原样；变量未设置时报错', async () => {
-    vi.stubEnv('DELA_MCP_TOKEN', 't');
+    vi.stubEnv('WILTHY_MCP_TOKEN', 't');
     const [view] = await addMcpServer({
       name: 'env-remote',
       transport: 'http',
       url,
-      headers: { Authorization: 'Bearer ${DELA_MCP_TOKEN}' },
+      headers: { Authorization: 'Bearer ${WILTHY_MCP_TOKEN}' },
     });
     expect(view).toMatchObject({ status: 'connected' });
     expect(storedConfigs()['env-remote']?.headers).toEqual({
-      Authorization: 'Bearer ${DELA_MCP_TOKEN}',
+      Authorization: 'Bearer ${WILTHY_MCP_TOKEN}',
     });
 
     vi.unstubAllEnvs();
     const views = await refreshMcpServer('env-remote');
     expect(views.find(({ id }) => id === 'env-remote')).toMatchObject({
       status: 'error',
-      error: '环境变量 DELA_MCP_TOKEN 未设置',
+      error: '环境变量 WILTHY_MCP_TOKEN 未设置',
     });
   }, 20000);
 });

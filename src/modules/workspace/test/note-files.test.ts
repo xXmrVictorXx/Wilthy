@@ -26,7 +26,7 @@ describe('isRelativeAssetPath', () => {
   });
   it('拒绝协议、锚点、绝对路径与盘符', () => {
     expect(isRelativeAssetPath('https://example.com/a.png')).toBe(false);
-    expect(isRelativeAssetPath('dela-img:0123')).toBe(false);
+    expect(isRelativeAssetPath('wilthy-img:0123')).toBe(false);
     expect(isRelativeAssetPath('#section')).toBe(false);
     expect(isRelativeAssetPath('/abs/a.png')).toBe(false);
     expect(isRelativeAssetPath('\\abs\\a.png')).toBe(false);

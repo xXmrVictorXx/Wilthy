@@ -33,7 +33,7 @@ export const canvasNoticeSource: NoticeSource = {
           const id = `canvas:${key}:${announcement.sourceId}`;
           const createdAt = announcement.postedAt || syncedAt;
           const href = { kind: 'canvas', sourceId: announcement.sourceId };
-          // Canvas 网页端读过的公告同步为已读；Dela 内标记已读只记在本地，不回写 Canvas。
+          // Canvas 网页端读过的公告同步为已读；Wilthy 内标记已读只记在本地，不回写 Canvas。
           upsertNotification(
             'canvas',
             key,

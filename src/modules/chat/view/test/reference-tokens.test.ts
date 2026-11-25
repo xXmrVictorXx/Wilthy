@@ -167,8 +167,8 @@ describe('referenceCandidates（通用池并入资料根目录）', () => {
     path,
     updatedAt: '2026-10-09T00:00:00.000Z',
   });
-  const workspace = '/data/Dela/workspace';
-  const privateDirectory = '/data/Dela/chat-sessions/s1';
+  const workspace = '/data/Wilthy/workspace';
+  const privateDirectory = '/data/Wilthy/chat-sessions/s1';
 
   it('资料根目录下的文件进候选，title 相对资料根目录；资料里项目的文件不进', () => {
     const entries = [
@@ -204,13 +204,13 @@ describe('referenceCandidates（通用池并入资料根目录）', () => {
         null,
         null,
         [],
-        [{ path: '/data/Dela/courses/软件工程/lec1.pdf', title: '软件工程/lec1.pdf' }],
+        [{ path: '/data/Wilthy/courses/软件工程/lec1.pdf', title: '软件工程/lec1.pdf' }],
         workspace,
       ),
     ).toEqual([
       ref(`${privateDirectory}/草稿.md`, '草稿.md'),
       ref(`${workspace}/笔记.md`, '笔记.md'),
-      ref('/data/Dela/courses/软件工程/lec1.pdf', '软件工程/lec1.pdf'),
+      ref('/data/Wilthy/courses/软件工程/lec1.pdf', '软件工程/lec1.pdf'),
     ]);
   });
 });

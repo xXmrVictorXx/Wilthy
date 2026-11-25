@@ -1,8 +1,8 @@
 # 贡献指南
 
-欢迎参与 Dela 的开发与维护。Dela 是面向 SJTU 用户的本地优先 Agent 桌面应用：Electron 主进程与 React 渲染进程，Agent 内核为 Pi Coding Agent，领域能力通过 `dela` 命令与 Skills 外置。数据保存在本机 SQLite，账号凭据经 Electron `safeStorage` 加密，模型服务与 MCP 配置在 `~/.dela` 下的 JSON 中，无服务端与账号系统。
+欢迎参与 Wilthy 的开发与维护。Wilthy 是面向 SJTU 用户的本地优先 Agent 桌面应用：Electron 主进程与 React 渲染进程，Agent 内核为 Pi Coding Agent，领域能力通过 `wilthy` 命令与 Skills 外置。数据保存在本机 SQLite，账号凭据经 Electron `safeStorage` 加密，模型服务与 MCP 配置在 `~/.wilthy` 下的 JSON 中，无服务端与账号系统。
 
-贡献形式包括代码、文档、测试、设计、问题反馈，以及向需要的用户介绍 Dela。开始之前，请先阅读本指南的[架构](#架构)与 [AGENTS.md](AGENTS.md)。
+贡献形式包括代码、文档、测试、设计、问题反馈，以及向需要的用户介绍 Wilthy。开始之前，请先阅读本指南的[架构](#架构)与 [AGENTS.md](AGENTS.md)。
 
 ## 如何参与
 
@@ -31,7 +31,7 @@
 
 ### 推广与文档
 
-- 在班级群、社团、技术社区介绍 Dela，或撰写使用体验、教程与问题记录，均有助于项目推广。
+- 在班级群、社团、技术社区介绍 Wilthy，或撰写使用体验、教程与问题记录，均有助于项目推广。
 - 文档纠错与补充说明可直接提交 PR。面向用户的变化应同步更新 README，重要改动应同步更新 CHANGELOG。
 - 发现安全漏洞时请勿公开讨论，应按 [SECURITY.md](SECURITY.md) 的方式私下联系作者。
 
@@ -67,7 +67,7 @@ pnpm dev
 
 `pnpm install` 的 `postinstall` 会下载 Electron 运行时，并在 macOS 上修正 `node-pty` 的 `spawn-helper` 可执行位。
 
-在 Windows 上，Git for Windows 是运行前提而非可选项：Agent 的 Bash 工具依赖它（内置终端跟随系统 shell，不依赖它）。macOS 使用系统 `/bin/bash` 与本机 Git/SSH，无需安装 MinGit。Go 仅与 `helper/` 有关；远端 helper 的静态二进制已入库在 `vendor/dela-helper/`，日常开发不需要 Go。
+在 Windows 上，Git for Windows 是运行前提而非可选项：Agent 的 Bash 工具依赖它（内置终端跟随系统 shell，不依赖它）。macOS 使用系统 `/bin/bash` 与本机 Git/SSH，无需安装 MinGit。Go 仅与 `helper/` 有关；远端 helper 的静态二进制已入库在 `vendor/wilthy-helper/`，日常开发不需要 Go。
 
 模型服务、搜索服务与校园服务凭据均在应用设置中配置。请勿提交 `.env`、个人数据、日志与本地工具。
 
@@ -90,15 +90,15 @@ pnpm test
 
 根据改动范围补充相应的冒烟或真机测试：
 
-| 场景                     | 命令                                                                                             |
-| ------------------------ | ------------------------------------------------------------------------------------------------ |
-| Electron 基础冒烟        | `pnpm smoke`                                                                                     |
-| 离线运行时与 `dela` 桥   | `pnpm smoke:runtime`                                                                             |
-| 原生菜单、窗口关闭与恢复 | `pnpm smoke:desktop`                                                                             |
-| 工作区、水源             | `pnpm smoke:workspace` / `pnpm smoke:shuiyuan`                                                   |
-| 远程项目真机回归         | `pnpm test:remote`（先 `pnpm fetch:remote-rg`），需要 `DELA_REMOTE_HOST`，可选 `DELA_REMOTE_KEY` |
-| 远程项目窗口冒烟         | `pnpm smoke:remote`，同样需要 `DELA_REMOTE_HOST`                                                 |
-| 打包目录启动             | `pnpm package:dir` 后运行 `dist/win-unpacked/Dela.exe --smoke-test`                              |
+| 场景                     | 命令                                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Electron 基础冒烟        | `pnpm smoke`                                                                                         |
+| 离线运行时与 `wilthy` 桥 | `pnpm smoke:runtime`                                                                                 |
+| 原生菜单、窗口关闭与恢复 | `pnpm smoke:desktop`                                                                                 |
+| 工作区、水源             | `pnpm smoke:workspace` / `pnpm smoke:shuiyuan`                                                       |
+| 远程项目真机回归         | `pnpm test:remote`（先 `pnpm fetch:remote-rg`），需要 `WILTHY_REMOTE_HOST`，可选 `WILTHY_REMOTE_KEY` |
+| 远程项目窗口冒烟         | `pnpm smoke:remote`，同样需要 `WILTHY_REMOTE_HOST`                                                   |
+| 打包目录启动             | `pnpm package:dir` 后运行 `dist/win-unpacked/Wilthy.exe --smoke-test`                                |
 
 - 修改 `src/core/remote/`、`src/modules/remotes/`、`helper/` 或远端路径与上下文镜像时，必须通过 `pnpm test:remote` 在真机上执行回归；该套件在默认测试与 CI 中均会跳过。
 - 涉及构建、原生依赖或打包时，另跑 `pnpm smoke` 并启动打包目录。
@@ -120,7 +120,7 @@ pnpm test
 ┌──────────────▼───────────────┐
 │ Electron Main                │
 │  ├─ Pi Coding Agent（内核）  │
-│  ├─ dela 命令（HTTP 桥）     │
+│  ├─ wilthy 命令（HTTP 桥）     │
 │  ├─ 模块 / 远程项目          │
 │  ├─ SQLite + safeStorage     │
 │  └─ Skills / 终端 / 更新     │
@@ -134,7 +134,7 @@ pnpm test
 ### 目录与分层
 
 ```text
-Dela/
+Wilthy/
 ├─ src/
 │  ├─ core/                   Agent 内核，不依赖 Electron、React 与业务
 │  │  ├─ protocol/            Agent 协议、模块契约工具与桌面私有视图类型（只依赖 zod）
@@ -142,7 +142,7 @@ Dela/
 │  │  ├─ capabilities/        工具、Skills、MCP、联网与注册表
 │  │  ├─ remote/              远程执行后端与 helper 通道
 │  │  ├─ data/                会话表的结构与迁移
-│  │  ├─ config-files.ts      ~/.dela 下的 JSON 配置（模型服务、联网搜索、MCP）
+│  │  ├─ config-files.ts      ~/.wilthy 下的 JSON 配置（模型服务、联网搜索、MCP）
 │  │  └─ ports.ts             宿主端口（HostPorts）
 │  ├─ ui/                     Design System（fork 自 beautiful-ui），零业务依赖
 │  │  └─ agent/               Agent 对话外观组件（消息、工具卡片、输入框）
@@ -203,13 +203,13 @@ Dela/
 ### 设计原则
 
 - **优化目标**：单用户桌面应用，响应速度取决于 LLM。不追求可伸缩与极致性能，保持单一部署单元，不拆进程，不引入微服务；单应用、单 `package.json`，不做 monorepo。按功能组织目录，让改动范围能从目录预测。
-- **本地优先**：无服务端与账号系统。模型服务、联网搜索与 MCP 是 `~/.dela` 下的明文 JSON，与 Claude Code、Codex 的做法一致，方便 magpie 等工具管理，读写时保留不认识的字段与条目；学校账号的凭据经 `safeStorage` 加密保存。
-- **Pi 是 core 的私有引擎**：执行循环、会话树、上下文组装与压缩、重试与 Skills 加载都交给 Pi，Dela 不另写。Pi 的类型不出 `core`，界面只看 Dela 自己的视图类型。模型厂商以 Pi 的目录为准，Dela 不维护自己的预设。第三方能力只经 Agent Skills（项目级只认 `.agents/skills`）与 MCP 接入，不支持 Pi Packages 与代码钩子。
-- **领域能力外置**：校园功能经 `dela` 命令与 Skills 交给内核。`dela` 是应用运行期间的本机 HTTP 桥，经 `shellCommandPrefix` 注入 Agent 的 Bash（内置终端不注入）；Skills 提供领域知识与用法指引，不是硬编码的执行分支。
+- **本地优先**：无服务端与账号系统。模型服务、联网搜索与 MCP 是 `~/.wilthy` 下的明文 JSON，与 Claude Code、Codex 的做法一致，方便 magpie 等工具管理，读写时保留不认识的字段与条目；学校账号的凭据经 `safeStorage` 加密保存。
+- **Pi 是 core 的私有引擎**：执行循环、会话树、上下文组装与压缩、重试与 Skills 加载都交给 Pi，Wilthy 不另写。Pi 的类型不出 `core`，界面只看 Wilthy 自己的视图类型。模型厂商以 Pi 的目录为准，Wilthy 不维护自己的预设。第三方能力只经 Agent Skills（项目级只认 `.agents/skills`）与 MCP 接入，不支持 Pi Packages 与代码钩子。
+- **领域能力外置**：校园功能经 `wilthy` 命令与 Skills 交给内核。`wilthy` 是应用运行期间的本机 HTTP 桥，经 `shellCommandPrefix` 注入 Agent 的 Bash（内置终端不注入）；Skills 提供领域知识与用法指引，不是硬编码的执行分支。
 - **两种契约**：模块的 `contract.ts` 只连接同一模块的 main 与 view，可以随时改。Agent 协议（`core/protocol/agent.ts`）由桌面与移动端共用，只能新增，不兼容的改动要升 `AGENT_PROTOCOL_VERSION`。新功能先判断它属于 Agent 交互（进协议）还是桌面便利功能（不进协议）。协议 v1 以单用户为前提：不做多端冲突处理，不加事件序号，本地路径照传。
 - **进程边界**：renderer 不导入 main，不直接访问文件系统、数据库或凭据，只经 preload 按契约白名单放行的 `bridge` 通信。校园网页使用独立 Session 与 sandbox，不加载主界面 preload。
 - **数据归属**：会话与项目文件归桌面端 core，移动端经协议访问；待办、笔记、草稿只在桌面；学校数据由桌面端与移动端各自直连学校。跨部署单元时，重复比耦合好。
-- **数据库**：只有一个 `dela.db`。谁的表谁在 `data/schema.ts` 声明，只有表的主人写自己表的 SQL；迁移按 `YYYYMMDD-简述` 命名登记，fork 与上游不会撞号；跨模块外键只能顺着代码的依赖方向。
+- **数据库**：只有一个 `wilthy.db`。谁的表谁在 `data/schema.ts` 声明，只有表的主人写自己表的 SQL；迁移按 `YYYYMMDD-简述` 命名登记，fork 与上游不会撞号；跨模块外键只能顺着代码的依赖方向。
 - **模块协作的优先顺序**：直接调用对方的 `index.ts`；一个使用方、多个提供方时，由使用方开注册口；有多个监听方时才用事件。注册表是主进程唯一允许的模块级可变状态，只在启动时写入，不做自动扫描。
 - **界面状态按归属放**：后端数据只在 TanStack Query 的缓存里存一份；主进程推送的完整状态写入同名查询的缓存，增量事件流进领域 store，都只在启动时订阅一次；页面跳转只有 `navigate(target)`；外壳的接入点是视图定义里的声明式字段。
 - **不提前抽象校园**：只有交大一个样本，不建「高校兼容层」。出现第二所学校时，再从两份真实实现里提炼共性。

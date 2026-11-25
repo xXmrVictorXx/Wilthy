@@ -169,7 +169,7 @@ function ChatSessionView({
   // （非仓库、缺 Git、远程项目都不显示，随聊无项目目录同样不显示）。
   const { data: reviewReady = false } = useQuery({
     queryKey: ['chat-uncommitted-availability', active, projectId],
-    enabled: projectId !== null && Boolean(window.dela),
+    enabled: projectId !== null && Boolean(window.wilthy),
     staleTime: Infinity,
     gcTime: 0,
     queryFn: () =>
@@ -186,7 +186,7 @@ function ChatSessionView({
   const conversation = chat && (busy || chat.messages.length > 0 || chat.running || subagent);
 
   const saveConversation = async () => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     setExporting(true);
     const exportSession = async () => {
       const { saved, missing } = await chatClient.export(active);

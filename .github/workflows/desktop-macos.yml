@@ -25,8 +25,8 @@ jobs:
         shell: bash
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-      DELA_REMOTE_HOST: ''
-      PACKAGED_APP: dist/mac-arm64/Dela.app
+      WILTHY_REMOTE_HOST: ''
+      PACKAGED_APP: dist/mac-arm64/Wilthy.app
     steps:
       - uses: actions/checkout@v6
         with:
@@ -35,12 +35,12 @@ jobs:
         if: inputs.helper
         with:
           name: helper-linux-amd64
-          path: vendor/dela-helper
+          path: vendor/wilthy-helper
       - uses: actions/download-artifact@v7
         if: inputs.helper
         with:
           name: helper-linux-arm64
-          path: vendor/dela-helper
+          path: vendor/wilthy-helper
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
@@ -82,7 +82,7 @@ jobs:
         run: node scripts/verify-macos-package.ts "$PACKAGED_APP"
       - name: Smoke test packaged app and native dependencies
         run: |
-          node scripts/ci-smoke.ts "Packaged Electron and native dependencies" "$PACKAGED_APP/Contents/MacOS/Dela" --smoke-test
+          node scripts/ci-smoke.ts "Packaged Electron and native dependencies" "$PACKAGED_APP/Contents/MacOS/Wilthy" --smoke-test
           node scripts/ci-smoke.ts "Packaged desktop behavior" pnpm smoke:desktop "$PACKAGED_APP/Contents/Resources/app.asar"
           node scripts/ci-smoke.ts "Packaged shuiyuan authorization window" pnpm exec electron scripts/shuiyuan-auth-smoke.cjs "$PACKAGED_APP/Contents/Resources/app.asar"
           node scripts/ci-smoke.ts "Packaged terminal behavior" pnpm exec electron scripts/terminal-smoke.cjs "$PACKAGED_APP/Contents/Resources/app.asar"

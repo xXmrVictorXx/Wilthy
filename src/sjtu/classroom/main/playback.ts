@@ -1,4 +1,4 @@
-// 课堂视频在线播放代理：dela-resource://vsjtu/video/<videoId>/<view>?t=<token>。
+// 课堂视频在线播放代理：wilthy-resource://vsjtu/video/<videoId>/<view>?t=<token>。
 // 签名媒体地址与校园 cookie 留在 main；token 防止远程内容按可猜测的 videoId 盗播，Range 原样转发以支持拖拽。
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -63,7 +63,7 @@ export async function issuePlayback(videoId: number): Promise<PlaybackStream[]> 
   return entry.streams.map((stream) => ({
     view: stream.view,
     duration: stream.duration,
-    playbackUrl: `dela-resource://vsjtu/video/${videoId}/${stream.view}?t=${playbackToken(videoId)}`,
+    playbackUrl: `wilthy-resource://vsjtu/video/${videoId}/${stream.view}?t=${playbackToken(videoId)}`,
   }));
 }
 

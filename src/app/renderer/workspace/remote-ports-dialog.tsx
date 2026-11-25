@@ -29,7 +29,7 @@ export function RemotePortsDialog({
   const ports = useQuery({
     queryKey: ['workspace', 'remote-ports', projectId],
     queryFn: () => workspaceClient.remotePorts(projectId),
-    enabled: open && Boolean(window.dela),
+    enabled: open && Boolean(window.wilthy),
     gcTime: 0,
   });
   const state = ports.data ?? null;
@@ -44,7 +44,7 @@ export function RemotePortsDialog({
   };
 
   const openPort = async (port: number) => {
-    if (!window.dela || busyPort !== null) return;
+    if (!window.wilthy || busyPort !== null) return;
     setBusyPort(port);
     try {
       await workspaceClient.openRemotePort({ projectId, port });
@@ -56,7 +56,7 @@ export function RemotePortsDialog({
   };
 
   const stopPort = async (port: number) => {
-    if (!window.dela || busyPort !== null) return;
+    if (!window.wilthy || busyPort !== null) return;
     setBusyPort(port);
     try {
       await workspaceClient.closeRemotePort({ projectId, port });

@@ -28,7 +28,7 @@ function addPlugin(program: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
     execFile(
       program,
-      ['plugin', 'add', 'magpie-agent-dela'],
+      ['plugin', 'add', 'magpie-agent-wilthy'],
       { timeout: 180_000, windowsHide: true },
       (error, stdout, stderr) => {
         if (!error) resolve(true);

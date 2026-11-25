@@ -17,7 +17,7 @@ const skill = (name: string, description: string, body: string) =>
   `---\nname: ${name}\ndescription: ${description}\n---\n\n${body}\n`;
 
 beforeEach(() => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-context-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-context-'));
 });
 afterEach(() => rmSync(state.root, { force: true, recursive: true }));
 

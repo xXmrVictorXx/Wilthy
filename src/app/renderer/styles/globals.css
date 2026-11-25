@@ -8,13 +8,13 @@
 @source '../../../sjtu';
 @source '../../../ui';
 
-.dela-brand-dark {
+.wilthy-brand-dark {
   display: none;
 }
-:root.dark .dela-brand-light {
+:root.dark .wilthy-brand-light {
   display: none;
 }
-:root.dark .dela-brand-dark {
+:root.dark .wilthy-brand-dark {
   display: block;
 }
 
@@ -26,7 +26,7 @@
   src: url('../../../../assets/fonts/Italianno.woff2') format('woff2');
 }
 
-/* 只为 streamdown 保留，Dela 代码不使用，换掉 Markdown 渲染器时删除。 */
+/* 只为 streamdown 保留，Wilthy 代码不使用，换掉 Markdown 渲染器时删除。 */
 @theme inline {
   --color-background: var(--surface);
   --color-foreground: var(--ink);
@@ -135,7 +135,7 @@
   max-width: none;
 }
 
-.pdfViewer.dela-pdf-pages .page {
+.pdfViewer.wilthy-pdf-pages .page {
   margin-left: 0;
 }
 
@@ -149,7 +149,7 @@
   font-size: 0.8125rem;
 }
 
-::highlight(dela-reply-comment) {
+::highlight(wilthy-reply-comment) {
   background-color: color-mix(in oklch, var(--accent) 24%, transparent);
 }
 

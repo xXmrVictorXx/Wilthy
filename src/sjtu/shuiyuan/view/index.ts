@@ -32,7 +32,7 @@ export const shuiyuanView = defineView({
   },
   opensLink: (url) => shuiyuanTopicFromUrl(url) !== null,
   start(navigate) {
-    const bridge = window.dela?.bridge;
+    const bridge = window.wilthy?.bridge;
     subscribe(shuiyuanContract, bridge, 'openTopic', ({ topicId, postNumber }) =>
       navigate({ page: 'shuiyuan', topicId, postNumber }),
     );

@@ -1,6 +1,6 @@
-// dela-helper 是 Dela 在远端运行的常驻 runtime：远程项目的全部工具调用都经它执行。只绑回环地址，
-// 由 Dela 经 `ssh -L` 隧道访问，每个请求带 token。它的生命周期不随隧道：断线期间任务照跑，
-// Dela 重连后复用同一个实例并接回任务；连续一段时间没有任何请求才退出。
+// wilthy-helper 是 Wilthy 在远端运行的常驻 runtime：远程项目的全部工具调用都经它执行。只绑回环地址，
+// 由 Wilthy 经 `ssh -L` 隧道访问，每个请求带 token。它的生命周期不随隧道：断线期间任务照跑，
+// Wilthy 重连后复用同一个实例并接回任务；连续一段时间没有任何请求才退出。
 // 它不做沙箱：权限就是启动它的 SSH 用户的权限（与 `ssh <host> <命令>` 一致）。协议见 helper/README.md。
 package main
 
@@ -121,7 +121,7 @@ func (s *server) stop(reason string) {
 	}
 }
 
-// idleLoop 的空闲判定用的是「最后一次收到请求」：Dela 开着就有心跳，所以计时等于从最后一个
+// idleLoop 的空闲判定用的是「最后一次收到请求」：Wilthy 开着就有心跳，所以计时等于从最后一个
 // 客户端断开算起。在跑的任务不续命——跑偏的任务不该把 helper 一直挂在服务器上。
 func (s *server) idleLoop() {
 	ticker := time.NewTicker(idleTick)
@@ -138,20 +138,20 @@ func (s *server) idleLoop() {
 func main() {
 	port := flag.Int("port", 0, "监听端口；0 表示由系统分配")
 	tokenFile := flag.String("token-file", "", "存放访问 token 的文件（至少 16 字节）")
-	runFile := flag.String("run-file", "", "把端口、pid 与版本写到这个文件：Dela 重连时据此复用这个实例")
+	runFile := flag.String("run-file", "", "把端口、pid 与版本写到这个文件：Wilthy 重连时据此复用这个实例")
 	lockFile := flag.String("lock-file", "", "启动时独占加锁的文件：同一目录只允许一个实例")
 	idle := flag.Duration("idle-timeout", time.Hour, "这么久收不到任何请求就退出，并终止在跑的任务")
 	flag.StringVar(&bundledRg, "rg", "", "优先使用的 rg 可执行文件；不可用时退回 PATH 里的 rg")
 	showVersion := flag.Bool("version", false, "打印版本后退出")
 	flag.Parse()
 
-	logger := log.New(os.Stderr, "dela-helper: ", log.LstdFlags)
+	logger := log.New(os.Stderr, "wilthy-helper: ", log.LstdFlags)
 	if *showVersion {
 		fmt.Println(helperVersion)
 		return
 	}
 
-	// 锁要在读 token 之前拿：两个 Dela 同时连上来时，没抢到锁的那个直接退出（退出码 3），
+	// 锁要在读 token 之前拿：两个 Wilthy 同时连上来时，没抢到锁的那个直接退出（退出码 3），
 	// 启动脚本据此改为复用已在跑的实例。锁随进程退出由内核释放。
 	if *lockFile != "" {
 		if err := acquireLock(*lockFile); err != nil {
@@ -187,8 +187,8 @@ func main() {
 		}
 		defer os.Remove(*runFile)
 	}
-	// 启动横幅只供人读（helper.log）；Dela 读的是 run-file，不解析这行。
-	fmt.Printf("DELA-HELPER port=%d pid=%d version=%s\n", bound, os.Getpid(), helperVersion)
+	// 启动横幅只供人读（helper.log）；Wilthy 读的是 run-file，不解析这行。
+	fmt.Printf("WILTHY-HELPER port=%d pid=%d version=%s\n", bound, os.Getpid(), helperVersion)
 
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)

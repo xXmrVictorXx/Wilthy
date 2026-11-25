@@ -41,14 +41,14 @@ describe('htmlFrameDocument', () => {
   });
 
   it('drops relative and local addresses unless the caller allows them', () => {
-    const local = 'dela-resource://workspace/a.png';
-    const html = `<a href="/x">x</a><img src="${local}"><img data-dela-lazy="${local}" data-dela-zoom="${local}">`;
+    const local = 'wilthy-resource://workspace/a.png';
+    const html = `<a href="/x">x</a><img src="${local}"><img data-wilthy-lazy="${local}" data-wilthy-zoom="${local}">`;
     const doc = parse(html, { rootSize: 14 });
     expect(doc.querySelector('a')!.hasAttribute('href')).toBe(false);
-    expect(doc.body.innerHTML).not.toContain('dela-resource:');
-    const allowed = parse(html, { rootSize: 14, localImages: 'dela-resource://workspace/' });
+    expect(doc.body.innerHTML).not.toContain('wilthy-resource:');
+    const allowed = parse(html, { rootSize: 14, localImages: 'wilthy-resource://workspace/' });
     expect(allowed.querySelector('img')!.getAttribute('src')).toBe(local);
-    expect(allowed.querySelector('[data-dela-lazy],[data-dela-zoom]')).toBeNull();
+    expect(allowed.querySelector('[data-wilthy-lazy],[data-wilthy-zoom]')).toBeNull();
   });
 });
 
@@ -75,7 +75,7 @@ describe('frame script', () => {
     frame.querySelector(selector)!.dispatchEvent(event);
     const messages = post.mock.calls
       .map(([data]) => data as { source: string })
-      .filter((data) => data.source !== 'dela-frame-height');
+      .filter((data) => data.source !== 'wilthy-frame-height');
     post.mockRestore();
     vi.unstubAllGlobals();
     return { prevented: event.defaultPrevented, messages };
@@ -84,7 +84,7 @@ describe('frame script', () => {
   it('reports link clicks instead of navigating', () => {
     expect(click('<a href="https://example.com/a"><b>x</b></a>', 'b')).toEqual({
       prevented: true,
-      messages: [{ source: 'dela-frame-link', href: 'https://example.com/a' }],
+      messages: [{ source: 'wilthy-frame-link', href: 'https://example.com/a' }],
     });
   });
 
@@ -95,12 +95,12 @@ describe('frame script', () => {
   it('reports zoomable images before their surrounding link', () => {
     expect(
       click(
-        '<a href="https://example.com/a"><img data-dela-zoom="https://example.com/big.png" alt="图"></a>',
+        '<a href="https://example.com/a"><img data-wilthy-zoom="https://example.com/big.png" alt="图"></a>',
         'img',
       ),
     ).toEqual({
       prevented: true,
-      messages: [{ source: 'dela-frame-image', src: 'https://example.com/big.png', alt: '图' }],
+      messages: [{ source: 'wilthy-frame-image', src: 'https://example.com/big.png', alt: '图' }],
     });
   });
 });

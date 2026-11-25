@@ -1,7 +1,7 @@
-import type { DelaApi } from '../preload/api';
+import type { WilthyApi } from '../preload/api';
 
 declare global {
   interface Window {
-    dela?: DelaApi;
+    wilthy?: WilthyApi;
   }
 }

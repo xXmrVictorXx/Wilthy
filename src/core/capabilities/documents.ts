@@ -187,7 +187,7 @@ export async function readDocument(input: unknown, signal?: AbortSignal) {
   const { ref, offset = 0 } = inputSchema.parse(input);
   const token = hostPorts().secrets.read(TOKEN);
   if (!token) throw new Error(`未配置 MinerU Token，${TOKEN_HINT}`);
-  const root = join(hostPorts().paths.temp(), 'dela-documents');
+  const root = join(hostPorts().paths.temp(), 'wilthy-documents');
   await mkdir(root, { recursive: true });
   for (const entry of await readdir(root)) {
     const path = join(root, entry);

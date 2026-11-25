@@ -7,14 +7,14 @@ import type { ClassroomVideo, VideoCourse } from '../../contract';
 
 // 契约客户端在模块加载时取 bridge，须先于导入视图装好。
 vi.hoisted(() => {
-  window.dela = {
+  window.wilthy = {
     bridge: {
       invoke: async () => [
-        { view: 1, duration: 300, playbackUrl: 'dela-resource://vsjtu/video/11/1' },
+        { view: 1, duration: 300, playbackUrl: 'wilthy-resource://vsjtu/video/11/1' },
       ],
       subscribe: () => () => {},
     },
-  } as unknown as NonNullable<typeof window.dela>;
+  } as unknown as NonNullable<typeof window.wilthy>;
 });
 import { Player } from '../Player';
 import { readPlaybackProgress, savePlaybackProgress } from '../progress';

@@ -19,7 +19,7 @@ describe('remotePath', () => {
   });
 
   it('镜像路径翻回远端真身，普通远端路径不受影响', () => {
-    const mirror = 'C:\\Users\\me\\AppData\\Roaming\\dela\\remote-context\\r1\\p1';
+    const mirror = 'C:\\Users\\me\\AppData\\Roaming\\wilthy\\remote-context\\r1\\p1';
     setContextMirrors('r1:p1', [
       { mirror: `${mirror}\\repo`, remote: '/root/proj' },
       { mirror: `${mirror}\\home`, remote: '/root' },
@@ -29,8 +29,8 @@ describe('remotePath', () => {
         '/root/proj/.agents/skills/lint/SKILL.md',
       );
       // 大小写与混合分隔符都要认（Windows 盘符大小写不定）
-      expect(remotePath(`${mirror.toLowerCase()}/home/.dela/skills/x/SKILL.md`)).toBe(
-        '/root/.dela/skills/x/SKILL.md',
+      expect(remotePath(`${mirror.toLowerCase()}/home/.wilthy/skills/x/SKILL.md`)).toBe(
+        '/root/.wilthy/skills/x/SKILL.md',
       );
       expect(remotePath(`${mirror}\\repo`)).toBe('/root/proj');
       expect(remotePath('/tmp/x')).toBe('/tmp/x');
@@ -39,7 +39,7 @@ describe('remotePath', () => {
       setContextMirrors('r1:p1', []);
     }
     expect(remotePath(`${mirror}\\repo\\.agents\\skills\\lint\\SKILL.md`)).toBe(
-      '/Users/me/AppData/Roaming/dela/remote-context/r1/p1/repo/.agents/skills/lint/SKILL.md',
+      '/Users/me/AppData/Roaming/wilthy/remote-context/r1/p1/repo/.agents/skills/lint/SKILL.md',
     );
   });
 

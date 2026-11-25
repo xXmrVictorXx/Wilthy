@@ -31,7 +31,7 @@ let cwd: string;
 let sessionId: string;
 
 beforeEach(async () => {
-  root = await fsPromises.realpath(mkdtempSync(join(tmpdir(), 'dela-changes-')));
+  root = await fsPromises.realpath(mkdtempSync(join(tmpdir(), 'wilthy-changes-')));
   cwd = join(root, 'project');
   profile.path = join(root, 'profile');
   provideTestHostPorts({ paths: { userData: () => profile.path } });
@@ -49,7 +49,15 @@ function init() {
 }
 function commit() {
   git('add', '.');
-  git('-c', 'user.name=Dela Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'baseline');
+  git(
+    '-c',
+    'user.name=Wilthy Test',
+    '-c',
+    'user.email=test@example.com',
+    'commit',
+    '-m',
+    'baseline',
+  );
 }
 
 it('非 Git 目录记录脚本的增改删，排除依赖与 ignore 路径，冻结后不读取当前文件', async () => {

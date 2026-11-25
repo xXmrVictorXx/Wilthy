@@ -17,7 +17,7 @@ import { loadLlmConfig } from '../agent/llm-config';
 import { readDisabledTools, setBuiltinCapabilities } from './tools';
 import { searchDeepSeek } from './deepseek';
 
-// 搜索服务配置（设置 › 内置能力 › 网络）存在 ~/.dela/config.json 的 webSearch 里：可存多条
+// 搜索服务配置（设置 › 内置能力 › 网络）存在 ~/.wilthy/config.json 的 webSearch 里：可存多条
 // （同类型可重复，供多账号复用额度），聊天输入框左下角选择当前使用哪一条；应用不内置搜索服务。
 const SECTION_KEY = 'webSearch';
 const REQUEST_TIMEOUT_MS = 15000;

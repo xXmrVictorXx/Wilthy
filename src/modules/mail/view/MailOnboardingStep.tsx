@@ -10,11 +10,11 @@ export function MailOnboardingStep({ onDone }: { onDone: () => void }) {
   const [state, setState] = useState<StepButtonState>('idle');
   const [error, setError] = useState<string | null>(null);
 
-  if (!window.dela) {
+  if (!window.wilthy) {
     return (
       <DesktopOnlyNotice
         description="邮箱凭据不会暴露给浏览器。"
-        title="邮箱仅在 Dela 桌面端可用"
+        title="邮箱仅在 Wilthy 桌面端可用"
       />
     );
   }

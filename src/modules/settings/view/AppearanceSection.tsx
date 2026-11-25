@@ -97,7 +97,7 @@ export function AppearanceSection({
     useQuery({
       queryKey: ['settings', 'icon'],
       queryFn: () => settingsClient.icon(),
-      enabled: Boolean(window.dela),
+      enabled: Boolean(window.wilthy),
     }).data ?? 'white';
   const themeSave = useOptionSave();
   const iconSave = useOptionSave();
@@ -115,7 +115,7 @@ export function AppearanceSection({
     void iconSave.save(async () => {
       queryClient.setQueryData(
         ['settings', 'icon'],
-        window.dela ? await settingsClient.setIcon(next) : next,
+        window.wilthy ? await settingsClient.setIcon(next) : next,
       );
     });
   };

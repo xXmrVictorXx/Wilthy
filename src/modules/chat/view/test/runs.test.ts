@@ -7,7 +7,7 @@ const runEventListeners = vi.hoisted(() => {
   Object.defineProperty(globalThis, 'window', {
     configurable: true,
     value: {
-      dela: {
+      wilthy: {
         bridge: {
           subscribe: (channel: string, listener: (event: RunEvent) => void) => {
             if (channel === 'agent:run-event') listeners.push(listener);

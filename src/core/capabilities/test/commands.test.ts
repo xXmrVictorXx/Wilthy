@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 import { commandPrompt, registerCommandDomain } from '../commands';
 
-it('系统提示只列出 Skill 未停用的命令域，全部停用时不提 dela', () => {
+it('系统提示只列出 Skill 未停用的命令域，全部停用时不提 wilthy', () => {
   for (const name of ['canvas', 'todo'])
     registerCommandDomain({
       name,

@@ -1,7 +1,7 @@
 import { createClient, subscribe, type EventPayload } from '../../../core/protocol/contract';
 import { workspaceContract } from '../contract';
 
-const bridge = typeof window === 'undefined' ? undefined : window.dela?.bridge;
+const bridge = typeof window === 'undefined' ? undefined : window.wilthy?.bridge;
 
 export const workspaceClient = createClient(workspaceContract, bridge);
 

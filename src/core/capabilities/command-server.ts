@@ -1,4 +1,4 @@
-// dela 命令是 shell 里的业务命令，不常驻模型工具表；复用应用已有的缓存、登录与操作边界。
+// wilthy 命令是 shell 里的业务命令，不常驻模型工具表；复用应用已有的缓存、登录与操作边界。
 import { createServer } from 'node:http';
 import { randomBytes } from 'node:crypto';
 import { z } from 'zod';
@@ -29,7 +29,7 @@ async function executeDomainCommand(name: string, input: unknown) {
       }));
   }
   const command = commands.get(name);
-  if (!command) throw new Error(`命令不存在或所属 Skill 已停用：${name}，请使用 dela help`);
+  if (!command) throw new Error(`命令不存在或所属 Skill 已停用：${name}，请使用 wilthy help`);
   return command.execute(input);
 }
 
@@ -109,11 +109,11 @@ const BLOCKED_PORTS = new Set([
 ]);
 const isBlockedPort = (port: number) => BLOCKED_PORTS.has(port);
 
-export const COMMAND_BRIDGE = `dela() {
+export const COMMAND_BRIDGE = `wilthy() {
   command_name="$1"
   # 不能写 \${2:-{}}：bash 会把默认值截断在第一个 }，再拼出一个字面量 } 破坏 JSON。
   command_json="$2"
   [ -n "$command_json" ] || command_json='{}'
   # 请求体走 stdin：走 argv 时 Windows 会按 ANSI 代码页转码，中文参数到服务端已是替换字符。
-  printf '{"command":"%s","input":%s}' "$command_name" "$command_json" | curl --silent --show-error --fail-with-body -H "Authorization: Bearer $DELA_COMMAND_TOKEN" -H 'Content-Type: application/json' --data-binary @- "$DELA_COMMAND_URL"
+  printf '{"command":"%s","input":%s}' "$command_name" "$command_json" | curl --silent --show-error --fail-with-body -H "Authorization: Bearer $WILTHY_COMMAND_TOKEN" -H 'Content-Type: application/json' --data-binary @- "$WILTHY_COMMAND_URL"
 }`;

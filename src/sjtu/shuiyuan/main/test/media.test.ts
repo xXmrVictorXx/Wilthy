@@ -5,7 +5,7 @@ vi.mock('../credentials', () => ({
 }));
 import { handleShuiyuanMediaRequest } from '../media';
 
-const upload = 'dela-resource://shuiyuan/secure-uploads/optimized/4X/a/b/c/abc_2_690x388.jpeg';
+const upload = 'wilthy-resource://shuiyuan/secure-uploads/optimized/4X/a/b/c/abc_2_690x388.jpeg';
 
 afterEach(() => vi.unstubAllGlobals());
 

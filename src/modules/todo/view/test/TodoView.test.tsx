@@ -9,12 +9,12 @@ import { useTodoPreferences } from '../preferences';
 // 契约客户端在模块加载时取 bridge，须先于导入视图装好。
 const api = vi.hoisted(() => {
   const handlers: Record<string, (input: unknown) => Promise<unknown>> = {};
-  window.dela = {
+  window.wilthy = {
     bridge: {
       invoke: (channel: string, input: unknown) => handlers[channel.slice('todo:'.length)]!(input),
       subscribe: () => () => {},
     },
-  } as unknown as NonNullable<typeof window.dela>;
+  } as unknown as NonNullable<typeof window.wilthy>;
   return handlers;
 });
 import { TodoView } from '../TodoView';

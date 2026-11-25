@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createClient } from '../../../core/protocol/contract';
 import { mailContract, type MailState } from '../contract';
 
-export const mailClient = createClient(mailContract, window.dela?.bridge);
+export const mailClient = createClient(mailContract, window.wilthy?.bridge);
 
 export const mailStateKey = ['mail', 'state'];
 /** 邮箱页的读取都在这一前缀下，退出登录时一并清掉。 */

@@ -5,7 +5,10 @@ import { createDefaultLayout, findGroup, splitDepth, walkGroups } from '../layou
 // 契约客户端在模块加载时取 bridge，须先于导入 store 装好。
 const bridge = vi.hoisted(() => {
   const bridge = { invoke: vi.fn(), subscribe: () => () => {} };
-  Object.defineProperty(globalThis, 'window', { configurable: true, value: { dela: { bridge } } });
+  Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: { wilthy: { bridge } },
+  });
   return bridge;
 });
 import { useWorkbenchLayout } from '../layout-store';
@@ -18,7 +21,10 @@ function installLayoutApi(get: (projectId: string | null) => WorkbenchLayout | n
   bridge.invoke.mockImplementation((channel: string, input: never) =>
     channel === 'workspace:layout' ? layout(input) : save(input),
   );
-  Object.defineProperty(globalThis, 'window', { configurable: true, value: { dela: { bridge } } });
+  Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: { wilthy: { bridge } },
+  });
   return { layout, save };
 }
 

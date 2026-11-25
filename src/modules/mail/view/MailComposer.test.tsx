@@ -8,12 +8,12 @@ import type { PreparedEmail } from '../contract';
 // 契约客户端在模块加载时取 bridge，须先于导入组件装好。
 const api = vi.hoisted(() => {
   const handlers: Record<string, (input: unknown) => Promise<unknown>> = {};
-  window.dela = {
+  window.wilthy = {
     bridge: {
       invoke: (channel: string, input: unknown) => handlers[channel.slice('mail:'.length)]!(input),
       subscribe: () => () => {},
     },
-  } as unknown as NonNullable<typeof window.dela>;
+  } as unknown as NonNullable<typeof window.wilthy>;
   return handlers;
 });
 vi.mock('../../../ui/toast', () => ({ showToast: vi.fn() }));
@@ -113,7 +113,7 @@ it.each([
 
 it('内联图片恢复为预览，发送数据仍用 CID 并保留周围格式', async () => {
   const editor = await mount(
-    '<i>图片前</i><img src="cid:image@dela" alt="说明"><b>图片后</b>',
+    '<i>图片前</i><img src="cid:image@wilthy" alt="说明"><b>图片后</b>',
     '正文',
     [
       {
@@ -127,7 +127,7 @@ it('内联图片恢复为预览，发送数据仍用 CID 并保留周围格式',
   );
   expect(editor.querySelector('img')?.getAttribute('src')).toMatch(/^data:/);
   const saved = await save();
-  expect(saved.html).toContain('src="cid:image@dela"');
+  expect(saved.html).toContain('src="cid:image@wilthy"');
   expect(saved.html).toContain('<i>图片前</i>');
   expect(saved.html).toContain('<b>图片后</b>');
   expect(saved.inlineImageIds).toEqual(['image']);

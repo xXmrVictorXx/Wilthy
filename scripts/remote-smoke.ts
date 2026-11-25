@@ -1,5 +1,5 @@
 // 远程项目的真实窗口冒烟：真 preload、真 renderer、真主进程 IPC，远端也真连（需要
-// DELA_REMOTE_HOST / DELA_REMOTE_KEY，未设置则跳过并退出 0）；这种链路在 jsdom 里只能靠假 window.dela 代替。
+// WILTHY_REMOTE_HOST / WILTHY_REMOTE_KEY，未设置则跳过并退出 0）；这种链路在 jsdom 里只能靠假 window.wilthy 代替。
 import { app, BrowserWindow, ipcMain } from 'electron';
 import assert from 'node:assert/strict';
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
@@ -15,13 +15,13 @@ import { remoteBackend } from '../src/core/remote/operations';
 import { exec, probeRemote } from '../src/core/remote/transport';
 import { registerPreviewProtocol, registerPreviewScheme } from '../src/modules/workspace';
 
-const host = process.env.DELA_REMOTE_HOST;
+const host = process.env.WILTHY_REMOTE_HOST;
 if (!host) {
-  console.log(JSON.stringify({ result: 'skipped', reason: '未设置 DELA_REMOTE_HOST' }));
+  console.log(JSON.stringify({ result: 'skipped', reason: '未设置 WILTHY_REMOTE_HOST' }));
   app.exit(0);
 }
-const target = { host: host!, keyPath: process.env.DELA_REMOTE_KEY ?? null };
-const profile = mkdtempSync(join(tmpdir(), 'dela-remote-gui-'));
+const target = { host: host!, keyPath: process.env.WILTHY_REMOTE_KEY ?? null };
+const profile = mkdtempSync(join(tmpdir(), 'wilthy-remote-gui-'));
 app.setPath('userData', profile);
 app.setPath('documents', profile);
 app.setPath('home', profile);
@@ -41,7 +41,7 @@ app
 
     // 远端夹具：放在主目录下，这样向导从主目录点一层就能到。
     const home = (await probeRemote(target)).home;
-    const root = `${home}/dela-gui-smoke`;
+    const root = `${home}/wilthy-gui-smoke`;
     fixtureRoot = root;
     await exec(
       target,
@@ -141,7 +141,7 @@ app
       );
     await click('保存并连接');
     await wait(
-      `[...document.querySelectorAll('[role="option"] button')].some(b => b.textContent.trim() === 'dela-gui-smoke')`,
+      `[...document.querySelectorAll('[role="option"] button')].some(b => b.textContent.trim() === 'wilthy-gui-smoke')`,
       '面板里的远端目录清单',
     );
     assert.ok((await helperCount()) >= 1, '连接后服务器上应有 helper 进程');
@@ -149,10 +149,10 @@ app
     await shoot('directory-home');
 
     await evaluate(
-      `[...document.querySelectorAll('[role="option"] button')].find(b => b.textContent.trim() === 'dela-gui-smoke').click()`,
+      `[...document.querySelectorAll('[role="option"] button')].find(b => b.textContent.trim() === 'wilthy-gui-smoke').click()`,
     );
     await wait(
-      `document.querySelector('[aria-label="项目名称"]').value === 'dela-gui-smoke'`,
+      `document.querySelector('[aria-label="项目名称"]').value === 'wilthy-gui-smoke'`,
       '项目名称跟随选中的目录',
     );
     await shoot('directory-selected');
@@ -163,8 +163,8 @@ app
       '远端目录树里的文件行',
     );
     const entry = await evaluate(`(async () => {
-      const state = await window.dela.bridge.invoke('workspace:state');
-      const item = state.entries.find(e => e.name === 'dela-gui-smoke');
+      const state = await window.wilthy.bridge.invoke('workspace:state');
+      const item = state.entries.find(e => e.name === 'wilthy-gui-smoke');
       return item ? { id: item.id, remoteId: item.remoteId ?? null, path: item.path ?? null } : null;
     })()`);
     assert.ok(entry, '工作区状态里没有刚添加的远程项目');
@@ -224,7 +224,7 @@ app
     await evaluate(closeMenu);
 
     const references = await evaluate(
-      `(async () => (await window.dela.bridge.invoke('workspace:remoteReferences', ${JSON.stringify(entry.id)})).map(r => r.title ?? r.key))()`,
+      `(async () => (await window.wilthy.bridge.invoke('workspace:remoteReferences', ${JSON.stringify(entry.id)})).map(r => r.title ?? r.key))()`,
     );
     assert.ok(references.includes('a b.txt'), `@ 候选缺少远端文件：${JSON.stringify(references)}`);
     assert.ok(
@@ -239,7 +239,7 @@ app
       '刷新后自动出现的远端新文件',
     );
 
-    // Dela 之外改的远端文件（这里用一条独立的 ssh 去改），靠 helper 的 inotify watch 推回来；
+    // Wilthy 之外改的远端文件（这里用一条独立的 ssh 去改），靠 helper 的 inotify watch 推回来；
     // 每轮重 touch 一次，避免「上报监视集合」和这次改动抢跑。
     const outside = `${root}/outside-watch.txt`;
     const outsideShown = `document.querySelector('[role="treeitem"][aria-label="outside-watch.txt"]') !== null`;
@@ -249,14 +249,14 @@ app
       await new Promise((resolve) => setTimeout(resolve, 400));
       watched = await evaluate(outsideShown);
     }
-    assert.ok(watched, 'Dela 之外建的文件没有出现在目录树里（watch 没生效）');
+    assert.ok(watched, 'Wilthy 之外建的文件没有出现在目录树里（watch 没生效）');
 
     await evaluate(`(async () => {
       window.__term = { id: crypto.randomUUID(), data: '' };
-      window.dela.bridge.subscribe('terminal:event', (event) => {
+      window.wilthy.bridge.subscribe('terminal:event', (event) => {
         if (event.type === 'data') window.__term.data += event.data;
       });
-      await window.dela.bridge.invoke('terminal:create', {
+      await window.wilthy.bridge.invoke('terminal:create', {
         projectId: ${JSON.stringify(entry.id)},
         id: window.__term.id,
       });
@@ -271,23 +271,23 @@ app
       }
       if (!termData.includes(prompt)) {
         const snapshots = await evaluate(
-          `(async () => (await window.dela.bridge.invoke('terminal:list', ${JSON.stringify(entry.id)})).map(s => ({ exitCode: s.exitCode, tail: s.buffer.slice(-400) })))()`,
+          `(async () => (await window.wilthy.bridge.invoke('terminal:list', ${JSON.stringify(entry.id)})).map(s => ({ exitCode: s.exitCode, tail: s.buffer.slice(-400) })))()`,
         );
         throw new Error(
           `远端终端里没等到项目目录。\n事件数据：${JSON.stringify(termData.slice(-400))}\n快照：${JSON.stringify(snapshots)}`,
         );
       }
       await evaluate(
-        `window.dela.bridge.invoke('terminal:write', { id: window.__term.id, data: 'echo MARK-$(pwd)\\r' })`,
+        `window.wilthy.bridge.invoke('terminal:write', { id: window.__term.id, data: 'echo MARK-$(pwd)\\r' })`,
       );
       // 只认命令输出：输入回显里是 MARK-$(pwd)，展开成绝对路径的结果不会出现在回显里。
       await wait(`window.__term.data.includes('MARK-${root}')`, '远端终端执行命令的输出');
       const buffer = await evaluate(
-        `(async () => (await window.dela.bridge.invoke('terminal:list', ${JSON.stringify(entry.id)})).map(s => s.buffer).join(''))()`,
+        `(async () => (await window.wilthy.bridge.invoke('terminal:list', ${JSON.stringify(entry.id)})).map(s => s.buffer).join(''))()`,
       );
       assert.ok(buffer.includes(`MARK-${root}`), '终端快照里没有命令输出');
     } finally {
-      await evaluate(`window.dela.bridge.invoke('terminal:close', window.__term.id)`).catch(
+      await evaluate(`window.wilthy.bridge.invoke('terminal:close', window.__term.id)`).catch(
         () => {},
       );
     }

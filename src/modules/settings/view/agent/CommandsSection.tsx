@@ -30,7 +30,7 @@ export function CommandsSection() {
   const instructionQuery = useQuery({
     queryKey: ['settings', 'instruction'],
     queryFn: () => settingsClient.instruction(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   });
   const instruction = instructionQuery.data;
   const [edited, setEdited] = useState<string | null>(null);
@@ -44,7 +44,7 @@ export function CommandsSection() {
   };
 
   const saveInstruction = async () => {
-    if (!window.dela || instructionBusy || instruction === undefined) return;
+    if (!window.wilthy || instructionBusy || instruction === undefined) return;
     setInstructionBusy(true);
     try {
       const saved = await settingsClient.setInstruction(draft);
@@ -58,7 +58,7 @@ export function CommandsSection() {
   };
 
   const remove = async (id: string) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     setBusy(true);
     try {
       await chatClient.deleteCommand(id);
@@ -72,7 +72,7 @@ export function CommandsSection() {
   return (
     <div className="grid gap-10">
       <SectionHeader title="自定义指令" />
-      {!window.dela ? (
+      {!window.wilthy ? (
         <p className="text-sm text-ink-3">指令配置仅在桌面端可用。</p>
       ) : (
         <>
@@ -206,7 +206,7 @@ function CommandFormDialog({
   const [error, setError] = useState<string | null>(null);
 
   const save = async () => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     setBusy(true);
     setError(null);
     const id = editing.mode === 'edit' ? editing.command.id : undefined;

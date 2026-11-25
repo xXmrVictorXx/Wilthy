@@ -36,7 +36,7 @@ export const snapshotRoot = () => join(app.getPath('userData'), snapshotDirector
 export const snapshotDir = (topicId: number) => join(snapshotRoot(), String(topicId));
 export const partialDir = (topicId: number) => join(snapshotRoot(), `${topicId}.partial`);
 
-const ENCRYPTED_HEADER = Buffer.from('DELA-SNAPSHOT-1');
+const ENCRYPTED_HEADER = Buffer.from('WILTHY-SNAPSHOT-1');
 let cachedKey: { root: string; key: Buffer } | undefined;
 
 function snapshotKey(): Buffer {
@@ -156,7 +156,7 @@ export async function readShuiyuanSnapshotPage(
   );
 }
 
-/** dela-resource://shuiyuan-snapshot/<topicId>/<hash>.<ext>：只放行快照目录内的图片文件，草稿的图片在 .partial 下。 */
+/** wilthy-resource://shuiyuan-snapshot/<topicId>/<hash>.<ext>：只放行快照目录内的图片文件，草稿的图片在 .partial 下。 */
 export async function handleShuiyuanSnapshotRequest(url: URL): Promise<Response> {
   const match = /^\/(\d+)\/([0-9a-f]{32})\.([a-z]+)$/.exec(url.pathname);
   const type = match && imageTypes.get(match[3]!);

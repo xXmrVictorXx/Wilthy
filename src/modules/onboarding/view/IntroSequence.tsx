@@ -76,7 +76,7 @@ export function IntroSequence({ onStart }: { onStart: () => void }) {
 
         <div className="relative flex flex-col items-center">
           <img
-            alt="Dela"
+            alt="Wilthy"
             className="size-45 animate-rise-in motion-reduce:animate-none [@media(max-height:560px)]:size-33"
             src={logo}
             style={{

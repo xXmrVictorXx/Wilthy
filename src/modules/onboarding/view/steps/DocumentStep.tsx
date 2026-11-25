@@ -16,11 +16,11 @@ export function DocumentStep({ onDone }: { onDone: () => void }) {
   const [state, setState] = useState<StepButtonState>('idle');
   const [error, setError] = useState<string | null>(null);
 
-  if (!window.dela) {
+  if (!window.wilthy) {
     return (
       <DesktopOnlyNotice
         description="MinerU Token 只加密保存在桌面端。"
-        title="文档读取仅在 Dela 桌面端可用"
+        title="文档读取仅在 Wilthy 桌面端可用"
       />
     );
   }

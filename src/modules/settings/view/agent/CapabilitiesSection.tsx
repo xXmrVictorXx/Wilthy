@@ -88,7 +88,7 @@ export function CapabilitiesSection() {
   const list = useQuery({
     queryKey: ['capabilities', 'builtin'],
     queryFn: () => capabilitiesClient.listBuiltinCapabilities(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   });
   const capabilities = list.data;
   const [busy, setBusy] = useState(false);
@@ -97,7 +97,7 @@ export function CapabilitiesSection() {
   const hasDocumentToken = useQuery({
     queryKey: ['capabilities', 'documentToken'],
     queryFn: () => capabilitiesClient.hasDocumentToken(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   }).data;
 
   useEffect(
@@ -109,7 +109,7 @@ export function CapabilitiesSection() {
   );
 
   const run = async (operation: () => Promise<AgentCapabilityView[]>) => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     setBusy(true);
     try {
       queryClient.setQueryData(['capabilities', 'builtin'], await operation());
@@ -122,7 +122,7 @@ export function CapabilitiesSection() {
   return (
     <div className="grid gap-10" data-setting-id="capabilities">
       <SectionHeader title="内置能力" />
-      {!window.dela ? (
+      {!window.wilthy ? (
         <p className="text-sm text-ink-3">内置能力配置仅在桌面端可用。</p>
       ) : (
         <>

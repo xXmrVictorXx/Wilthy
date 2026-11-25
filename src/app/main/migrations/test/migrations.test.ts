@@ -20,7 +20,7 @@ const seal = {
 };
 
 let userData: string;
-const dbPath = () => join(userData, 'dela.db');
+const dbPath = () => join(userData, 'wilthy.db');
 const configPath = () => join(userData, 'llm-providers.bin');
 
 function v6Database() {
@@ -54,7 +54,7 @@ const v6Config = {
 };
 
 beforeEach(() => {
-  userData = mkdtempSync(join(tmpdir(), 'dela-migrate-'));
+  userData = mkdtempSync(join(tmpdir(), 'wilthy-migrate-'));
 });
 afterEach(() => rmSync(userData, { recursive: true, force: true }));
 
@@ -354,7 +354,7 @@ it('v11→v12：MCP 配置连同 env 移进加密文件并标为 stdio，数据�
   ]);
 });
 
-it('v12→v13：模型服务、联网搜索与 MCP 移进 ~/.dela 的 JSON，id 换成可读名字，已有的键不覆盖', () => {
+it('v12→v13：模型服务、联网搜索与 MCP 移进 ~/.wilthy 的 JSON，id 换成可读名字，已有的键不覆盖', () => {
   const before = new Database(dbPath());
   before.exec(`CREATE TABLE workspace_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
     CREATE TABLE sessions (id TEXT PRIMARY KEY, provider_id TEXT);
@@ -401,10 +401,10 @@ it('v12→v13：模型服务、联网搜索与 MCP 移进 ~/.dela 的 JSON，id 
       ]),
     ),
   );
-  const dela = join(userData, '.dela');
-  mkdirSync(dela);
+  const wilthy = join(userData, '.wilthy');
+  mkdirSync(wilthy);
   const magpie = { name: 'Magpie', baseUrl: 'http://127.0.0.1:3425/v1', apiKey: 'm', models: {} };
-  writeFileSync(join(dela, 'config.json'), JSON.stringify({ providers: { magpie } }));
+  writeFileSync(join(wilthy, 'config.json'), JSON.stringify({ providers: { magpie } }));
 
   expect(runMigrations({ userData, home: userData, seal }, 13)).toBe(1);
 
@@ -416,7 +416,7 @@ it('v12→v13：模型服务、联网搜索与 MCP 移进 ~/.dela 的 JSON，id 
     enabled: false,
     models: { chat: {}, reasoner: { effort: 'high' } },
   };
-  const config = JSON.parse(readFileSync(join(dela, 'config.json'), 'utf8'));
+  const config = JSON.parse(readFileSync(join(wilthy, 'config.json'), 'utf8'));
   expect(config).toEqual({
     providers: {
       magpie,
@@ -428,7 +428,7 @@ it('v12→v13：模型服务、联网搜索与 MCP 移进 ~/.dela 的 JSON，id 
       services: { brave: { name: 'Brave', provider: 'brave', apiKey: 'kb' } },
     },
   });
-  expect(JSON.parse(readFileSync(join(dela, 'mcp.json'), 'utf8'))).toEqual({
+  expect(JSON.parse(readFileSync(join(wilthy, 'mcp.json'), 'utf8'))).toEqual({
     mcpServers: {
       gh: { command: 'npx', args: [], env: {} },
       web: { type: 'http', url: 'https://x', headers: {}, disabled: true },
@@ -446,19 +446,19 @@ it('v12→v13：模型服务、联网搜索与 MCP 移进 ~/.dela 的 JSON，id 
   db.close();
 });
 
-it('v12→v13：~/.dela/config.json 已写坏时不改它，旧的加密文件保留', () => {
+it('v12→v13：~/.wilthy/config.json 已写坏时不改它，旧的加密文件保留', () => {
   const before = new Database(dbPath());
   before.exec(`CREATE TABLE workspace_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
     CREATE TABLE sessions (id TEXT PRIMARY KEY, provider_id TEXT);`);
   before.pragma('user_version = 12');
   before.close();
   writeFileSync(configPath(), seal.encrypt(JSON.stringify({ providers: [] })));
-  mkdirSync(join(userData, '.dela'));
-  writeFileSync(join(userData, '.dela', 'config.json'), '{ broken');
+  mkdirSync(join(userData, '.wilthy'));
+  writeFileSync(join(userData, '.wilthy', 'config.json'), '{ broken');
 
   runMigrations({ userData, home: userData, seal }, 13);
 
-  expect(readFileSync(join(userData, '.dela', 'config.json'), 'utf8')).toBe('{ broken');
+  expect(readFileSync(join(userData, '.wilthy', 'config.json'), 'utf8')).toBe('{ broken');
   expect(existsSync(configPath())).toBe(true);
 });
 

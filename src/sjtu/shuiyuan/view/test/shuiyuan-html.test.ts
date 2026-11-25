@@ -19,20 +19,20 @@ it('shows the lightbox original instead of the optimized thumbnail', () => {
   );
   const [lightboxed, plain] = doc.querySelectorAll('img');
   expect(lightboxed!.getAttribute('src')).toBe(
-    'dela-resource://shuiyuan/secure-uploads/original/4X/a/b/c/abc.jpeg',
+    'wilthy-resource://shuiyuan/secure-uploads/original/4X/a/b/c/abc.jpeg',
   );
   expect(lightboxed!.hasAttribute('srcset')).toBe(false);
   expect(plain!.getAttribute('src')).toBe(
-    'dela-resource://shuiyuan/secure-uploads/original/4X/d/e/f/small.png',
+    'wilthy-resource://shuiyuan/secure-uploads/original/4X/d/e/f/small.png',
   );
 });
 
 it('keeps images already saved into the local snapshot', () => {
-  const local = 'dela-resource://shuiyuan-snapshot/42/0123456789abcdef0123456789abcdef.jpg';
+  const local = 'wilthy-resource://shuiyuan-snapshot/42/0123456789abcdef0123456789abcdef.jpg';
   const doc = render(`<a class="lightbox"><img src="${local}"></a>`);
   expect(doc.querySelector('img')!.hasAttribute('src')).toBe(false);
-  expect(doc.querySelector('img')!.getAttribute('data-dela-zoom')).toBe(local);
-  expect(doc.querySelector('img')!.getAttribute('data-dela-lazy')).toBe(`${local}?thumbnail=1`);
+  expect(doc.querySelector('img')!.getAttribute('data-wilthy-zoom')).toBe(local);
+  expect(doc.querySelector('img')!.getAttribute('data-wilthy-lazy')).toBe(`${local}?thumbnail=1`);
 });
 
 it('holds the place of snapshot images not saved yet without loading them', () => {

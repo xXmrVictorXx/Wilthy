@@ -1,4 +1,4 @@
-// MCP 客户端接入：配置在 ~/.dela/mcp.json（Claude Code 的格式，magpie 可以直接管理），惰性连接 + 显式 refresh 重连；
+// MCP 客户端接入：配置在 ~/.wilthy/mcp.json（Claude Code 的格式，magpie 可以直接管理），惰性连接 + 显式 refresh 重连；
 // 工具按 mcp_<server>_<tool> 命名空间化，断连标 error 并清空工具，返回内容只是资料而非指令。
 import type { CallToolResult, McpTransport, Tool } from '@earendil-works/pi-mcp';
 import { z } from 'zod';
@@ -27,7 +27,7 @@ async function loadMcpSdk(): Promise<McpSdk> {
 
 const CONNECT_TIMEOUT_MS = 10_000;
 const STDERR_TAIL_CHARS = 500;
-const CLIENT_INFO = { name: 'Dela', version: '0.0.0' };
+const CLIENT_INFO = { name: 'Wilthy', version: '0.0.0' };
 
 const nameField = z.string().trim().min(1).max(60);
 const commandField = z.string().trim().min(1).max(500);
@@ -35,7 +35,7 @@ const argsField = z.array(z.string().max(2000)).max(100);
 const variablesField = z.record(z.string().max(200), z.string().max(4000));
 const urlField = z.url({ protocol: /^https?$/ }).max(2000);
 
-// 文件里一项的形状：有 command 是 stdio，有 url 是 Streamable HTTP；SSE 等 Dela 不支持的传输方式跳过。
+// 文件里一项的形状：有 command 是 stdio，有 url 是 Streamable HTTP；SSE 等 Wilthy 不支持的传输方式跳过。
 const stdioEntrySchema = z.object({
   type: z.literal('stdio').optional(),
   command: commandField,
@@ -47,7 +47,7 @@ const httpEntrySchema = z.object({
   url: urlField,
   headers: variablesField.default({}),
 });
-/** 一项里由 Dela 决定的字段；其余字段（magpie 或用户加的）保存时原样保留。 */
+/** 一项里由 Wilthy 决定的字段；其余字段（magpie 或用户加的）保存时原样保留。 */
 const ownedEntryKeys = ['type', 'command', 'args', 'env', 'url', 'headers', 'disabled'];
 
 export const mcpServerInputSchema = z.discriminatedUnion('transport', [
@@ -117,7 +117,7 @@ function readMcpConfigs(): McpServerConfig[] {
   return Object.entries(section).flatMap(([name, value]) => configOf(name, value) ?? []);
 }
 
-/** 改名时 previousName 是原来的键；这一项里 Dela 不认识的字段原样保留。 */
+/** 改名时 previousName 是原来的键；这一项里 Wilthy 不认识的字段原样保留。 */
 function writeMcpServer(config: McpServerConfig, previousName = config.name): void {
   updateConfigFile('mcp.json', (file) => {
     const section = sectionOf(file, SERVERS_KEY);
@@ -181,7 +181,7 @@ function createTransport(sdk: McpSdk, config: McpServerConfig): McpTransport {
 function connectError(sdk: McpSdk, error: unknown): string {
   if (error instanceof sdk.McpTimeoutError) return `连接超时（${CONNECT_TIMEOUT_MS / 1000}s）`;
   if (error instanceof sdk.McpAuthRequiredError)
-    return '服务器要求授权（HTTP 401），Dela 暂不支持 OAuth 登录；如服务支持访问令牌，可在请求头中填写 Authorization';
+    return '服务器要求授权（HTTP 401），Wilthy 暂不支持 OAuth 登录；如服务支持访问令牌，可在请求头中填写 Authorization';
   // fetch 的网络错误只说 fetch failed，真正原因（DNS、拒绝连接）在 cause 里
   if (error instanceof TypeError && error.cause instanceof Error)
     return `${error.message}（${error.cause.message}）`;

@@ -46,7 +46,7 @@ describe('远端文件预览', () => {
     stat.mockResolvedValue(entry(2048, 7));
     const pdf = await readRemoteDocument('p-1', target, '/home/u/proj/manual.pdf');
     expect(pdf.previewUrl).toBe(
-      'dela-resource://remote/p-1?path=%2Fhome%2Fu%2Fproj%2Fmanual.pdf&v=7-2048',
+      'wilthy-resource://remote/p-1?path=%2Fhome%2Fu%2Fproj%2Fmanual.pdf&v=7-2048',
     );
     expect(pdf.format).toBe('pdf');
     expect(pdf.mime).toBe('application/pdf');
@@ -79,10 +79,10 @@ describe('远端文件预览', () => {
 describe('远端 Markdown 的相对图片', () => {
   it('按 Markdown 所在目录解析；越界的相对路径保持原样', () => {
     expect(remoteAssetUrl('p-1', '/home/u/proj', '/home/u/proj/docs/a.md', 'img/x.png')).toBe(
-      'dela-resource://remote-raw/p-1?path=%2Fhome%2Fu%2Fproj%2Fdocs%2Fimg%2Fx.png',
+      'wilthy-resource://remote-raw/p-1?path=%2Fhome%2Fu%2Fproj%2Fdocs%2Fimg%2Fx.png',
     );
     expect(remoteAssetUrl('p-1', '/home/u/proj', '/home/u/proj/docs/a.md', '../top.png')).toBe(
-      'dela-resource://remote-raw/p-1?path=%2Fhome%2Fu%2Fproj%2Ftop.png',
+      'wilthy-resource://remote-raw/p-1?path=%2Fhome%2Fu%2Fproj%2Ftop.png',
     );
     expect(remoteAssetUrl('p-1', '/home/u/proj', '/home/u/proj/a.md', '../../etc/passwd')).toBe(
       '../../etc/passwd',

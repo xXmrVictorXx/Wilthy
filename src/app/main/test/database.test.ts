@@ -16,7 +16,7 @@ import { provideTestHostPorts } from '../../../core/test/host-mock';
 let root = '';
 
 function freshRoot(): string {
-  root = mkdtempSync(join(tmpdir(), 'dela-db-'));
+  root = mkdtempSync(join(tmpdir(), 'wilthy-db-'));
   provideTestHostPorts({ paths: { userData: () => root } });
   return root;
 }
@@ -48,13 +48,13 @@ describe('current database format', () => {
 
   it('rejects a database from a newer version without clearing its data', () => {
     freshRoot();
-    const db = new Database(join(root, 'dela.db'));
+    const db = new Database(join(root, 'wilthy.db'));
     db.exec('CREATE TABLE sample (value TEXT)');
     db.exec("INSERT INTO sample VALUES ('keep')");
     db.pragma(`user_version = ${SCHEMA_VERSION + 1}`);
     db.close();
     expect(() => openDatabase([])).toThrow('数据库格式不受支持');
-    const stored = new Database(join(root, 'dela.db'));
+    const stored = new Database(join(root, 'wilthy.db'));
     expect(stored.prepare('SELECT value FROM sample').get()).toEqual({ value: 'keep' });
     stored.close();
   });
@@ -137,7 +137,7 @@ describe('module schemas', () => {
 
   it('3.0 的库补跑迁移：过时或易混淆的设置键改名，值不变', () => {
     freshRoot();
-    const old = new Database(join(root, 'dela.db'));
+    const old = new Database(join(root, 'wilthy.db'));
     old.pragma('user_version = 17');
     v17ToBaseline(old);
     const insert = old.prepare('INSERT INTO workspace_settings VALUES (?, ?)');
@@ -172,7 +172,7 @@ describe('module schemas', () => {
 
   it('3.0 的库补跑迁移：通知来源不再写死，会话不再外键指向项目，原有数据保留', () => {
     freshRoot();
-    const old = new Database(join(root, 'dela.db'));
+    const old = new Database(join(root, 'wilthy.db'));
     old.pragma('user_version = 17');
     v17ToBaseline(old);
     old.exec(`

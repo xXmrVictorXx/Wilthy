@@ -1,5 +1,5 @@
 // 远程工具的真机回归：bash/读写/stat/glob/grep/edit、超时与输出丢弃说明。
-// 需要 DELA_REMOTE_HOST（如 root@1.2.3.4），由 pnpm test:remote 运行，不在默认 pnpm test 与 CI 里。
+// 需要 WILTHY_REMOTE_HOST（如 root@1.2.3.4），由 pnpm test:remote 运行，不在默认 pnpm test 与 CI 里。
 import { existsSync } from 'node:fs';
 import { resolve as resolveLocal } from 'node:path';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
@@ -14,10 +14,10 @@ import { onRemoteChange } from '../events';
 import { exec, shellQuote, type RemoteTarget } from '../transport';
 
 const target: RemoteTarget = {
-  host: process.env.DELA_REMOTE_HOST!,
-  keyPath: process.env.DELA_REMOTE_KEY ?? null,
+  host: process.env.WILTHY_REMOTE_HOST!,
+  keyPath: process.env.WILTHY_REMOTE_KEY ?? null,
 };
-const root = '/tmp/dela-tools-test';
+const root = '/tmp/wilthy-tools-test';
 const mangled = (path: string) => resolveLocal(path);
 
 describe('远程工具（真机）', () => {
@@ -95,7 +95,7 @@ describe('远程工具（真机）', () => {
   it('stat 对未列过的路径仍能回答', async () => {
     const stat = await ops.ls.stat('/tmp');
     expect(stat.isDirectory()).toBe(true);
-    await expect(ops.ls.stat('/tmp/dela-not-here-9f3')).rejects.toThrow(/不存在/);
+    await expect(ops.ls.stat('/tmp/wilthy-not-here-9f3')).rejects.toThrow(/不存在/);
   });
 
   it('find 的 glob 返回相对路径并支持 ** 与 *', async () => {

@@ -130,7 +130,7 @@ export function ShuiyuanSourceDoc({ sourceId, content, navigate, onReload }: Sou
             </div>
             <div className="flex items-center gap-2">
               <Button
-                disabled={!window.dela}
+                disabled={!window.wilthy}
                 onClick={() => openInShuiyuan(topicId)}
                 size="sm"
                 variant="outline"

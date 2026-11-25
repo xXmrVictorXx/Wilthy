@@ -649,7 +649,7 @@ export async function readCanvasSource(id: string): Promise<DocumentContent> {
       bytes,
       previewUrl:
         pdf || office
-          ? `dela-resource://canvas/${encodeURIComponent(id)}?v=${encodeURIComponent(source.updatedAt ?? '')}`
+          ? `wilthy-resource://canvas/${encodeURIComponent(id)}?v=${encodeURIComponent(source.updatedAt ?? '')}`
           : undefined,
       mime: pdf ? 'application/pdf' : office ? officeZipMime[office] : cached.mime,
       updatedAt: source.updatedAt,

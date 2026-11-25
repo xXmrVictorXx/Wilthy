@@ -8,7 +8,7 @@ const state = vi.hoisted(() => ({
   disabled: false,
   sessions: [] as { file: string }[],
 }));
-state.root = mkdtempSync(join(tmpdir(), 'dela-media-'));
+state.root = mkdtempSync(join(tmpdir(), 'wilthy-media-'));
 vi.mock('electron', () => ({
   app: { getPath: () => state.root },
   nativeImage: {},

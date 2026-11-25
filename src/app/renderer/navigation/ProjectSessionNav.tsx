@@ -57,7 +57,7 @@ import {
 } from '../../../ui/dialog';
 import { errorMessage } from '../../../core/protocol/contract';
 
-const fileManagerName = window.dela?.platform === 'darwin' ? 'Finder' : '资源管理器';
+const fileManagerName = window.wilthy?.platform === 'darwin' ? 'Finder' : '资源管理器';
 
 export type { NavSessionSummary, SessionRunBadge };
 
@@ -314,7 +314,7 @@ export function ProjectSessionNav({
               disabled={archiving}
               onClick={() =>
                 void runAction('归档失败', async () => {
-                  if (!window.dela) throw new Error('会话管理仅在桌面端可用');
+                  if (!window.wilthy) throw new Error('会话管理仅在桌面端可用');
                   setArchiving(true);
                   try {
                     const ids = await chatClient.archiveProject(key);

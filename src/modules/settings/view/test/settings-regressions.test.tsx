@@ -11,7 +11,7 @@ const { api, bridge, invoke } = vi.hoisted(() => {
   const api: Record<string, (input: never) => unknown> = {};
   const invoke = vi.fn();
   const bridge = { invoke, subscribe: () => () => {} };
-  window.dela = { bridge } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { bridge } as unknown as NonNullable<typeof window.wilthy>;
   return { api, bridge, invoke };
 });
 import { LlmSection } from '../agent/LlmSection';
@@ -35,12 +35,12 @@ afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
   for (const toast of toasts()) dismissToast(toast.id);
-  delete window.dela;
+  delete window.wilthy;
   vi.unstubAllGlobals();
 });
 
 it('登录项等待系统批准时保持关闭、说明原因，批准后可重试开启', async () => {
-  const message = '请在 macOS「系统设置 › 通用 › 登录项」中允许 Dela，然后返回重试。';
+  const message = '请在 macOS「系统设置 › 通用 › 登录项」中允许 Wilthy，然后返回重试。';
   const setOpenAtLogin = vi.fn().mockRejectedValueOnce(new Error(message)).mockResolvedValue(true);
   const routes: Record<string, (input: unknown) => unknown> = {
     'settings:openAtLogin': () => false,
@@ -48,7 +48,7 @@ it('登录项等待系统批准时保持关闭、说明原因，批准后可重�
     'settings:taskNotifications': () => ({ failed: true, completed: false }),
   };
   invoke.mockImplementation(async (channel: string, input: unknown) => routes[channel]?.(input));
-  window.dela = { platform: 'darwin' } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { platform: 'darwin' } as unknown as NonNullable<typeof window.wilthy>;
   await act(async () =>
     root.render(
       <QueryClientProvider client={new QueryClient()}>
@@ -79,7 +79,7 @@ function button(text: string): HTMLButtonElement {
 
 function stubLlm(handlers: Record<string, (input: never) => unknown>) {
   for (const [name, handler] of Object.entries(handlers)) api[`llm:${name}`] = handler;
-  window.dela = { bridge } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { bridge } as unknown as NonNullable<typeof window.wilthy>;
 }
 
 const settle = () => act(() => new Promise((resolve) => setTimeout(resolve, 0)));

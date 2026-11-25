@@ -1,5 +1,5 @@
 // 远端文件传输真机回归：字节级往返与「用系统默认程序打开」的临时文件清理。
-// 需要 DELA_REMOTE_HOST（如 root@1.2.3.4），由 pnpm test:remote 运行，不在默认 pnpm test 与 CI 里。
+// 需要 WILTHY_REMOTE_HOST（如 root@1.2.3.4），由 pnpm test:remote 运行，不在默认 pnpm test 与 CI 里。
 import { createHash, randomBytes } from 'node:crypto';
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -20,11 +20,11 @@ import { readRemoteRange, statRemoteFile } from '../../../../core/remote/operati
 import type { RemoteTarget } from '../../../../core/remote/transport';
 
 const target: RemoteTarget = {
-  host: process.env.DELA_REMOTE_HOST!,
-  keyPath: process.env.DELA_REMOTE_KEY ?? null,
+  host: process.env.WILTHY_REMOTE_HOST!,
+  keyPath: process.env.WILTHY_REMOTE_KEY ?? null,
 };
-const root = '/tmp/dela-transfer-test';
-const local = mkdtempSync(join(tmpdir(), 'dela-transfer-'));
+const root = '/tmp/wilthy-transfer-test';
+const local = mkdtempSync(join(tmpdir(), 'wilthy-transfer-'));
 
 afterAll(() => rmSync(local, { recursive: true, force: true }));
 
@@ -61,7 +61,7 @@ describe('远端文件传输（真机）', () => {
     await openRemoteFile(target, remotePath);
     const { openPath } = await import('electron').then((m) => m.shell);
     const opened = vi.mocked(openPath).mock.calls.at(-1)?.[0] ?? '';
-    expect(opened).toContain(join('dela-remote-open', ''));
+    expect(opened).toContain(join('wilthy-remote-open', ''));
     expect(opened.endsWith('-open.txt')).toBe(true);
     expect(readFileSync(opened, 'utf8')).toBe('打开我\n');
 

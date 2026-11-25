@@ -14,7 +14,7 @@ function git(...args: string[]): void {
 }
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'dela-branch-'));
+  root = mkdtempSync(join(tmpdir(), 'wilthy-branch-'));
 });
 
 afterEach(() => {
@@ -22,8 +22,8 @@ afterEach(() => {
 });
 
 it('本地 Git 仓库返回当前分支', async () => {
-  git('init', '-b', 'dela-test');
-  await expect(gitBranchOf(root)).resolves.toBe('dela-test');
+  git('init', '-b', 'wilthy-test');
+  await expect(gitBranchOf(root)).resolves.toBe('wilthy-test');
 });
 
 it('不是 Git 仓库或目录已不存在时没有分支，也列不出、切不了', async () => {
@@ -47,7 +47,7 @@ function commit(message = 'x'): void {
 }
 
 it('分离 HEAD 时没有分支名', async () => {
-  git('init', '-b', 'dela-test');
+  git('init', '-b', 'wilthy-test');
   commit();
   git('checkout', '--detach');
   await expect(gitBranchOf(root)).resolves.toBeNull();

@@ -17,8 +17,8 @@ describe('parseChatBlocks', () => {
     expect(parseChatBlocks('![外链](https://example.com/a.png)')).toEqual([
       { type: 'text', text: '![外链](https://example.com/a.png)' },
     ]);
-    expect(parseChatBlocks('![损坏](dela-img:not-a-uuid)')).toEqual([
-      { type: 'text', text: '![损坏](dela-img:not-a-uuid)' },
+    expect(parseChatBlocks('![损坏](wilthy-img:not-a-uuid)')).toEqual([
+      { type: 'text', text: '![损坏](wilthy-img:not-a-uuid)' },
     ]);
   });
 });

@@ -86,7 +86,7 @@ function serializeBody(editor: HTMLDivElement): { html: string; text: string } {
       continue;
     }
     if (element instanceof HTMLImageElement) {
-      const id = element.dataset.delaInline;
+      const id = element.dataset.wilthyInline;
       if (!id) {
         element.remove();
         continue;
@@ -94,7 +94,7 @@ function serializeBody(editor: HTMLDivElement): { html: string; text: string } {
       const alt = element.alt;
       for (const attribute of Array.from(element.attributes))
         element.removeAttribute(attribute.name);
-      element.src = `cid:${id}@dela`;
+      element.src = `cid:${id}@wilthy`;
       element.alt = alt;
       continue;
     }
@@ -154,12 +154,12 @@ function draftBody(draft: PreparedEmail): HTMLDivElement {
     if (['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT'].includes(source.tagName)) return;
     if (source.tagName === 'IMG') {
       const file = draft.files.find(
-        (file) => source.getAttribute('src') === `cid:${file.id}@dela` && file.kind === 'inline',
+        (file) => source.getAttribute('src') === `cid:${file.id}@wilthy` && file.kind === 'inline',
       );
       if (file?.previewUrl) {
         const image = document.createElement('img');
         image.src = file.previewUrl;
-        image.dataset.delaInline = file.id;
+        image.dataset.wilthyInline = file.id;
         image.alt = source.getAttribute('alt') ?? '';
         target.appendChild(image);
       }
@@ -207,7 +207,7 @@ export function MailComposer({
   className,
   embedded = false,
 }: Props) {
-  const dela = window.dela!;
+  const wilthy = window.wilthy!;
   const queryClient = useQueryClient();
   const editorRef = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<Range | null>(null);
@@ -301,12 +301,12 @@ export function MailComposer({
     };
     window.addEventListener('beforeunload', preventUnload);
     void mailClient.setComposeActive(true);
-    const unsubscribe = subscribe(mailContract, dela.bridge, 'requestClose', (quitting) => {
+    const unsubscribe = subscribe(mailContract, wilthy.bridge, 'requestClose', (quitting) => {
       const close = () => {
         window.removeEventListener('beforeunload', preventUnload);
         void mailClient.setComposeActive(false).then(() => {
-          if (quitting) dela.window.quit();
-          else dela.window.close();
+          if (quitting) wilthy.window.quit();
+          else wilthy.window.close();
         });
       };
       if (!leaveComposer(close)) return;
@@ -317,7 +317,7 @@ export function MailComposer({
       window.removeEventListener('beforeunload', preventUnload);
       void mailClient.setComposeActive(false);
     };
-  }, [dela]);
+  }, [wilthy]);
 
   // 附件暂存仅在发送成功后由主进程释放，其余路径靠卸载释放；StrictMode 假卸载时编辑器仍在文档里，不释放。
   const composeFileIds = useEffectEvent(() => files.map((file) => file.id));
@@ -426,7 +426,7 @@ export function MailComposer({
         const image = document.createElement('img');
         image.src = file.previewUrl;
         image.alt = file.name;
-        image.dataset.delaInline = file.id;
+        image.dataset.wilthyInline = file.id;
         range.insertNode(image);
         range.setStartAfter(image);
         range.collapse(true);
@@ -459,7 +459,7 @@ export function MailComposer({
           const imageElement = document.createElement('img');
           imageElement.src = picked.previewUrl;
           imageElement.alt = picked.name;
-          imageElement.dataset.delaInline = picked.id;
+          imageElement.dataset.wilthyInline = picked.id;
           range.insertNode(imageElement);
           range.setStartAfter(imageElement);
           range.collapse(true);
@@ -480,11 +480,12 @@ export function MailComposer({
 
   const removeFile = (id: string) => {
     const editor = editorRef.current;
-    editor?.querySelector(`img[data-dela-inline="${CSS.escape(id)}"]`)?.remove();
+    editor?.querySelector(`img[data-wilthy-inline="${CSS.escape(id)}"]`)?.remove();
     setFiles((current) => current.filter((file) => file.id !== id));
     void mailClient.releaseComposeFiles([id]);
     setBodyHasContent(
-      Boolean(editor?.innerText.trim()) || Boolean(editor?.querySelector('img[data-dela-inline]')),
+      Boolean(editor?.innerText.trim()) ||
+        Boolean(editor?.querySelector('img[data-wilthy-inline]')),
     );
   };
 
@@ -496,8 +497,8 @@ export function MailComposer({
 
   const handleEditorInput = () => {
     const activeInlineIds = new Set(
-      [...(editorRef.current?.querySelectorAll<HTMLImageElement>('img[data-dela-inline]') ?? [])]
-        .map((image) => image.dataset.delaInline)
+      [...(editorRef.current?.querySelectorAll<HTMLImageElement>('img[data-wilthy-inline]') ?? [])]
+        .map((image) => image.dataset.wilthyInline)
         .filter((id): id is string => Boolean(id)),
     );
     setFiles((current) => {
@@ -511,7 +512,7 @@ export function MailComposer({
     });
     setBodyHasContent(
       Boolean(editorRef.current?.innerText.trim()) ||
-        Boolean(editorRef.current?.querySelector('img[data-dela-inline]')),
+        Boolean(editorRef.current?.querySelector('img[data-wilthy-inline]')),
     );
     saveSelection();
   };
@@ -520,7 +521,7 @@ export function MailComposer({
     const editor = editorRef.current;
     const accelerator = acceleratorFromEvent(
       event.nativeEvent,
-      window.dela?.platform === 'darwin' ? 'mac' : 'other',
+      window.wilthy?.platform === 'darwin' ? 'mac' : 'other',
     );
     if (accelerator === 'Mod+B') {
       event.preventDefault();

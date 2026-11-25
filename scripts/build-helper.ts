@@ -1,4 +1,4 @@
-// 静态链接（CGO_ENABLED=0）、不带本机路径（-trimpath）；产物放 vendor/dela-helper/，随 Dela 分发。
+// 静态链接（CGO_ENABLED=0）、不带本机路径（-trimpath）；产物放 vendor/wilthy-helper/，随 Wilthy 分发。
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, statSync } from 'node:fs';
@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const outDir = join(root, 'vendor', 'dela-helper');
+const outDir = join(root, 'vendor', 'wilthy-helper');
 const targets = process.argv.includes('--all')
   ? [
       ['linux', 'amd64'],
@@ -23,7 +23,7 @@ console.log(probe.stdout.trim());
 
 mkdirSync(outDir, { recursive: true });
 for (const [goos, goarch] of targets) {
-  const name = `dela-helper-${goos}-${goarch}`;
+  const name = `wilthy-helper-${goos}-${goarch}`;
   const out = join(outDir, name);
   const build = spawnSync('go', ['build', '-trimpath', '-ldflags', '-s -w', '-o', out, './'], {
     cwd: join(root, 'helper'),

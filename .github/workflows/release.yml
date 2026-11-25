@@ -30,7 +30,7 @@ jobs:
       run:
         shell: bash
     env:
-      DELA_REMOTE_HOST: ''
+      WILTHY_REMOTE_HOST: ''
     steps:
       - uses: actions/checkout@v6
         with:
@@ -39,11 +39,11 @@ jobs:
       - uses: actions/download-artifact@v7
         with:
           name: helper-linux-amd64
-          path: vendor/dela-helper
+          path: vendor/wilthy-helper
       - uses: actions/download-artifact@v7
         with:
           name: helper-linux-arm64
-          path: vendor/dela-helper
+          path: vendor/wilthy-helper
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
@@ -102,27 +102,27 @@ jobs:
       - name: Verify signatures, notarization and archives
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: node scripts/verify-macos-package.ts dist/mac-arm64/Dela.app --signed
+        run: node scripts/verify-macos-package.ts dist/mac-arm64/Wilthy.app --signed
       - name: Verify update artifacts
         run: |
-          test -f dist/mac-arm64/Dela.app/Contents/Resources/app-update.yml
+          test -f dist/mac-arm64/Wilthy.app/Contents/Resources/app-update.yml
           test -f dist/latest-mac.yml || test -f dist/mac-arm64/latest-mac.yml
           # electron-updater 的差量更新按 zip 直链 + .blockmap 探测，缺了就退回全量下载。
-          test -f dist/Dela-*-mac-arm64.zip.blockmap
+          test -f dist/Wilthy-*-mac-arm64.zip.blockmap
       - name: Smoke test signed app
-        run: node scripts/ci-smoke.ts "Signed macOS app" dist/mac-arm64/Dela.app/Contents/MacOS/Dela --smoke-test
+        run: node scripts/ci-smoke.ts "Signed macOS app" dist/mac-arm64/Wilthy.app/Contents/MacOS/Wilthy --smoke-test
       - name: Record artifact checksums and source
         run: |
           cd dist
-          shasum -a 256 Dela-*-mac-arm64.dmg Dela-*-mac-arm64.zip > SHA256SUMS-mac-arm64
+          shasum -a 256 Wilthy-*-mac-arm64.dmg Wilthy-*-mac-arm64.zip > SHA256SUMS-mac-arm64
           git rev-parse HEAD > source-commit-mac-arm64.txt
       - uses: actions/upload-artifact@v6
         with:
           name: installer-mac-arm64
           path: |
-            dist/Dela-*-mac-arm64.dmg
-            dist/Dela-*-mac-arm64.zip
-            dist/Dela-*-mac-arm64.zip.blockmap
+            dist/Wilthy-*-mac-arm64.dmg
+            dist/Wilthy-*-mac-arm64.zip
+            dist/Wilthy-*-mac-arm64.zip.blockmap
             dist/latest-mac.yml
             dist/mac-arm64/latest-mac.yml
             dist/SHA256SUMS-mac-arm64
@@ -196,7 +196,7 @@ jobs:
         shell: bash
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-      DELA_REMOTE_HOST: ''
+      WILTHY_REMOTE_HOST: ''
     steps:
       - uses: actions/checkout@v6
         with:
@@ -205,11 +205,11 @@ jobs:
       - uses: actions/download-artifact@v7
         with:
           name: helper-linux-amd64
-          path: vendor/dela-helper
+          path: vendor/wilthy-helper
       - uses: actions/download-artifact@v7
         with:
           name: helper-linux-arm64
-          path: vendor/dela-helper
+          path: vendor/wilthy-helper
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
@@ -232,20 +232,20 @@ jobs:
       - name: Verify update artifacts
         run: |
           test -f dist/win-unpacked/resources/app-update.yml
-          test -f "dist/Dela-${RELEASE_TAG#v}-win-x64.exe"
-          test -f "dist/Dela-${RELEASE_TAG#v}-win-x64.exe.blockmap"
+          test -f "dist/Wilthy-${RELEASE_TAG#v}-win-x64.exe"
+          test -f "dist/Wilthy-${RELEASE_TAG#v}-win-x64.exe.blockmap"
           if [[ "$RELEASE_TAG" != *-* ]]; then test -f dist/latest.yml; fi
         env:
           RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
       - name: Verify packaged helper
         run: |
-          cmp vendor/dela-helper/dela-helper-linux-amd64 dist/win-unpacked/resources/dela-helper/dela-helper-linux-amd64
-          cmp vendor/dela-helper/dela-helper-linux-arm64 dist/win-unpacked/resources/dela-helper/dela-helper-linux-arm64
+          cmp vendor/wilthy-helper/wilthy-helper-linux-amd64 dist/win-unpacked/resources/wilthy-helper/wilthy-helper-linux-amd64
+          cmp vendor/wilthy-helper/wilthy-helper-linux-arm64 dist/win-unpacked/resources/wilthy-helper/wilthy-helper-linux-arm64
           cmp .build/remote-rg/rg-linux-amd64 dist/win-unpacked/resources/remote-rg/rg-linux-amd64
           cmp .build/remote-rg/rg-linux-arm64 dist/win-unpacked/resources/remote-rg/rg-linux-arm64
       - name: Smoke test packaged app
         env:
-          PACKAGED_EXECUTABLE: dist/win-unpacked/Dela.exe
+          PACKAGED_EXECUTABLE: dist/win-unpacked/Wilthy.exe
         run: '"$PACKAGED_EXECUTABLE" --smoke-test'
       - uses: actions/upload-artifact@v6
         with:

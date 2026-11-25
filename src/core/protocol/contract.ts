@@ -98,7 +98,7 @@ export function createClient<C extends Contract>(
   bridge: Bridge | undefined,
 ): Client<C> {
   const call = async (name: string, input: unknown) => {
-    if (!bridge) throw new Error('请在 Dela 桌面端使用');
+    if (!bridge) throw new Error('请在 Wilthy 桌面端使用');
     try {
       return await bridge.invoke(`${contract.namespace}:${name}`, input);
     } catch (error) {

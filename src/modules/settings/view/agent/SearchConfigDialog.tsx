@@ -70,7 +70,7 @@ export function SearchConfigDialog({ onClose }: { onClose: () => void }) {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const remove = async (id: string) => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     setBusy(true);
     try {
       setEntries(await capabilitiesClient.removeWebSearchEntry(id));
@@ -218,7 +218,7 @@ function EntryForm({
   const [sourceId, setSourceId] = useState('');
 
   const save = async () => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     onBusy(true);
     const base = { id: draft.id, name: name.trim() };
     const saveEntry = async () => {
@@ -274,7 +274,7 @@ function EntryForm({
   };
 
   const importKey = async (id?: string) => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     onBusy(true);
     onError(null);
     const importFromProvider = async () => {

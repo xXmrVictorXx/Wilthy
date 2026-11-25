@@ -1,4 +1,4 @@
-// 远端文件只读预览：字节不能整篇进内存，文本/图片只读限长片段，PDF/Office 经 dela-resource 按 Range 拉取。
+// 远端文件只读预览：字节不能整篇进内存，文本/图片只读限长片段，PDF/Office 经 wilthy-resource 按 Range 拉取。
 import {
   TEXT_EDIT_MAX_BYTES,
   TEXT_PREVIEW_MAX_BYTES,
@@ -18,7 +18,7 @@ function remoteDocumentTitle(path: string): string {
 
 function remotePreviewUrl(projectId: string, path: string, revision: string): string {
   const query = `path=${encodeURIComponent(path)}&v=${encodeURIComponent(revision)}`;
-  return `dela-resource://remote/${encodeURIComponent(projectId)}?${query}`;
+  return `wilthy-resource://remote/${encodeURIComponent(projectId)}?${query}`;
 }
 
 export function remoteDocumentMime(path: string): string {

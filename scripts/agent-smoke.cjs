@@ -1,5 +1,5 @@
 // 真实应用、独立用户目录：验证 agent 基座的工作区闭环（需要真实模型服务）。
-// 用法：DELA_SMOKE_BASE_URL=… DELA_SMOKE_API_KEY=… DELA_SMOKE_MODEL=… electron scripts/agent-smoke.cjs
+// 用法：WILTHY_SMOKE_BASE_URL=… WILTHY_SMOKE_API_KEY=… WILTHY_SMOKE_MODEL=… electron scripts/agent-smoke.cjs
 // 覆盖：两个项目各自的会话 cwd、项目内读改写、@ 引用文件、跨项目不串、重开会话后续聊（上下文来自 Pi JSONL）。
 const { app } = require('electron');
 const { join, resolve } = require('node:path');
@@ -8,10 +8,10 @@ const { tmpdir } = require('node:os');
 const assert = require('node:assert/strict');
 
 const env = process.env;
-for (const key of ['DELA_SMOKE_BASE_URL', 'DELA_SMOKE_API_KEY', 'DELA_SMOKE_MODEL'])
+for (const key of ['WILTHY_SMOKE_BASE_URL', 'WILTHY_SMOKE_API_KEY', 'WILTHY_SMOKE_MODEL'])
   if (!env[key]) throw new Error(`缺少环境变量 ${key}`);
 const root = resolve(process.argv[2] || '.');
-const profile = mkdtempSync(join(tmpdir(), 'dela-agent-smoke-'));
+const profile = mkdtempSync(join(tmpdir(), 'wilthy-agent-smoke-'));
 for (const name of ['userData', 'documents', 'home']) app.setPath(name, profile);
 process.argv.push('--terminal-smoke-test');
 
@@ -34,20 +34,20 @@ async function run(window) {
   const js = (source) => window.webContents.executeJavaScript(source);
   const call = (expression) => js(`(async () => ${expression})()`);
   await call(
-    `window.dela.bridge.invoke('llm:save', ${JSON.stringify({
+    `window.wilthy.bridge.invoke('llm:save', ${JSON.stringify({
       name: 'smoke',
-      baseUrl: env.DELA_SMOKE_BASE_URL,
-      apiKey: env.DELA_SMOKE_API_KEY,
-      models: [env.DELA_SMOKE_MODEL],
+      baseUrl: env.WILTHY_SMOKE_BASE_URL,
+      apiKey: env.WILTHY_SMOKE_API_KEY,
+      models: [env.WILTHY_SMOKE_MODEL],
     })})`,
   );
   const alpha = await call(
-    `window.dela.bridge.invoke('workspace:create', { parentId: null, name: 'alpha', kind: 'project' })`,
+    `window.wilthy.bridge.invoke('workspace:create', { parentId: null, name: 'alpha', kind: 'project' })`,
   );
   const beta = await call(
-    `window.dela.bridge.invoke('workspace:create', { parentId: null, name: 'beta', kind: 'project' })`,
+    `window.wilthy.bridge.invoke('workspace:create', { parentId: null, name: 'beta', kind: 'project' })`,
   );
-  const state = await call(`window.dela.bridge.invoke('workspace:state')`);
+  const state = await call(`window.wilthy.bridge.invoke('workspace:state')`);
   const dirOf = (id) => state.entries.find((entry) => entry.id === id).path;
   const alphaDir = dirOf(alpha.id);
   const betaDir = dirOf(beta.id);
@@ -55,7 +55,7 @@ async function run(window) {
 
   const ask = async (sessionId, text, context = []) => {
     const chat = await call(
-      `window.dela.bridge.invoke('agent:ask', ${JSON.stringify({ sessionId, text, attachments: [], context })})`,
+      `window.wilthy.bridge.invoke('agent:ask', ${JSON.stringify({ sessionId, text, attachments: [], context })})`,
     );
     const reply = chat.messages.at(-1);
     console.log(
@@ -69,7 +69,7 @@ async function run(window) {
   };
 
   const a = await call(
-    `window.dela.bridge.invoke('agent:create-session', ${JSON.stringify({ projectId: alpha.id, scope: 'chat' })})`,
+    `window.wilthy.bridge.invoke('agent:create-session', ${JSON.stringify({ projectId: alpha.id, scope: 'chat' })})`,
   );
   assert.equal(a.cwd, alphaDir);
   await ask(
@@ -82,7 +82,7 @@ async function run(window) {
   assert.ok(!existsSync(join(betaDir, 'todo.md')), 'todo.md 不应出现在 beta');
 
   const b = await call(
-    `window.dela.bridge.invoke('agent:create-session', ${JSON.stringify({ projectId: beta.id, scope: 'chat' })})`,
+    `window.wilthy.bridge.invoke('agent:create-session', ${JSON.stringify({ projectId: beta.id, scope: 'chat' })})`,
   );
   assert.equal(b.cwd, betaDir);
   await ask(b.sessionId, '在当前项目新建 hello.txt，内容是 beta。');
@@ -92,7 +92,7 @@ async function run(window) {
   const followUp = await ask(a.sessionId, '刚才你在 todo.md 里写了什么？只回答那一行内容。');
   assert.match(followUp.messages.at(-1).content, /ship it/i);
   const reopened = await call(
-    `window.dela.bridge.invoke('agent:open-session', ${JSON.stringify({ sessionId: a.sessionId })})`,
+    `window.wilthy.bridge.invoke('agent:open-session', ${JSON.stringify({ sessionId: a.sessionId })})`,
   );
   assert.equal(reopened.messages.filter((m) => m.role === 'user').length, 2);
   assert.equal(reopened.projectId, alpha.id);

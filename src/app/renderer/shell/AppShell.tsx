@@ -62,8 +62,8 @@ import {
 } from '../../../ui/dialog';
 import { errorMessage } from '../../../core/protocol/contract';
 
-const platform = window.dela?.platform === 'darwin' ? 'mac' : 'other';
-const fileManagerName = window.dela?.platform === 'darwin' ? 'Finder' : '资源管理器';
+const platform = window.wilthy?.platform === 'darwin' ? 'mac' : 'other';
+const fileManagerName = window.wilthy?.platform === 'darwin' ? 'Finder' : '资源管理器';
 
 const labelFade = 'transition-opacity duration-slow ease-out';
 
@@ -97,26 +97,26 @@ function WindowControls() {
   const queryClient = useQueryClient();
   const windowState = useQuery({
     queryKey: ['window', 'state'],
-    queryFn: () => window.dela!.window.getState(),
-    enabled: Boolean(window.dela),
+    queryFn: () => window.wilthy!.window.getState(),
+    enabled: Boolean(window.wilthy),
   });
   const maximized = windowState.data?.maximized ?? false;
   useEffect(
     () =>
-      window.dela?.window.onStateChange((state) =>
+      window.wilthy?.window.onStateChange((state) =>
         queryClient.setQueryData(['window', 'state'], state),
       ),
     [queryClient],
   );
 
-  if (!window.dela || platform === 'mac') return null;
+  if (!window.wilthy || platform === 'mac') return null;
 
   return (
     <div className="[-webkit-app-region:no-drag] flex h-full">
       <button
         aria-label="最小化"
         className="grid h-full w-12 place-items-center text-ink-2 transition-colors duration-base hover:bg-hover-strong hover:text-ink"
-        onClick={() => window.dela?.window.minimize()}
+        onClick={() => window.wilthy?.window.minimize()}
         type="button"
       >
         <Minus className="size-4" strokeWidth={1.8} />
@@ -124,7 +124,7 @@ function WindowControls() {
       <button
         aria-label={maximized ? '还原' : '最大化'}
         className="grid h-full w-12 place-items-center text-ink-2 transition-colors duration-base hover:bg-hover-strong hover:text-ink"
-        onClick={() => window.dela?.window.toggleMaximize()}
+        onClick={() => window.wilthy?.window.toggleMaximize()}
         type="button"
       >
         {maximized ? (
@@ -136,7 +136,7 @@ function WindowControls() {
       <button
         aria-label="关闭"
         className="grid h-full w-12 place-items-center text-ink-2 transition-colors duration-base hover:bg-window-close hover:text-on-accent"
-        onClick={() => window.dela?.window.close()}
+        onClick={() => window.wilthy?.window.close()}
         type="button"
       >
         <X className="size-4" strokeWidth={1.8} />
@@ -236,7 +236,7 @@ export function AppShell({
   const sourcesActive = view === 'workbench' && projectId === null && !activeTabIsChat;
 
   const openProjectDirectory = (target: 'vscode' | 'explorer') => {
-    if (view !== 'workbench' || !projectId || !window.dela) return;
+    if (view !== 'workbench' || !projectId || !window.wilthy) return;
     const effective: 'vscode' | 'explorer' = projectIsRemote ? 'vscode' : target;
     if (effective === target) setPreference('projectOpenTarget', target);
     void workspaceClient
@@ -475,7 +475,7 @@ export function AppShell({
               </Button>
             </div>
           )}
-          {view === 'workbench' && projectId && window.dela && (
+          {view === 'workbench' && projectId && window.wilthy && (
             <div className="[-webkit-app-region:no-drag] flex shrink-0 items-center gap-1 px-2">
               <SplitButton>
                 <SplitButtonAction
@@ -525,7 +525,7 @@ export function AppShell({
               </Button>
             </div>
           )}
-          {view === 'workbench' && projectId === null && window.dela && (
+          {view === 'workbench' && projectId === null && window.wilthy && (
             <Button
               variant="ghost"
               size="icon-sm"
@@ -616,7 +616,7 @@ export function AppShell({
                 sidebarCollapsed && 'opacity-0',
               )}
             >
-              Dela
+              Wilthy
             </span>
             <div className="flex-1" />
             <Button

@@ -1,6 +1,6 @@
 import type { TabId } from '../../../core/protocol/workbench';
 
-export const tabDragType = 'application/x-dela-tab';
+export const tabDragType = 'application/x-wilthy-tab';
 
 export interface TabDragPayload {
   tabId: TabId;

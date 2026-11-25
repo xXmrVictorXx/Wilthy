@@ -52,7 +52,7 @@ export const useSessions = create<SessionsState>((set, get) => {
     homeSessionId: null,
     refreshTimers: {},
     refresh: async (projectId) => {
-      if (typeof window === 'undefined' || !window.dela) return;
+      if (typeof window === 'undefined' || !window.wilthy) return;
       const sessions = await agentClient['list-sessions']({ projectId });
       set((state) => ({ lists: { ...state.lists, [poolKey(projectId)]: sessions } }));
     },
@@ -78,7 +78,7 @@ export function querySessions(
   projectId: string | null,
   query: string,
 ): Promise<ChatSessionSummary[]> {
-  return typeof window !== 'undefined' && window.dela
+  return typeof window !== 'undefined' && window.wilthy
     ? agentClient['list-sessions']({ projectId, query })
     : Promise.resolve([]);
 }
@@ -139,7 +139,7 @@ export async function updateSession(
   sessionId: string,
   patch: { archived?: boolean; pinned?: boolean },
 ): Promise<void> {
-  if (!window.dela) throw new Error('会话管理仅在桌面端可用');
+  if (!window.wilthy) throw new Error('会话管理仅在桌面端可用');
   await chatClient.update({ id: sessionId, patch });
   await refreshSessionLists();
 }

@@ -9,7 +9,7 @@ export function MagpieControl() {
     <div className="grid gap-2">
       <SettingsGroup settingId="magpie">
         <SettingRow
-          description="由 magpie 统一管理 Dela 的模型、MCP 服务器和 Skills。"
+          description="由 magpie 统一管理 Wilthy 的模型、MCP 服务器和 Skills。"
           settingId="magpie-plugin"
           title="magpie 插件"
         >

@@ -58,7 +58,7 @@ function createDb(): Database.Database {
 }
 
 beforeEach(() => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-remote-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-remote-'));
   state.db = createDb();
   provideTestHostPorts({ database: () => state.db!, projects: workspaceProjects });
   state.locate.mockReset();

@@ -116,10 +116,10 @@ function migrateMcpServers(sealed: unknown, mcp: JsonObject): boolean {
   return true;
 }
 
-/** 模型服务、联网搜索与 MCP 移到 ~/.dela 下的明文 JSON，供用户和 magpie 等工具直接管理。
+/** 模型服务、联网搜索与 MCP 移到 ~/.wilthy 下的明文 JSON，供用户和 magpie 等工具直接管理。
  *  不覆盖文件里已有的键，可重复执行；解不开或读不懂的旧数据原样保留。 */
 export function v12tov13(db: Database.Database, { userData, home, seal }: MigrationContext): void {
-  const directory = join(home, '.dela');
+  const directory = join(home, '.wilthy');
   const configPath = join(directory, 'config.json');
   const mcpPath = join(directory, 'mcp.json');
   const config = readJson(configPath);

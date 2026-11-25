@@ -183,7 +183,7 @@ export function ChatComposer({
   const providerQuery = useQuery({
     queryKey: ['llm', 'list'],
     queryFn: () => llmClient.list(),
-    enabled: Boolean(window.dela) && modelPickerOpen,
+    enabled: Boolean(window.wilthy) && modelPickerOpen,
   });
   const providers = providerQuery.data?.filter((view) => view.enabled) ?? null;
   const providersFailed = providerQuery.isError;
@@ -199,7 +199,7 @@ export function ChatComposer({
   const searchQuery = useQuery({
     queryKey: webSearchOptionsKey,
     queryFn: () => capabilitiesClient.listWebSearchOptions(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   });
   const searchEntries = searchQuery.data?.entries ?? null;
   const searchSelectedId = searchQuery.data?.selectedId ?? null;
@@ -215,7 +215,7 @@ export function ChatComposer({
     menu?.kind === 'slash'
       ? [
           ...(customCommands ?? []).map((command) => ({ ...command, hint: '自定义' })),
-          // Dela 的会话命令：插入 `/name ` 留给参数，发送时由 use-chat 拦下执行。
+          // Wilthy 的会话命令：插入 `/name ` 留给参数，发送时由 use-chat 拦下执行。
           // 旁问里没有会话命令：发出去就是普通提问。
           ...(sidechat ? [] : SESSION_COMMANDS).map((command) => ({
             name: command.name,
@@ -282,7 +282,7 @@ export function ChatComposer({
   };
 
   const addFiles = async (files: File[], pos: number) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     let insertPos = pos;
     // 闭包里的 value 不含本轮已插入的 token，循环内自计数防止批量拖入绕过上限。
     let imageCount = matchChatImageTokens(value).length;
@@ -315,7 +315,7 @@ export function ChatComposer({
   };
 
   const pickFiles = () => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     void chatClient
       .pickMedia()
       .then((views) => {
@@ -390,7 +390,7 @@ export function ChatComposer({
   };
 
   const selectSearchEntry = async (id: string | null) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     try {
       await capabilitiesClient.selectWebSearchEntry(id);
       void refreshSearch();

@@ -26,7 +26,7 @@ requestAnimationFrame(frame);
 let firstBodyMs: number | null = null;
 window.addEventListener('message', (event) => {
   if (
-    event.data?.source === 'dela-frame-height' &&
+    event.data?.source === 'wilthy-frame-height' &&
     event.data.height > 48 &&
     firstBodyMs === null
   ) {

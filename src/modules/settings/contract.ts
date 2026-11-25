@@ -67,7 +67,7 @@ export type BackupResult =
   /** skipped 是没复制成功的顶层条目名；原因不止被占用，所以只回报名字，不断言原因。 */
   | { status: 'exported'; path: string; skipped: string[] }
   | { status: 'cancelled' }
-  /** 选定的位置不能用（例如落在 Dela 自己的数据目录里），reason 直接给用户看。 */
+  /** 选定的位置不能用（例如落在 Wilthy 自己的数据目录里），reason 直接给用户看。 */
   | { status: 'failed'; reason: string };
 
 export interface CacheClearResult {

@@ -48,16 +48,17 @@ function HtmlFrame({
   useFrameMessages((event) => {
     if (event.source !== frameRef.current?.contentWindow) return;
     const data = event.data as FrameMessage | null;
-    if (data?.source === 'dela-frame-height' && typeof data.height === 'number')
+    if (data?.source === 'wilthy-frame-height' && typeof data.height === 'number')
       setHeight(Math.max(0, Math.ceil(data.height)));
-    else if (data?.source === 'dela-frame-link' && typeof data.href === 'string') onLink(data.href);
+    else if (data?.source === 'wilthy-frame-link' && typeof data.href === 'string')
+      onLink(data.href);
     else if (
-      data?.source === 'dela-frame-image' &&
+      data?.source === 'wilthy-frame-image' &&
       typeof data.src === 'string' &&
       typeof data.alt === 'string'
     )
       openLightbox(data.src, data.alt);
-    else if (data?.source === 'dela-frame-scroll' && typeof data.top === 'number')
+    else if (data?.source === 'wilthy-frame-scroll' && typeof data.top === 'number')
       onScroll?.(data.top);
   });
 
@@ -68,7 +69,7 @@ function HtmlFrame({
       onLoad={(event) => {
         if (initialScroll)
           event.currentTarget.contentWindow?.postMessage(
-            { source: 'dela-frame-scroll-to', top: initialScroll() },
+            { source: 'wilthy-frame-scroll-to', top: initialScroll() },
             '*',
           );
       }}

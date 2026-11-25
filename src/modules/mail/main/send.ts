@@ -244,7 +244,7 @@ export async function sendMailMessage(
         ...inlineImages.map((file) => ({
           filename: file.name,
           ...attachmentSource(file),
-          cid: `${file.id}@dela`,
+          cid: `${file.id}@wilthy`,
         })),
       ],
     };

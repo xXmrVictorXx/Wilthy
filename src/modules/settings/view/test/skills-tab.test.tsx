@@ -13,7 +13,7 @@ const { api, bridge } = vi.hoisted(() => {
     invoke: async (channel: string, input: never) => api[channel]!(input),
     subscribe: () => () => {},
   };
-  window.dela = { bridge } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { bridge } as unknown as NonNullable<typeof window.wilthy>;
   return { api, bridge };
 });
 import { dismissToast, toasts } from '../../../../ui/toast';
@@ -27,8 +27,8 @@ const skill = {
   name: 'lint',
   description: '代码检查',
   enabled: true,
-  path: '/home/u/.dela/skills/lint/SKILL.md',
-  id: '/home/u/.dela/skills/lint/SKILL.md',
+  path: '/home/u/.wilthy/skills/lint/SKILL.md',
+  id: '/home/u/.wilthy/skills/lint/SKILL.md',
   origin: 'user' as const,
 };
 
@@ -52,7 +52,7 @@ const localProject: WorkspaceEntry = {
 
 const state = (entries: WorkspaceEntry[]): WorkspaceState => ({
   entries,
-  directory: '/tmp/dela',
+  directory: '/tmp/wilthy',
 });
 
 function buttonByText(text: string): HTMLButtonElement {
@@ -75,7 +75,7 @@ afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
   for (const toast of toasts()) dismissToast(toast.id);
-  delete window.dela;
+  delete window.wilthy;
   vi.unstubAllGlobals();
 });
 
@@ -94,7 +94,7 @@ async function renderTab() {
 
 function stubCapabilities(handlers: Record<string, (input: never) => unknown>) {
   for (const [name, handler] of Object.entries(handlers)) api[`capabilities:${name}`] = handler;
-  window.dela = { bridge } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { bridge } as unknown as NonNullable<typeof window.wilthy>;
 }
 
 async function openDialog(

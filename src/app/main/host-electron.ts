@@ -71,7 +71,7 @@ function readSealed(namespace: SecretNamespace): string | null {
 
 /** 开发时的位置：helper 与 OpenSSH 入库在 vendor/，rg 由 fetch:remote-rg 下载到 .build/。 */
 const bundledInRepo: Record<BundledResource, string> = {
-  'dela-helper': join('vendor', 'dela-helper'),
+  'wilthy-helper': join('vendor', 'wilthy-helper'),
   'remote-rg': join('.build', 'remote-rg'),
   openssh: join('vendor', 'openssh'),
 };

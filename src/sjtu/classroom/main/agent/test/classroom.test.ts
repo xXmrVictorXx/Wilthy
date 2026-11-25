@@ -14,7 +14,7 @@ vi.mock('../../api', async () => ({
 let directory: string;
 beforeEach(async () => {
   vi.clearAllMocks();
-  directory = await mkdtemp(join(tmpdir(), 'dela-transcript-'));
+  directory = await mkdtemp(join(tmpdir(), 'wilthy-transcript-'));
   vi.mocked(getTranscript).mockResolvedValue({
     videoId: 11,
     segments: [

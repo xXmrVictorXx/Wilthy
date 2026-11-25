@@ -7,7 +7,7 @@ import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import type { StoredLlmProvider } from '../llm-config';
 import { mockFrames, type MockOpenAiServer, type RecordedRequest } from './mock-openai-server';
 
-const root = mkdtempSync(join(tmpdir(), 'dela-task-notice-'));
+const root = mkdtempSync(join(tmpdir(), 'wilthy-task-notice-'));
 const state = vi.hoisted(() => ({
   db: null as Database.Database | null,
   provider: null as StoredLlmProvider | null,

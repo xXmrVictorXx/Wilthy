@@ -7,9 +7,9 @@ import type { ContextUsageView } from '../../../../core/protocol/agent';
 
 // 契约客户端在模块加载时取 bridge，须先于导入装好。
 vi.hoisted(() => {
-  window.dela = {
+  window.wilthy = {
     bridge: { invoke: async () => undefined, subscribe: () => () => {} },
-  } as unknown as NonNullable<typeof window.dela>;
+  } as unknown as NonNullable<typeof window.wilthy>;
 });
 import { ChatComposer, cacheHitRateText } from '../ChatComposer';
 import type { ComposerEditor } from '../ComposerEditor';
@@ -125,7 +125,7 @@ afterEach(async () => {
   host.remove();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
-  delete window.dela;
+  delete window.wilthy;
 });
 
 it('命中率文本只在拿到两个累计字段且分母大于 0 时才算数，其余留空', () => {

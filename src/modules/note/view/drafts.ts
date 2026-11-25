@@ -62,7 +62,7 @@ export const useNoteDrafts = create<Store>((set, get) => {
       // force 语义是「强制重读磁盘」而非新持有入口（NoteTab 窗口聚焦刷新、App 会话终态
       // 刷新都复用它且无配对 release）：不计数，否则草稿被永久持有、重开时复用过期快照。
       if (!force) setHandle('refcounts', key, (get().refcounts[key] ?? 0) + 1);
-      if (!window.dela || (!force && get().drafts[key])) return;
+      if (!window.wilthy || (!force && get().drafts[key])) return;
       if (force && get().drafts[key]?.saving) {
         const pending = get().saving[key];
         if (!pending || !(await pending)) return;
@@ -159,7 +159,7 @@ export const useNoteDrafts = create<Store>((set, get) => {
           const draft = get().drafts[key];
           if (!draft) return true;
           if (draft.text === draft.saved) return true;
-          if (!window.dela) return false;
+          if (!window.wilthy) return false;
           if (!draft.content.revision) {
             const message = '此文档没有可用的保存版本。';
             set((s) => ({

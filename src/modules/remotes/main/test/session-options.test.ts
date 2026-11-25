@@ -1,4 +1,4 @@
-// 远程会话必须是「七个远程工具 + 本机工具（联网/MCP）」，且不能带 dela 命令桥：工具名一旦被
+// 远程会话必须是「七个远程工具 + 本机工具（联网/MCP）」，且不能带 wilthy 命令桥：工具名一旦被
 // excludeTools 过滤，同名覆盖就会失效，模型会拿远端路径调用 Pi 内置工具，在 Windows 上写到本地盘。
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ToolDefinition } from '@earendil-works/pi-coding-agent';
@@ -24,13 +24,13 @@ vi.mock('../../../../core/remote/context', () => ({
   syncRemoteContext: async () => ({
     skillPaths: [
       'C:\\data\\remote-context\\r1\\p-remote\\repo\\.agents\\skills',
-      'C:\\data\\remote-context\\r1\\p-remote\\home\\.dela\\skills',
+      'C:\\data\\remote-context\\r1\\p-remote\\home\\.wilthy\\skills',
     ],
     agentsFiles: [{ path: '/root/proj/AGENTS.md', content: '暗号：菠萝' }],
   }),
 }));
 vi.mock('../../../../core/capabilities/command-server', () => ({
-  COMMAND_BRIDGE: 'dela() { :; }',
+  COMMAND_BRIDGE: 'wilthy() { :; }',
   startDomainBridge: () => ({ url: 'http://127.0.0.1:1', token: 'token' }),
 }));
 vi.mock('../../../../core/capabilities/skills', () => ({
@@ -76,7 +76,7 @@ beforeEach(() => {
 });
 
 describe('远程会话环境', () => {
-  it('给七个远程工具加本机工具，且不带 dela 命令桥', async () => {
+  it('给七个远程工具加本机工具，且不带 wilthy 命令桥', async () => {
     const options = await agentEnvironment().sessionOptions('p-remote', '/root/proj');
     expect(names(options.customTools)).toEqual(
       [
@@ -96,7 +96,7 @@ describe('远程会话环境', () => {
     );
     expect(options.commandPrefix).toBeUndefined();
     expect(options.appendSystemPrompt.join('\n')).toContain('远端项目目录：/root/proj');
-    expect(options.appendSystemPrompt.join('\n')).not.toContain('dela help');
+    expect(options.appendSystemPrompt.join('\n')).not.toContain('wilthy help');
   });
 
   it('用户关掉的能力名单不会波及七个工具名', async () => {
@@ -115,7 +115,7 @@ describe('远程会话环境', () => {
 });
 
 describe('本地会话环境', () => {
-  it('保留 dela 命令桥与内置工具，不给远程工具', async () => {
+  it('保留 wilthy 命令桥与内置工具，不给远程工具', async () => {
     state.remote = false;
     const options = await agentEnvironment().sessionOptions('p-local', 'E:\\proj');
     expect(names(options.customTools)).toEqual([
@@ -125,6 +125,6 @@ describe('本地会话环境', () => {
       'web_fetch',
       'web_search',
     ]);
-    expect(options.commandPrefix).toContain('DELA_COMMAND_URL');
+    expect(options.commandPrefix).toContain('WILTHY_COMMAND_URL');
   });
 });

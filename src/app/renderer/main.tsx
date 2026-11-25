@@ -16,7 +16,7 @@ import './styles/globals.css';
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
 });
-const bridge = window.dela?.bridge;
+const bridge = window.wilthy?.bridge;
 if (bridge) connectQueryEvents(queryClient, bridge.queryEvents, bridge);
 for (const view of views) view.start?.(useNavigationStore.getState().navigate);
 useUpdateState.setState({ beforeInstall: saveWorkspace });

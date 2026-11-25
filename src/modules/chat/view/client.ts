@@ -5,7 +5,7 @@ import { llmContract } from '../../../core/protocol/llm';
 import { chatContract } from '../contract';
 
 // 会话 store 在模块加载时订阅事件，node 环境的测试也会加载到这里。
-const bridge = typeof window === 'undefined' ? undefined : window.dela?.bridge;
+const bridge = typeof window === 'undefined' ? undefined : window.wilthy?.bridge;
 
 export const agentClient = createClient(agentContract, bridge);
 export const chatClient = createClient(chatContract, bridge);

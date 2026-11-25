@@ -81,7 +81,7 @@ export function SidechatPanel({
 
   const send = async () => {
     const { prompt, comments = [] } = useChatDrafts.getState().drafts[key] ?? emptyDraft;
-    if (!window.dela || busy || !canSendInput(prompt, false, attachments.length, comments.length))
+    if (!window.wilthy || busy || !canSendInput(prompt, false, attachments.length, comments.length))
       return;
     const references = referenceContext(prompt, referenceOptions);
     const flushDrafts = async () => {
@@ -144,7 +144,7 @@ export function SidechatPanel({
   };
 
   const addAttachmentFile = async (file: File) => {
-    if (!window.dela) throw new Error('附件仅在桌面端可用');
+    if (!window.wilthy) throw new Error('附件仅在桌面端可用');
     if (attachments.length >= CHAT_ATTACHMENT_MAX)
       throw new Error(`附件最多 ${CHAT_ATTACHMENT_MAX} 个`);
     const limit =

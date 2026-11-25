@@ -59,14 +59,14 @@ export function updateView(state: UpdateSnapshot): UpdateView {
       };
     case 'ready':
       return {
-        status: '更新已下载，安装时将退出 Dela 并打开安装向导',
+        status: '更新已下载，安装时将退出 Wilthy 并打开安装向导',
         action: 'install',
         label: '安装更新',
         progress: null,
       };
     case 'installing':
       return {
-        status: '正在打开安装向导，Dela 即将退出',
+        status: '正在打开安装向导，Wilthy 即将退出',
         action: null,
         label: null,
         progress: null,
@@ -110,9 +110,9 @@ export const useUpdateState = create<UpdateState>(() => ({
 }));
 
 export function startUpdateMirror() {
-  if (!window.dela) return;
-  if (window.dela.updatedOnLaunch) {
-    showToast({ variant: 'success', title: `已更新至 Dela ${window.dela.version}` });
+  if (!window.wilthy) return;
+  if (window.wilthy.updatedOnLaunch) {
+    showToast({ variant: 'success', title: `已更新至 Wilthy ${window.wilthy.version}` });
   }
   const receive = (snapshot: UpdateSnapshot) => {
     const previous = useUpdateState.getState().snapshot;
@@ -147,7 +147,7 @@ export function startUpdateMirror() {
 // 安装前先跑外壳登记的保存，失败就不安装；保存期间由应用级弹窗阻止继续编辑。
 
 export async function runUpdateAction(action: UpdateAction): Promise<boolean> {
-  if (!window.dela) return false;
+  if (!window.wilthy) return false;
   if (action === 'install') {
     if (useUpdateState.getState().preparingInstall) return false;
     useUpdateState.setState({ preparingInstall: true });
@@ -200,7 +200,7 @@ export async function runUpdateAction(action: UpdateAction): Promise<boolean> {
 
 export async function deferInstall(): Promise<boolean> {
   try {
-    if (!window.dela) return false;
+    if (!window.wilthy) return false;
     await updateClient.deferInstall();
     return true;
   } catch (error) {

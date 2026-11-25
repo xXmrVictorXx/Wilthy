@@ -4,7 +4,7 @@ const invoke = vi.hoisted(() => {
   const invoke = vi.fn();
   Object.defineProperty(globalThis, 'window', {
     configurable: true,
-    value: { dela: { bridge: { invoke, subscribe: () => () => {} } } },
+    value: { wilthy: { bridge: { invoke, subscribe: () => () => {} } } },
   });
   return invoke;
 });

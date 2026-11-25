@@ -1,4 +1,4 @@
-// Skills 的发现、加载与注入由 Pi 完成；这里负责写入 Dela 内置 skill、给设置页列出可见 skill、维护禁用名单。
+// Skills 的发现、加载与注入由 Pi 完成；这里负责写入 Wilthy 内置 skill、给设置页列出可见 skill、维护禁用名单。
 // 设置页按来处分组：内置、本机目录、每个本地项目；项目的按 SKILL.md 路径开关。
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -11,7 +11,7 @@ import { builtinSkills } from './commands';
 const SKILL_ENTRY_FILE = 'SKILL.md';
 
 export function builtinSkillsDirectory(): string {
-  return join(hostPorts().paths.home(), '.dela', 'skills');
+  return join(hostPorts().paths.home(), '.wilthy', 'skills');
 }
 
 export function globalSkillDirectories(): string[] {
@@ -19,7 +19,7 @@ export function globalSkillDirectories(): string[] {
 }
 
 let builtinEnsured = false;
-/** 进程内首次使用时把内置 Skill 覆写到 ~/.dela/skills（与 dela 命令面强绑定，用户的编辑会被还原）；先比后写，避开文件被占用。 */
+/** 进程内首次使用时把内置 Skill 覆写到 ~/.wilthy/skills（与 wilthy 命令面强绑定，用户的编辑会被还原）；先比后写，避开文件被占用。 */
 export function ensureBuiltinSkills(): void {
   if (builtinEnsured) return;
   builtinEnsured = true;

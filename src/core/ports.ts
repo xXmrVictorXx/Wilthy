@@ -30,7 +30,7 @@ export interface Paths {
   bash(): string;
 }
 
-export type BundledResource = 'dela-helper' | 'remote-rg' | 'openssh';
+export type BundledResource = 'wilthy-helper' | 'remote-rg' | 'openssh';
 
 export interface SqlStatement {
   run(...params: unknown[]): unknown;

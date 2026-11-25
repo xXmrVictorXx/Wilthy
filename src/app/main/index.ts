@@ -55,9 +55,9 @@ import { spawn as spawnPty } from 'node-pty';
 const terminalSmokeTest = process.argv.includes('--terminal-smoke-test');
 const smokeTest = process.argv.includes('--smoke-test') || terminalSmokeTest;
 let startHidden = process.argv.includes('--hidden');
-// 单实例锁按 userData 判定：冒烟须先换到临时目录，否则开着的 Dela 会让它直接退出。
+// 单实例锁按 userData 判定：冒烟须先换到临时目录，否则开着的 Wilthy 会让它直接退出。
 if (smokeTest && !terminalSmokeTest) {
-  const profile = mkdtempSync(join(tmpdir(), 'dela-smoke-'));
+  const profile = mkdtempSync(join(tmpdir(), 'wilthy-smoke-'));
   app.setPath('userData', profile);
   app.setPath('documents', profile);
   app.setPath('home', profile);
@@ -132,7 +132,7 @@ app
     if (!hasSingleInstanceLock) return;
     provideHostPorts(electronPorts);
     // Windows 通知按 AppUserModelID 识别应用，开发运行也要显式设置。
-    if (process.platform === 'win32') app.setAppUserModelId('io.dela.desktop');
+    if (process.platform === 'win32') app.setAppUserModelId('io.wilthy.desktop');
     if (process.platform === 'darwin') {
       const action = (value: TrayAction) => () => {
         if (!mainWindow || mainWindow.isDestroyed()) return;
@@ -142,7 +142,7 @@ app
       Menu.setApplicationMenu(
         Menu.buildFromTemplate([
           {
-            label: 'Dela',
+            label: 'Wilthy',
             submenu: [
               { role: 'about' },
               { label: '设置…', click: action('open-settings') },
@@ -202,7 +202,10 @@ app
     // 数据库拒绝降级打开时走这里；没有 catch 用户只会看到窗口一直不出现。
     console.error(error);
     if (!smokeTest) {
-      dialog.showErrorBox('Dela 无法启动', error instanceof Error ? error.message : String(error));
+      dialog.showErrorBox(
+        'Wilthy 无法启动',
+        error instanceof Error ? error.message : String(error),
+      );
     }
     app.exit(1);
   });
@@ -243,7 +246,7 @@ async function createWindow(): Promise<void> {
       nodeIntegration: false,
       sandbox: true,
       additionalArguments: [
-        ...(app.isPackaged && process.argv.includes('--updated') ? ['--dela-updated'] : []),
+        ...(app.isPackaged && process.argv.includes('--updated') ? ['--wilthy-updated'] : []),
       ],
     },
   });
@@ -282,7 +285,7 @@ async function createWindow(): Promise<void> {
       defaultId: 1,
       cancelId: 1,
       title: '仍有未保存的内容',
-      message: '有未保存的笔记或未发送的邮件，确定抛弃并退出 Dela 吗？',
+      message: '有未保存的笔记或未发送的邮件，确定抛弃并退出 Wilthy 吗？',
     });
     if (choice === 0) {
       quitting = wasQuitting;
@@ -306,7 +309,7 @@ async function createWindow(): Promise<void> {
   window.on('maximize', sendWindowState);
   window.on('unmaximize', sendWindowState);
 
-  const devUrl = !app.isPackaged ? process.env.DELA_DEV_URL : undefined;
+  const devUrl = !app.isPackaged ? process.env.WILTHY_DEV_URL : undefined;
   if (devUrl) {
     if (new URL(devUrl).origin !== 'http://127.0.0.1:5173') {
       throw new Error('Unexpected development server origin');
@@ -338,7 +341,7 @@ async function createWindow(): Promise<void> {
       if (row.value !== 'ok') throw new Error('SQLite smoke check failed');
       await new Promise((resolve) => setTimeout(resolve, 300));
       const rendered = await window.webContents.executeJavaScript(
-        `document.querySelector('main') !== null && document.querySelector('aside[aria-label="主导航"]') !== null && window.dela?.version === ${JSON.stringify(app.getVersion())} && typeof window.dela?.bridge.invoke === 'function' && typeof window.require === 'undefined'`,
+        `document.querySelector('main') !== null && document.querySelector('aside[aria-label="主导航"]') !== null && window.wilthy?.version === ${JSON.stringify(app.getVersion())} && typeof window.wilthy?.bridge.invoke === 'function' && typeof window.require === 'undefined'`,
       );
       if (!rendered) throw new Error('Renderer or preload smoke check failed');
       // Pi 是纯 ESM 包，只能动态 import 加载；冒烟覆盖 dev 与打包两条路径。
@@ -347,7 +350,7 @@ async function createWindow(): Promise<void> {
         throw new Error('Pi runtime smoke check failed');
       // 签名与 hardened runtime 可能让 PTY 起不来，打包产物要真起一次。
       await new Promise<void>((resolve, reject) => {
-        const pty = spawnPty(locateBash(), ['--noprofile', '--norc', '-c', 'echo DELA_PTY_OK'], {
+        const pty = spawnPty(locateBash(), ['--noprofile', '--norc', '-c', 'echo WILTHY_PTY_OK'], {
           cols: 80,
           rows: 24,
           ...(process.platform === 'win32' ? { useConptyDll: true } : {}),
@@ -355,7 +358,7 @@ async function createWindow(): Promise<void> {
         let output = '';
         pty.onData((data) => {
           output += data;
-          if (output.includes('DELA_PTY_OK')) resolve();
+          if (output.includes('WILTHY_PTY_OK')) resolve();
         });
         pty.onExit(({ exitCode }) => {
           if (exitCode !== 0) reject(new Error(`PTY smoke check failed (${exitCode}): ${output}`));
@@ -384,7 +387,7 @@ function createTray(window: BrowserWindow): void {
     .createFromPath(join(app.getAppPath(), 'assets', `Wilthy_${savedIcon()}_bg.png`))
     .resize({ width: 16, height: 16 });
   tray = new Tray(icon);
-  tray.setToolTip('Dela');
+  tray.setToolTip('Wilthy');
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: '打开主窗口', click: () => showMainWindow(window) },

@@ -55,4 +55,4 @@ export const resourceAddressSchema = z
     }
     return parsed.data;
   })
-  .meta({ description: '资源地址，type 决定其余字段；可用的写法见 dela help read_resource' });
+  .meta({ description: '资源地址，type 决定其余字段；可用的写法见 wilthy help read_resource' });

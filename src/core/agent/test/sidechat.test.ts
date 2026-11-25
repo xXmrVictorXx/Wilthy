@@ -7,7 +7,7 @@ import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import type { StoredLlmProvider } from '../llm-config';
 import type { MockOpenAiServer, RecordedRequest } from './mock-openai-server';
 
-const root = mkdtempSync(join(tmpdir(), 'dela-sidechat-'));
+const root = mkdtempSync(join(tmpdir(), 'wilthy-sidechat-'));
 const state = vi.hoisted(() => ({
   db: null as Database.Database | null,
   provider: null as StoredLlmProvider | null,

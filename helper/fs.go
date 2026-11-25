@@ -38,7 +38,7 @@ type statEntry struct {
 	ModifiedAt int64 `json:"modifiedAt"`
 }
 
-// 只接受绝对路径：远端工具的 cwd 语义由调用方（Dela）自己保证，helper 不猜相对路径。
+// 只接受绝对路径：远端工具的 cwd 语义由调用方（Wilthy）自己保证，helper 不猜相对路径。
 func requireAbsPath(raw string) (string, error) {
 	path := strings.TrimSpace(raw)
 	if path == "" {
@@ -219,14 +219,14 @@ func (s *server) handleRead(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("Content-Length", strconv.FormatInt(want, 10))
-	w.Header().Set("X-Dela-File-Size", strconv.FormatInt(info.Size(), 10))
+	w.Header().Set("X-Wilthy-File-Size", strconv.FormatInt(info.Size(), 10))
 	w.WriteHeader(http.StatusOK)
 	if _, err := io.CopyN(w, file, want); err != nil {
 		s.logger.Printf("发送 %s 中断：%v", path, err)
 	}
 }
 
-// 原子写：同目录临时文件 + rename，避免 Dela 读到写了一半的文件。
+// 原子写：同目录临时文件 + rename，避免 Wilthy 读到写了一半的文件。
 // `parents=1` 时先建缺失的父目录：agent 的 write 工具要 mkdir -p 语义，省一次往返。
 func (s *server) handleWrite(w http.ResponseWriter, r *http.Request) {
 	path, err := requireAbsPath(r.URL.Query().Get("path"))
@@ -245,7 +245,7 @@ func (s *server) handleWrite(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "no_directory", fmt.Sprintf("目录不存在：%s", dir))
 		return
 	}
-	temp, err := os.CreateTemp(dir, ".dela-tmp-*")
+	temp, err := os.CreateTemp(dir, ".wilthy-tmp-*")
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "temp_failed", err.Error())
 		return

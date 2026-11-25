@@ -28,7 +28,7 @@ vi.mock('electron', () => ({
 }));
 
 beforeEach(() => {
-  storage.directory = mkdtempSync(join(tmpdir(), 'dela-credentials-test-'));
+  storage.directory = mkdtempSync(join(tmpdir(), 'wilthy-credentials-test-'));
   storage.available = true;
   provideHostPorts(electronPorts);
 });

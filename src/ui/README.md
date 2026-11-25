@@ -1,14 +1,14 @@
 # src/ui
 
-Dela 的 Design System，fork 自 [beautiful-ui](../../LICENSES/beautiful-ui.txt)，不再跟随上游。只依赖 react、radix、cva、lucide、zustand、DOMPurify 与样式工具，不认识任何业务。
+Wilthy 的 Design System，fork 自 [beautiful-ui](../../LICENSES/beautiful-ui.txt)，不再跟随上游。只依赖 react、radix、cva、lucide、zustand、DOMPurify 与样式工具，不认识任何业务。
 
 本文只写约定，不列组件清单：有哪些组件，直接看目录。
 
 ## 放什么
 
-- 判断一个界面结构该不该进来，问一句：**去掉 Dela 的文案和业务，它还成立吗？**
+- 判断一个界面结构该不该进来，问一句：**去掉 Wilthy 的文案和业务，它还成立吗？**
   - 成立：通用组件，例如 Button、Dialog、Select。
-  - 只在 Dela 的场景成立，但被多个模块共用：拼装件，例如 ConnectCard、DesktopOnlyNotice。它们也放在这里，因为模块不能引用 `app`。
+  - 只在 Wilthy 的场景成立，但被多个模块共用：拼装件，例如 ConnectCard、DesktopOnlyNotice。它们也放在这里，因为模块不能引用 `app`。
   - 只有一个模块用：留在那个模块的 `view/`。
 - 同样的结构出现两次以上才提取；API 只按现有的真实用法设计，不为以后预留。
 - 目录：`hooks/` 放 hook，`lib/` 放工具函数，其余组件平铺在根目录。
@@ -34,7 +34,7 @@ Dela 的 Design System，fork 自 [beautiful-ui](../../LICENSES/beautiful-ui.txt
 
 纯图标按钮用 `Button` 的 `size="icon-<大小>"`。它和同一大小的文字按钮等高，例如 `icon-sm` 和 `sm` 都是 28px，放在同一行天然对齐。纯图标按钮没有文字，必须写 `aria-label`。
 
-「取消」「关闭」这类通用文案可以作为默认值写在组件里；带 Dela 内容的文案由调用方传入。
+「取消」「关闭」这类通用文案可以作为默认值写在组件里；带 Wilthy 内容的文案由调用方传入。
 
 ## 样式
 

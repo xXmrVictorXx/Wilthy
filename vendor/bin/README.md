@@ -1,6 +1,6 @@
 # 自带搜索工具 rg / fd（Agent 的 grep / find）
 
-Dela 内核（pi）的 `grep` / `find` 工具不在进程内实现，而是 spawn 外部的
+Wilthy 内核（pi）的 `grep` / `find` 工具不在进程内实现，而是 spawn 外部的
 ripgrep（`rg`）与 fd。用户机器上通常没有这两个程序：pi 自身的兜底是从
 GitHub Releases 直连下载，大陆网络下大概率失败，失败后工具持续报错。
 因此随包带上，主进程启动时把平台对应目录前插进 PATH，pi 的 PATH 探测会直接命中，

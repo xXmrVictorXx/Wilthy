@@ -6,16 +6,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { WorkspaceChat } from '../../../core/protocol/agent';
 
 // 契约客户端在模块加载时取 bridge，须先于导入装好；各用例按通道替换或监视 handler。
-const { api, dela } = vi.hoisted(() => {
+const { api, wilthy } = vi.hoisted(() => {
   const api: Record<string, (input: never) => unknown> = {};
-  const dela = {
+  const wilthy = {
     bridge: {
       invoke: async (channel: string, input: never) => api[channel]!(input),
       subscribe: () => () => {},
     },
-  } as unknown as NonNullable<typeof window.dela>;
-  window.dela = dela;
-  return { api, dela };
+  } as unknown as NonNullable<typeof window.wilthy>;
+  window.wilthy = wilthy;
+  return { api, wilthy };
 });
 import { useNavigationStore } from '../navigation/view';
 import { useWorkbenchLayout } from './layout-store';
@@ -130,7 +130,7 @@ beforeEach(() => {
       ],
     }),
   });
-  window.dela = dela;
+  window.wilthy = wilthy;
   queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   host = document.createElement('div');
   document.body.append(host);
@@ -141,7 +141,7 @@ afterEach(async () => {
   await act(async () => root.unmount());
   host.remove();
   vi.useRealTimers();
-  delete window.dela;
+  delete window.wilthy;
   vi.unstubAllGlobals();
 });
 

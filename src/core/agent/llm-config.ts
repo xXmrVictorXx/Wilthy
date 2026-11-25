@@ -1,4 +1,4 @@
-// 模型服务存在 ~/.dela/config.json 的 providers 里，键是服务 id；magpie 连接 Dela 时会往里加自己的一项。
+// 模型服务存在 ~/.wilthy/config.json 的 providers 里，键是服务 id；magpie 连接 Wilthy 时会往里加自己的一项。
 // id 新建后不再变（会话按它记住用哪个服务），显示名另存，可以随便改。
 import { z } from 'zod';
 import type { LlmModelSettings } from '../protocol/llm';
@@ -80,7 +80,7 @@ function brandOf(baseUrl: string): string {
   return /^[a-z][a-z0-9-]{0,47}$/i.test(brand) ? brand.toLowerCase() : 'custom';
 }
 
-/** 保留这一项里 Dela 不认识的字段（magpie 或用户自己加的）。 */
+/** 保留这一项里 Wilthy 不认识的字段（magpie 或用户自己加的）。 */
 function putProvider(section: JsonObject, provider: StoredLlmProvider): void {
   const previous = section[provider.id];
   const kept = isJsonObject(previous) ? { ...previous } : {};

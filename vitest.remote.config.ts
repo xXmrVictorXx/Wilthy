@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
 
-// 真机远程套件：只跑 *.remote.test.ts，需要 DELA_REMOTE_HOST（如 root@1.2.3.4）。
+// 真机远程套件：只跑 *.remote.test.ts，需要 WILTHY_REMOTE_HOST（如 root@1.2.3.4）。
 // 默认的 vitest.config.ts 把它们排除在外——CI 没有可连的主机，跳过等于没覆盖，
 // 但白导入 Pi、白建临时目录的代价照付。
 export default defineConfig({

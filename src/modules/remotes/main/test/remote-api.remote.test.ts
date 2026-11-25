@@ -1,4 +1,4 @@
-// 远程项目主进程链路的真机回归（假数据库 + 真实 helper）：需要 DELA_REMOTE_HOST（如 root@1.2.3.4），
+// 远程项目主进程链路的真机回归（假数据库 + 真实 helper）：需要 WILTHY_REMOTE_HOST（如 root@1.2.3.4），
 // 由 pnpm test:remote 运行，不在默认 pnpm test 与 CI 里。
 import Database from 'better-sqlite3';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
@@ -30,9 +30,9 @@ import { importRemoteProject, projectLocation, workspaceModule } from '../../../
 import { remotesSchema } from '../../data/schema';
 import { parentOf, targetOf } from '../api';
 
-const host = process.env.DELA_REMOTE_HOST!;
-const keyPath = process.env.DELA_REMOTE_KEY ?? null;
-const testRoot = '/tmp/dela-api-test';
+const host = process.env.WILTHY_REMOTE_HOST!;
+const keyPath = process.env.WILTHY_REMOTE_KEY ?? null;
+const testRoot = '/tmp/wilthy-api-test';
 
 function createDb(): Database.Database {
   const db = new Database(':memory:');
@@ -48,7 +48,7 @@ function createDb(): Database.Database {
 }
 
 beforeAll(async () => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-remote-api-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-remote-api-'));
   state.db = createDb();
   const target = targetOf({ host, keyPath });
   await writeRemoteFile(target, `${testRoot}/a b.txt`, Buffer.from('hello\n'));

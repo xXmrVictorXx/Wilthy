@@ -30,7 +30,7 @@ const touch = (path: string) => {
 
 beforeEach(async () => {
   vi.resetModules();
-  state.root = mkdtempSync(join(tmpdir(), 'dela-runtime-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-runtime-'));
   state.packaged = false;
   state.systemBash = true;
   vi.stubGlobal('process', {
@@ -104,7 +104,7 @@ describe('Git Bash 定位', () => {
   it('系统 Git for Windows 优先，其次随包 MinGit；都缺失时提示安装后重启', () => {
     const bundled = join(state.root, '.build', 'mingit', 'usr', 'bin', 'bash.exe');
     const system = join(state.root, 'Git', 'bin', 'bash.exe');
-    expect(() => runtime.locateBash()).toThrow('后重启 Dela');
+    expect(() => runtime.locateBash()).toThrow('后重启 Wilthy');
     touch(bundled);
     expect(runtime.locateBash()).toBe(bundled);
     touch(system);

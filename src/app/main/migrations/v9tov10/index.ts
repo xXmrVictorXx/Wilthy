@@ -14,7 +14,7 @@ const removedSettings = [
   'capabilities-onboarding-completed',
 ];
 
-// 只删 Dela 自己的 Pi 目录；用户项目的 .pi/ 与 ~/.pi/agent 归用户和 Pi CLI
+// 只删 Wilthy 自己的 Pi 目录；用户项目的 .pi/ 与 ~/.pi/agent 归用户和 Pi CLI
 const removedPaths = [
   ['components', 'node'],
   ['pi', 'npm'],

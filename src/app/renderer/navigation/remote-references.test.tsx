@@ -7,7 +7,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 // 契约客户端在模块加载时取 bridge，须先于导入视图装好。
 const remoteReferences = vi.hoisted(() => {
   const remoteReferences = vi.fn();
-  window.dela = {
+  window.wilthy = {
     bridge: {
       invoke: (_channel: string, input: string) => remoteReferences(input),
       subscribe: () => () => {},

@@ -1,4 +1,4 @@
-// ~/.dela 下的 JSON 配置：用户和 magpie 等工具可以直接编辑，所以 Dela 每次都读最新内容，只改自己要改的那一项。
+// ~/.wilthy 下的 JSON 配置：用户和 magpie 等工具可以直接编辑，所以 Wilthy 每次都读最新内容，只改自己要改的那一项。
 import { existsSync, mkdirSync, readFileSync, renameSync, watch, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { hostPorts } from './ports';
@@ -13,7 +13,7 @@ export function isJsonObject(value: unknown): value is JsonObject {
 }
 
 export function configDirectory(): string {
-  return join(hostPorts().paths.home(), '.dela');
+  return join(hostPorts().paths.home(), '.wilthy');
 }
 
 export function configFilePath(name: ConfigFileName): string {
@@ -22,7 +22,7 @@ export function configFilePath(name: ConfigFileName): string {
 
 export class ConfigFileError extends Error {
   constructor(path: string, cause?: unknown) {
-    super(`${path} 不是有效的 JSON，请修正后重试；修正前 Dela 不会改写这个文件`, { cause });
+    super(`${path} 不是有效的 JSON，请修正后重试；修正前 Wilthy 不会改写这个文件`, { cause });
     this.name = 'ConfigFileError';
   }
 }

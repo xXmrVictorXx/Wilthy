@@ -427,7 +427,7 @@ export function WorkbenchExplorer({
                   return;
                 }
                 if (event.target !== event.currentTarget) return;
-                if (!event.dataTransfer.types.includes('application/x-dela-entry')) return;
+                if (!event.dataTransfer.types.includes('application/x-wilthy-entry')) return;
                 event.preventDefault();
                 event.dataTransfer.dropEffect = 'move';
               }}
@@ -440,7 +440,7 @@ export function WorkbenchExplorer({
                 }
                 if (event.target !== event.currentTarget) return;
                 event.preventDefault();
-                const drag = event.dataTransfer.getData('application/x-dela-entry');
+                const drag = event.dataTransfer.getData('application/x-wilthy-entry');
                 if (drag) move(drag, null);
               }}
             >

@@ -166,7 +166,7 @@ export function WorkbenchShell({ home }: { home?: boolean }) {
 
   const onCreated = async (entry: WorkspaceEntry) => {
     if (entry.kind === 'project') return;
-    if (window.dela && entry.path) {
+    if (window.wilthy && entry.path) {
       try {
         useWorkspaceStore
           .getState()
@@ -226,7 +226,7 @@ export function WorkbenchShell({ home }: { home?: boolean }) {
     loadDocument: async (tabKey: TabId): Promise<LoadedDocument> => {
       const target = parsePreviewTabId(tabKey);
       if (!target) throw new Error('无效的预览标签');
-      if (!window.dela) throw new Error('文件预览仅在桌面端可用');
+      if (!window.wilthy) throw new Error('文件预览仅在桌面端可用');
       const entries = useWorkspaceStore.getState().workspace.entries;
       let sourceId: string | null = null;
       let entry: WorkspaceEntry | undefined;
@@ -261,7 +261,7 @@ export function WorkbenchShell({ home }: { home?: boolean }) {
     navigate: (target) => useNavigationStore.getState().navigate(target),
   };
 
-  if (!loaded && workspaceError === null && window.dela)
+  if (!loaded && workspaceError === null && window.wilthy)
     // 工作区镜像载入前不渲染：布局种子与标题解析都依赖条目树。
     return <div className="min-h-0 flex-1 bg-surface" />;
 

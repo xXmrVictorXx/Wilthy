@@ -9,11 +9,11 @@ import (
 
 const (
 	// 合并窗口：npm install / git checkout 会在几百毫秒里造出上万次结构变化，
-	// 窗口太小会把它们打成碎片发给 Dela。
+	// 窗口太小会把它们打成碎片发给 Wilthy。
 	watchMergeWindow = 200 * time.Millisecond
 	// 单条 change 最多带这么多目录。再多就不值得逐条列：让调用方整块重读更便宜。
 	watchMaxChangePaths = 256
-	// 每个订阅者的队列长度。进程内订阅者数量不设限（Dela 侧自己管），但队列必须有界。
+	// 每个订阅者的队列长度。进程内订阅者数量不设限（Wilthy 侧自己管），但队列必须有界。
 	watchSubscriberQueue = 256
 )
 
@@ -24,7 +24,7 @@ const (
 	watchReasonSlowSub  = "subscriber-slow"  // 某个订阅者读得太慢，它的队列被丢弃
 )
 
-// watchEvent 是 SSE 里 data: 后面的 JSON，形状由 Dela 侧定死。
+// watchEvent 是 SSE 里 data: 后面的 JSON，形状由 Wilthy 侧定死。
 type watchEvent struct {
 	Type   string   `json:"type"`
 	ID     string   `json:"id"`

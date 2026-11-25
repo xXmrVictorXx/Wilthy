@@ -18,7 +18,7 @@ import {
 } from '../contract';
 import { markTopicRead, openTopic, useShuiyuan, type ListSelection, type Reading } from './store';
 
-export const shuiyuanClient = createClient(shuiyuanContract, window.dela?.bridge);
+export const shuiyuanClient = createClient(shuiyuanContract, window.wilthy?.bridge);
 
 export function topicIdOf(sourceId: string): number {
   return Number(sourceId.slice(SHUIYUAN_SOURCE_PREFIX.length));

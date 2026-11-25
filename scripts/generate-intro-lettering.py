@@ -19,7 +19,7 @@ from fontTools.ttLib import TTFont
 FONT_PATH = Path('assets/fonts/Italianno.woff2')
 OUT_PATH = Path('src/modules/onboarding/view/intro-lettering.ts')
 LINES = {
-    'name': 'Dela',
+    'name': 'Wilthy',
     'quote': 'In a shallow age, refuse to float.',
     'author': '— ChangYo',
 }

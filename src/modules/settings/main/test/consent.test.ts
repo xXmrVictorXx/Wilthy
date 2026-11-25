@@ -18,7 +18,7 @@ import { settingsSchema } from '../../data/schema';
 import { hasConsented, recordConsent } from '../consent';
 
 beforeEach(() => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-consent-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-consent-'));
   provideTestHostPorts({ paths: { userData: () => state.root }, database: getDatabase });
   openDatabase([{ id: 'settings', schema: settingsSchema }]);
 });

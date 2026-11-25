@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-const STORAGE_KEY = 'dela.session.drafts';
+const STORAGE_KEY = 'wilthy.session.drafts';
 
 function loadFresh(): Promise<typeof import('../drafts')> {
   vi.resetModules();

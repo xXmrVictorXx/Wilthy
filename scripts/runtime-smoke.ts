@@ -1,4 +1,4 @@
-// 直接执行 Pi 的本地工具与真实 dela 命令桥，不调用模型或真实校园接口。
+// 直接执行 Pi 的本地工具与真实 wilthy 命令桥，不调用模型或真实校园接口。
 import { app } from 'electron';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
@@ -19,7 +19,7 @@ import { todoModule } from '../src/modules/todo';
 import { workspaceModule } from '../src/modules/workspace';
 
 const root = resolve('.');
-const profile = mkdtempSync(join(tmpdir(), 'dela-runtime-中文-'));
+const profile = mkdtempSync(join(tmpdir(), 'wilthy-runtime-中文-'));
 // setAppPath 是 Electron 未写进类型的内部接口，让打包后的随包路径指回仓库。
 (app as typeof app & { setAppPath(path: string): void }).setAppPath(root);
 for (const name of ['userData', 'documents', 'home'] as const) app.setPath(name, profile);
@@ -68,26 +68,28 @@ app.whenReady().then(async () => {
     const pi = await loadPi();
     const bash = pi.createBashTool(profile, {
       shellPath: locateBash(),
-      commandPrefix: `export DELA_COMMAND_URL='${bridge.url}' DELA_COMMAND_TOKEN='${bridge.token}'\n${COMMAND_BRIDGE}`,
+      commandPrefix: `export WILTHY_COMMAND_URL='${bridge.url}' WILTHY_COMMAND_TOKEN='${bridge.token}'\n${COMMAND_BRIDGE}`,
     });
     const response = JSON.parse(
-      text(await bash.execute('smoke-bash', { command: 'dela help', timeout: 5 })),
+      text(await bash.execute('smoke-bash', { command: 'wilthy help', timeout: 5 })),
     );
     assert.equal(response.ok, true);
     assert.ok(response.result.some((command: { name: string }) => command.name === 'query_todos'));
-    writeFileSync(join(profile, 'fixture 测试.txt'), 'dela-runtime-needle 中文\n');
+    writeFileSync(join(profile, 'fixture 测试.txt'), 'wilthy-runtime-needle 中文\n');
     assert.match(
       text(
-        await pi.createGrepTool(profile).execute('smoke-grep', { pattern: 'dela-runtime-needle' }),
+        await pi
+          .createGrepTool(profile)
+          .execute('smoke-grep', { pattern: 'wilthy-runtime-needle' }),
       ),
-      /dela-runtime-needle/,
+      /wilthy-runtime-needle/,
     );
     assert.match(
       text(await pi.createFindTool(profile).execute('smoke-find', { pattern: '*.txt' })),
       /fixture 测试\.txt/,
     );
     console.log(
-      'Runtime smoke passed: platform Bash/SSH, bundled rg/fd, Pi bash/grep/find, real dela help bridge.',
+      'Runtime smoke passed: platform Bash/SSH, bundled rg/fd, Pi bash/grep/find, real wilthy help bridge.',
     );
     exitCode = 0;
   } catch (error) {

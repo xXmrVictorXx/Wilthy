@@ -11,12 +11,12 @@ export function OnboardingWindowBar({ children }: { children?: ReactNode }) {
         </div>
       )}
       <div className="flex h-full [-webkit-app-region:no-drag]">
-        {window.dela && window.dela.platform !== 'darwin' && (
+        {window.wilthy && window.wilthy.platform !== 'darwin' && (
           <>
             <button
               aria-label="最小化"
               className="grid h-full w-12 place-items-center text-ink-3 transition-colors hover:bg-hover-strong hover:text-ink"
-              onClick={() => window.dela?.window.minimize()}
+              onClick={() => window.wilthy?.window.minimize()}
               type="button"
             >
               <Minus className="size-4" strokeWidth={1.8} />
@@ -24,7 +24,7 @@ export function OnboardingWindowBar({ children }: { children?: ReactNode }) {
             <button
               aria-label="关闭"
               className="grid h-full w-12 place-items-center text-ink-3 transition-colors hover:bg-window-close hover:text-on-accent"
-              onClick={() => window.dela?.window.close()}
+              onClick={() => window.wilthy?.window.close()}
               type="button"
             >
               <X className="size-4" strokeWidth={1.8} />

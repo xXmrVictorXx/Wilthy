@@ -17,7 +17,7 @@ async function withAttachmentFile<T>(
   const mail = await readMailMessage(messageId);
   const attachment = mail.attachments.find((item) => item.part === part);
   if (!attachment) throw new Error('附件不存在，请先同步邮件');
-  const temporaryDirectory = await mkdtemp(join(hostPorts().paths.temp(), 'dela-attachment-'));
+  const temporaryDirectory = await mkdtemp(join(hostPorts().paths.temp(), 'wilthy-attachment-'));
   try {
     const path = join(temporaryDirectory, diskName(attachment.filename));
     await saveMailAttachment(messageId, part, path);

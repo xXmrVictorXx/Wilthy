@@ -35,7 +35,7 @@ export interface ExplorerItem {
   importable?: boolean;
 }
 
-const explorerDragType = 'application/x-dela-entry';
+const explorerDragType = 'application/x-wilthy-entry';
 
 export interface ExplorerPending {
   parentId: string | null;

@@ -24,7 +24,7 @@ type PreferencesStore = PreferenceValues & {
   patchProjectNav: (id: string, patch: ProjectNavPreference) => void;
 };
 
-const storageKey = 'dela.preferences';
+const storageKey = 'wilthy.preferences';
 
 const legacyNavEntries = z.object({ state: z.object({ hidden: z.array(z.string()) }) });
 const legacyProjectNav = z.object({
@@ -53,37 +53,37 @@ function legacyWidth(key: string, accept: (value: number) => boolean, fallback: 
 }
 
 const legacyKeys = [
-  'dela.shell.sidebar-collapsed',
-  'dela.project.open-target',
-  'dela.mail.folders-collapsed',
-  'dela.todo.show-completed',
-  'dela.classroom.sidebarWidth',
-  'dela.classroom.sidebarCollapsed',
-  'dela.workspace.sidebarWidth',
-  'dela.workspace.collapsed',
-  'dela.nav-entries',
-  'dela.project-nav',
-  'dela.remote.lastDirectory',
+  'wilthy.shell.sidebar-collapsed',
+  'wilthy.project.open-target',
+  'wilthy.mail.folders-collapsed',
+  'wilthy.todo.show-completed',
+  'wilthy.classroom.sidebarWidth',
+  'wilthy.classroom.sidebarCollapsed',
+  'wilthy.workspace.sidebarWidth',
+  'wilthy.workspace.collapsed',
+  'wilthy.nav-entries',
+  'wilthy.project-nav',
+  'wilthy.remote.lastDirectory',
 ];
 
 function migrateLegacyPreferences(): string {
   const state: PreferenceValues = {
-    shellSidebarCollapsed: localStorage.getItem('dela.shell.sidebar-collapsed') === 'true',
+    shellSidebarCollapsed: localStorage.getItem('wilthy.shell.sidebar-collapsed') === 'true',
     projectOpenTarget:
-      localStorage.getItem('dela.project.open-target') === 'explorer' ? 'explorer' : 'vscode',
+      localStorage.getItem('wilthy.project.open-target') === 'explorer' ? 'explorer' : 'vscode',
     workspaceSidebarWidth: legacyWidth(
-      'dela.workspace.sidebarWidth',
+      'wilthy.workspace.sidebarWidth',
       (value) => value > 0,
       defaults.workspaceSidebarWidth,
     ),
-    workspaceSidebarCollapsed: localStorage.getItem('dela.workspace.collapsed') === 'true',
+    workspaceSidebarCollapsed: localStorage.getItem('wilthy.workspace.collapsed') === 'true',
     hiddenNavEntries:
-      readLegacyJson('dela.nav-entries', legacyNavEntries)?.state.hidden ??
+      readLegacyJson('wilthy.nav-entries', legacyNavEntries)?.state.hidden ??
       defaults.hiddenNavEntries,
     projectNav:
-      readLegacyJson('dela.project-nav', legacyProjectNav)?.state.projects ?? defaults.projectNav,
+      readLegacyJson('wilthy.project-nav', legacyProjectNav)?.state.projects ?? defaults.projectNav,
     remoteLastDirectory:
-      readLegacyJson('dela.remote.lastDirectory', legacyRemoteDirectories) ??
+      readLegacyJson('wilthy.remote.lastDirectory', legacyRemoteDirectories) ??
       defaults.remoteLastDirectory,
   };
   const serialized = JSON.stringify({ state, version: 1 });

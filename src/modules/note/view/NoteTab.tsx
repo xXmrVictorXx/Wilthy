@@ -24,7 +24,7 @@ import { InlineButton } from '../../../ui/inline-button';
 const imageInsert = (entryId: string) =>
   markdownImageInsert(
     async (file) => {
-      if (!window.dela) throw new Error('仅桌面应用支持插入本地图片');
+      if (!window.wilthy) throw new Error('仅桌面应用支持插入本地图片');
       return workspaceClient.saveNoteImage({
         id: entryId,
         name: file.name,
@@ -133,7 +133,7 @@ export function NoteTab({ tabId, groupId }: { tabId: TabId; groupId: string }) {
   const dirty = draft.text !== draft.saved;
   const runReload = () => reload(entryId);
   const openInFolder = () => {
-    if (window.dela)
+    if (window.wilthy)
       void workspaceClient.openLocal(entryId).catch((cause) =>
         showToast({
           variant: 'error',

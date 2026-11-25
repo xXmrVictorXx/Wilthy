@@ -62,7 +62,7 @@ export function ArchivedSection({ navigate }: { navigate: Navigate }) {
   const groups = [...byProject.values()];
 
   const change = async (id: string, remove: boolean) => {
-    if (busy || !window.dela) return;
+    if (busy || !window.wilthy) return;
     setBusy(true);
     try {
       if (remove) {
@@ -83,7 +83,7 @@ export function ArchivedSection({ navigate }: { navigate: Navigate }) {
   };
 
   const removeAll = async () => {
-    if (busy || !window.dela || !sessions?.length) return;
+    if (busy || !window.wilthy || !sessions?.length) return;
     setBusy(true);
     // 逐条永久删除：主进程拒绝未归档会话，这里的数据本就全部已归档。
     const removeEach = async () => {
@@ -116,7 +116,7 @@ export function ArchivedSection({ navigate }: { navigate: Navigate }) {
   return (
     <div className="grid gap-10">
       <SectionHeader title="已归档对话" />
-      {!window.dela ? (
+      {!window.wilthy ? (
         <p className="text-sm text-ink-3">已归档对话管理仅在桌面端可用。</p>
       ) : (
         <>

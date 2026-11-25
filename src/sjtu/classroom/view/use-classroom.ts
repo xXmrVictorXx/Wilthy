@@ -4,7 +4,7 @@ import { showToast } from '../../../ui/toast';
 import { classroomContract } from '../contract';
 import { useClassroom } from './store';
 
-export const classroomClient = createClient(classroomContract, window.dela?.bridge);
+export const classroomClient = createClient(classroomContract, window.wilthy?.bridge);
 
 /** 读取失败时提示原因；已有课程时页面保留旧列表，没有时退回登录卡。 */
 export function useCourses() {

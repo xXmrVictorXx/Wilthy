@@ -41,7 +41,7 @@ Host gpu
   });
 
   it('展开 Include（相对 ~/.ssh，支持末段通配），没有 config 时返回空', () => {
-    home.dir = mkdtempSync(join(tmpdir(), 'dela-ssh-'));
+    home.dir = mkdtempSync(join(tmpdir(), 'wilthy-ssh-'));
     expect(sshConfigHosts()).toEqual([]);
     mkdirSync(join(home.dir, '.ssh', 'config.d'), { recursive: true });
     writeFileSync(join(home.dir, '.ssh', 'config'), 'Include config.d/*\nHost main\n');

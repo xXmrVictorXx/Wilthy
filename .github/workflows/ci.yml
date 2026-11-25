@@ -70,10 +70,10 @@ jobs:
               - '.github/workflows/helper.yml'
               - 'helper/**'
               - 'scripts/build-helper.ts'
-              - 'vendor/dela-helper/**'
+              - 'vendor/wilthy-helper/**'
             runtime:
               - 'helper/**'
-              - 'vendor/dela-helper/**'
+              - 'vendor/wilthy-helper/**'
               - 'scripts/**'
               - 'src/app/main/**'
               - 'src/core/remote/**'

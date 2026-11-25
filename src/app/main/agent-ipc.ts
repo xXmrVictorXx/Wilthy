@@ -175,7 +175,7 @@ const capabilities = implement(capabilitiesContract, {
   readWebSearchKey,
 });
 
-/** 用户或 magpie 直接改了 ~/.dela 下的文件：会话按新配置重建，各窗口的列表跟着刷新。 */
+/** 用户或 magpie 直接改了 ~/.wilthy 下的文件：会话按新配置重建，各窗口的列表跟着刷新。 */
 function onConfigFileChanged(name: ConfigFileName) {
   invalidateSessions();
   try {

@@ -5,10 +5,10 @@ import { vi } from 'vitest';
 import { provideHostPorts, type BundledResource, type HostPorts } from '../ports';
 
 // 默认把用户数据目录指到临时目录，避免相对路径把测试产物写进仓库。
-const scratch = mkdtempSync(join(tmpdir(), 'dela-test-'));
+const scratch = mkdtempSync(join(tmpdir(), 'wilthy-test-'));
 const secrets = new Map<string, string>();
 const bundledInRepo: Record<BundledResource, string> = {
-  'dela-helper': 'vendor/dela-helper',
+  'wilthy-helper': 'vendor/wilthy-helper',
   'remote-rg': '.build/remote-rg',
   openssh: 'vendor/openssh',
 };

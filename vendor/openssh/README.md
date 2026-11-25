@@ -1,6 +1,6 @@
 # 自带 OpenSSH 客户端（回退用）
 
-Dela 的远程项目优先使用系统 OpenSSH（`%WINDIR%\System32\OpenSSH\ssh.exe`，其次
+Wilthy 的远程项目优先使用系统 OpenSSH（`%WINDIR%\System32\OpenSSH\ssh.exe`，其次
 `%ProgramFiles%\OpenSSH\ssh.exe`）。系统里没有时，回退到这个目录里的客户端。
 探测顺序见 `src/core/remote/transport.ts` 的 `binaryCandidates`。
 
@@ -21,7 +21,7 @@ Dela 的远程项目优先使用系统 OpenSSH（`%WINDIR%\System32\OpenSSH\ssh.
 不带 `moduli`：实测 Win32-OpenSSH 不读可执行文件旁边的 `moduli`（放一个损坏的也不报错），
 DH-GEX 用内置默认组，带上是死重量。
 
-不带 `sshd.exe`、`ssh-keygen.exe`、`scp.exe`、`sftp.exe`：Dela 只用 `ssh` 建连接与跑命令，
+不带 `sshd.exe`、`ssh-keygen.exe`、`scp.exe`、`sftp.exe`：Wilthy 只用 `ssh` 建连接与跑命令，
 不用 SFTP（见 `CONTRIBUTING.md`「架构」的「远程项目」），也不生成密钥。
 
 ## 升级步骤

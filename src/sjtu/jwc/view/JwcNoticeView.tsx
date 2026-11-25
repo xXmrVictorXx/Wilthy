@@ -13,7 +13,7 @@ import { Spinner } from '../../../ui/spinner';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '../../../ui/dialog';
 import { Field } from '../../../ui/field';
 
-const jwcClient = createClient(jwcContract, window.dela?.bridge);
+const jwcClient = createClient(jwcContract, window.wilthy?.bridge);
 
 export function JwcNoticeView({
   target: { noticeId },

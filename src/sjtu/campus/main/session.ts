@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { attachContextMenu } from '../../../modules/workspace';
 
-const CAMPUS_PARTITION = 'persist:dela-campus';
+const CAMPUS_PARTITION = 'persist:wilthy-campus';
 let ready: Promise<Session> | undefined;
 let persistenceError: Error | undefined;
 

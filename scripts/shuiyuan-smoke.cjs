@@ -6,7 +6,7 @@ const { tmpdir } = require('node:os');
 const { join, resolve } = require('node:path');
 const assert = require('node:assert/strict');
 const root = resolve('.');
-const profile = mkdtempSync(join(tmpdir(), 'dela-shuiyuan-'));
+const profile = mkdtempSync(join(tmpdir(), 'wilthy-shuiyuan-'));
 app.setPath('userData', profile);
 
 const iso = (minutesAgo) => new Date(Date.now() - minutesAgo * 60000).toISOString();

@@ -146,7 +146,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    return window.dela?.window.onTrayAction((action) => {
+    return window.wilthy?.window.onTrayAction((action) => {
       const navigation = useNavigationStore.getState();
       if (action === 'new-chat') navigation.openGeneralChat(true);
       else if (action === 'new-project') navigation.newProject();

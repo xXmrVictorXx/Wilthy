@@ -1,4 +1,4 @@
-// dela 命令桥 bash 函数：在真实 Git Bash 里执行 COMMAND_BRIDGE。
+// wilthy 命令桥 bash 函数：在真实 Git Bash 里执行 COMMAND_BRIDGE。
 // 两条回归：'<JSON>' 参数原样进入 input（\${2:-{}} 会被 bash 截断在第一个 } 再拼出字面量 }）；
 // 请求体经 stdin 递出，走 argv 时 Windows 会按 ANSI 代码页转码，非 ASCII 内容到端上已是替换字符。
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -21,20 +21,20 @@ import { registerCommandDomain, type CommandDomain } from '../commands';
 import { testBash } from '../../test/bash';
 
 const CURL_STUB =
-  'curl() { while [ "$#" -gt 0 ]; do [ "$1" = "--data-binary" ] && cat > "$DELA_CAPTURE"; shift; done; }\n';
+  'curl() { while [ "$#" -gt 0 ]; do [ "$1" = "--data-binary" ] && cat > "$WILTHY_CAPTURE"; shift; done; }\n';
 
 function writeScript(prefix: string, env: string, line: string) {
-  const directory = mkdtempSync(join(tmpdir(), `dela-bridge-${prefix}-`));
+  const directory = mkdtempSync(join(tmpdir(), `wilthy-bridge-${prefix}-`));
   const path = join(directory, 'run.sh');
-  writeFileSync(path, `${env}\n${COMMAND_BRIDGE}\ndela ${line}`);
+  writeFileSync(path, `${env}\n${COMMAND_BRIDGE}\nwilthy ${line}`);
   return { directory, path };
 }
 
 function bridgeBody(line: string) {
-  const capture = join(tmpdir(), `dela-bridge-capture-${process.pid}-${Date.now()}.json`);
+  const capture = join(tmpdir(), `wilthy-bridge-capture-${process.pid}-${Date.now()}.json`);
   const { directory, path } = writeScript(
     'stub',
-    `export DELA_COMMAND_URL='http://127.0.0.1:9/' DELA_COMMAND_TOKEN=t DELA_CAPTURE='${capture.replace(/\\/g, '/')}'\n${CURL_STUB}`,
+    `export WILTHY_COMMAND_URL='http://127.0.0.1:9/' WILTHY_COMMAND_TOKEN=t WILTHY_CAPTURE='${capture.replace(/\\/g, '/')}'\n${CURL_STUB}`,
     line,
   );
   try {
@@ -51,7 +51,7 @@ function bridgeBody(line: string) {
 async function postedBody(port: number, line: string) {
   const { directory, path } = writeScript(
     'curl',
-    `export DELA_COMMAND_URL='http://127.0.0.1:${port}/' DELA_COMMAND_TOKEN=t`,
+    `export WILTHY_COMMAND_URL='http://127.0.0.1:${port}/' WILTHY_COMMAND_TOKEN=t`,
     line,
   );
   try {
@@ -66,7 +66,7 @@ async function postedBody(port: number, line: string) {
   }
 }
 
-describe('dela 命令桥', () => {
+describe('wilthy 命令桥', () => {
   it("把 '<JSON>' 原样作为 input 发送，缺省为 {}", () => {
     expect(bridgeBody('help')).toEqual({ command: 'help', input: {} });
     expect(bridgeBody("todo_list '{}'")).toEqual({ command: 'todo_list', input: {} });

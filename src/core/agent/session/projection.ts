@@ -1,4 +1,4 @@
-// 投影：Pi 的消息与会话状态 → 界面的 WorkspaceChat。<dela-meta> 的编解码只在这里，
+// 投影：Pi 的消息与会话状态 → 界面的 WorkspaceChat。<wilthy-meta> 的编解码只在这里，
 // 界面与跨会话读取都看不到 Pi 的记录格式。
 import { existsSync } from 'node:fs';
 import type { AgentSession, SessionManager } from '@earendil-works/pi-coding-agent';
@@ -18,15 +18,15 @@ import { modelChoice, requirePiSync, row, sessionCwd, type ModelChoice } from '.
 
 type ChatMessage = WorkspaceChat['messages'][number];
 
-export const TASK_NOTICE = 'dela-task';
+export const TASK_NOTICE = 'wilthy-task';
 
 export const textOf = (content: string | (TextContent | ImageContent)[]) =>
   typeof content === 'string'
     ? content
     : content.flatMap((block) => (block.type === 'text' ? [block.text] : [])).join('');
 
-const META_PREFIX = '<dela-meta>';
-const META_SUFFIX = '</dela-meta>\n';
+const META_PREFIX = '<wilthy-meta>';
+const META_SUFFIX = '</wilthy-meta>\n';
 
 type UserMessageMeta = Omit<Partial<ChatMessage>, 'attachments'> & {
   body?: string;

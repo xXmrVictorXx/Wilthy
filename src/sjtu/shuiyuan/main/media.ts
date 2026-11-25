@@ -21,7 +21,7 @@ function mediaResponse(response: Response): Response {
 }
 
 /**
- * 处理 dela-resource://shuiyuan/<同站媒体路径>：楼层 HTML 里的 /secure-uploads 等
+ * 处理 wilthy-resource://shuiyuan/<同站媒体路径>：楼层 HTML 里的 /secure-uploads 等
  * 地址匿名加载会被登录墙拦下，由主进程带 User API Key 头取回。
  * 全程不抛错：失败落回 404，图片破图但不影响楼层渲染。
  */

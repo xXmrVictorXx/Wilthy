@@ -12,7 +12,7 @@ const { invoke, listeners } = vi.hoisted(() => {
   Object.defineProperty(globalThis, 'window', {
     configurable: true,
     value: {
-      dela: {
+      wilthy: {
         bridge: {
           invoke,
           subscribe: (channel: string, listener: (payload: unknown) => void) => {

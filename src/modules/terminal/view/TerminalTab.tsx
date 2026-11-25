@@ -29,7 +29,7 @@ function withAlpha(color: string, alpha: number): string {
 const noTabs: never[] = [];
 
 export function TerminalTab({ tabId }: { tabId: string }) {
-  const desktop = Boolean(window.dela);
+  const desktop = Boolean(window.wilthy);
   const projectId = tabId.slice('terminal:'.length);
   const tabs = useTerminalStore((state) => state.tabs[projectId]) ?? noTabs;
   const remembered = useTerminalStore((state) => state.active[projectId]);
@@ -131,7 +131,7 @@ export function TerminalTab({ tabId }: { tabId: string }) {
     const selection = terminal.onSelectionChange(() => setHasSelection(terminal.hasSelection()));
     terminal.attachCustomKeyEventHandler((event) => {
       const clipboardModifier =
-        window.dela?.platform === 'darwin'
+        window.wilthy?.platform === 'darwin'
           ? event.metaKey && !event.ctrlKey && !event.shiftKey
           : event.ctrlKey && !event.metaKey && event.shiftKey;
       if (event.type === 'keydown' && clipboardModifier && !event.altKey) {
@@ -246,7 +246,9 @@ export function TerminalTab({ tabId }: { tabId: string }) {
         </div>
         <Button
           aria-label="复制终端选区"
-          title={window.dela?.platform === 'darwin' ? '复制选区（⌘C）' : '复制选区（Ctrl+Shift+C）'}
+          title={
+            window.wilthy?.platform === 'darwin' ? '复制选区（⌘C）' : '复制选区（Ctrl+Shift+C）'
+          }
           disabled={!hasSelection}
           variant="ghost"
           size="icon-sm"
@@ -256,7 +258,7 @@ export function TerminalTab({ tabId }: { tabId: string }) {
         </Button>
         <Button
           aria-label="粘贴到终端"
-          title={window.dela?.platform === 'darwin' ? '粘贴（⌘V）' : '粘贴（Ctrl+Shift+V）'}
+          title={window.wilthy?.platform === 'darwin' ? '粘贴（⌘V）' : '粘贴（Ctrl+Shift+V）'}
           disabled={!active || active.exitCode !== null}
           variant="ghost"
           size="icon-sm"

@@ -49,7 +49,7 @@ function previewImageUrl(src: string, alt: string): string | null {
   if (!url) return src;
   const parsed = new URL(url, SHUIYUAN_ORIGIN);
   return parsed.hostname === SHUIYUAN_HOST
-    ? `dela-resource://shuiyuan/${parsed.pathname.slice(1)}${parsed.search}`
+    ? `wilthy-resource://shuiyuan/${parsed.pathname.slice(1)}${parsed.search}`
     : parsed.href;
 }
 

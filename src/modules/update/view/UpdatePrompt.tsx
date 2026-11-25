@@ -1,4 +1,4 @@
-// 下载完成后的确认弹窗：安装会关掉并重启 Dela，必须让用户自己挑时机。
+// 下载完成后的确认弹窗：安装会关掉并重启 Wilthy，必须让用户自己挑时机。
 // 挂在应用层——下载可能持续几分钟，用户早就离开设置页了。
 import { Button } from '../../../ui/button';
 import { useUpdateState, deferInstall, runUpdateAction } from './update';

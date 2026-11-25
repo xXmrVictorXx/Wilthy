@@ -65,7 +65,7 @@ export function DirectoryBrowser({
   const scratch = stored.path === path ? stored : scratchOf(path);
   const { filter, typed, creating } = scratch;
   const edit = (patch: Partial<Scratch>) => setStored({ ...scratch, ...patch });
-  // 进到一个目录就读一次：有缓存先显示缓存，同时静默刷新，远端在 Dela 之外改过也看得到。
+  // 进到一个目录就读一次：有缓存先显示缓存，同时静默刷新，远端在 Wilthy 之外改过也看得到。
   // draft 每次渲染都是新对象：读取只跟着连接参数与路径走。
   const browseKey = [
     'remotes',
@@ -86,7 +86,7 @@ export function DirectoryBrowser({
 
   const createFolder = async () => {
     const name = creating?.trim();
-    if (!window.dela || !name) return;
+    if (!window.wilthy || !name) return;
     // 主进程同样会拦；这里先拦是为了给出人话，而不是 zod 的校验转储。
     const invalid = /[/\0]/.test(name)
       ? '文件夹名不能包含 /，只能新建一层'

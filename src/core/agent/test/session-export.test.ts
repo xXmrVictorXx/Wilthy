@@ -21,7 +21,7 @@ import { provideTestHostPorts } from '../../test/host-mock';
 import { exportSession } from '../session-export';
 
 beforeEach(async () => {
-  boundary.root = await mkdtemp(join(tmpdir(), 'dela-session-export-'));
+  boundary.root = await mkdtemp(join(tmpdir(), 'wilthy-session-export-'));
   boundary.file = join(boundary.root, 'pi.jsonl');
   boundary.save.mockReset();
   provideTestHostPorts({
@@ -119,9 +119,9 @@ it('导出当前分支及附件，保留压缩前的对话和工具轨迹', asyn
         {
           type: 'text',
           text:
-            '<dela-meta>' +
+            '<wilthy-meta>' +
             JSON.stringify(meta) +
-            '</dela-meta>\n' +
+            '</wilthy-meta>\n' +
             '用户引用了这些文件（需要时用 read 读取）：\n- src/example.m\n' +
             '<attachment name="说明.txt">\n' +
             notes +
@@ -193,9 +193,9 @@ it('导出当前分支及附件，保留压缩前的对话和工具轨迹', asyn
     text: '执行结果',
     images: [{ path: 'media/2.png' }],
   });
-  expect(log).not.toMatch(/已放弃|内部|dela-meta|已删除路径/);
+  expect(log).not.toMatch(/已放弃|内部|wilthy-meta|已删除路径/);
   expect(await readFile(boundary.file, 'utf8')).toBe(session);
-  expect((await readdir(boundary.root)).some((name) => name.startsWith('.dela-export-'))).toBe(
+  expect((await readdir(boundary.root)).some((name) => name.startsWith('.wilthy-export-'))).toBe(
     false,
   );
 });

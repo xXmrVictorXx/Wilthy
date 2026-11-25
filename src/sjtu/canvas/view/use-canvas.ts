@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { createClient } from '../../../core/protocol/contract';
 import { canvasContract, type CanvasState } from '../contract';
 
-export const canvasClient = createClient(canvasContract, window.dela?.bridge);
+export const canvasClient = createClient(canvasContract, window.wilthy?.bridge);
 
 export const stateKey = ['canvas', 'state'];
 

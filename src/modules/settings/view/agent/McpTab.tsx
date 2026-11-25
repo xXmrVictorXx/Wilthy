@@ -23,7 +23,7 @@ export function McpTab() {
   const list = useQuery({
     queryKey: ['capabilities', 'listMcpServers'],
     queryFn: () => capabilitiesClient.listMcpServers(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
     refetchInterval: (query) =>
       query.state.data?.some((view) => view.status === 'connecting') ? 500 : false,
   });
@@ -35,7 +35,7 @@ export function McpTab() {
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
   const toggle = async (server: McpServerView, next: boolean) => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     setBusy(true);
     const previous = servers;
     setServers(
@@ -53,7 +53,7 @@ export function McpTab() {
   };
 
   const reconnect = async (id: string) => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     setBusy(true);
     try {
       setServers(await capabilitiesClient.refreshMcpServer(id));
@@ -64,7 +64,7 @@ export function McpTab() {
   };
 
   const remove = async (id: string) => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     setBusy(true);
     try {
       setServers(await capabilitiesClient.removeMcpServer(id));
@@ -77,7 +77,7 @@ export function McpTab() {
     setBusy(false);
   };
 
-  if (!window.dela) {
+  if (!window.wilthy) {
     return (
       <div className="grid gap-10">
         <SectionHeader title="MCP" />

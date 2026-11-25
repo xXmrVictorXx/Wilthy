@@ -66,7 +66,7 @@ function insertFileEntry(db: Database.Database, path: string, kind: 'file') {
   return id;
 }
 
-const workspaceRoot = () => join(state.root, 'Dela', 'workspace');
+const workspaceRoot = () => join(state.root, 'Wilthy', 'workspace');
 const localPathOf = (id: string) => entry(id).path!;
 
 let db: Database.Database;
@@ -76,9 +76,9 @@ beforeEach(() => {
     callback(new Error('not a repository'), '', '');
     return { stdin: { on() {}, end() {} } };
   });
-  state.root = mkdtempSync(join(tmpdir(), 'dela-notes-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-notes-'));
   provideTestHostPorts({
-    paths: { documents: () => state.root, storage: () => join(state.root, 'Dela') },
+    paths: { documents: () => state.root, storage: () => join(state.root, 'Wilthy') },
     database: () => db,
   });
   db = createDb();
@@ -322,7 +322,7 @@ describe('createWorkspaceEntry', () => {
     expect(() => createWorkspaceEntry({ parentId: null, name: 'p/./q', kind: 'folder' })).toThrow(
       '路径段',
     );
-    expect(existsSync(join(state.root, 'Dela', 'escape.md'))).toBe(false);
+    expect(existsSync(join(state.root, 'Wilthy', 'escape.md'))).toBe(false);
     expect(() => createWorkspaceEntry({ parentId: null, name: 'a.md/b', kind: 'file' })).toThrow(
       '不是文件夹',
     );

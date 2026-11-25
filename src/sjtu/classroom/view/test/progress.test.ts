@@ -19,9 +19,9 @@ describe('playback progress', () => {
 
   it('ignores missing, malformed and sub-second values', () => {
     expect(readPlaybackProgress(11)).toBeNull();
-    localStorage.setItem('dela.classroom.progress.11', 'not-a-number');
+    localStorage.setItem('wilthy.classroom.progress.11', 'not-a-number');
     expect(readPlaybackProgress(11)).toBeNull();
-    localStorage.setItem('dela.classroom.progress.11', '-5');
+    localStorage.setItem('wilthy.classroom.progress.11', '-5');
     expect(readPlaybackProgress(11)).toBeNull();
     savePlaybackProgress(11, 0.9);
     expect(readPlaybackProgress(11)).toBeNull();

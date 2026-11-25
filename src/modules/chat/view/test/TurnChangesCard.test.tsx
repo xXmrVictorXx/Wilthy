@@ -6,7 +6,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { FileChangeDetail, TurnChanges } from '../../../../core/protocol/agent';
 
 // 契约客户端在模块加载时取 bridge，须先于导入卡片装好；各用例只重编程 handler。
-const { api, dela } = vi.hoisted(() => {
+const { api, wilthy } = vi.hoisted(() => {
   const api = {
     'agent:read-turn-changes': vi.fn<
       (input: {
@@ -28,14 +28,14 @@ const { api, dela } = vi.hoisted(() => {
     'chat:openInVsCode': vi.fn(async () => {}),
     'chat:revealFile': vi.fn(async () => {}),
   };
-  const dela = {
+  const wilthy = {
     bridge: {
       invoke: (channel: string, input: never) => api[channel as keyof typeof api](input),
       subscribe: () => () => {},
     },
-  } as unknown as NonNullable<typeof window.dela>;
-  window.dela = dela;
-  return { api, dela };
+  } as unknown as NonNullable<typeof window.wilthy>;
+  window.wilthy = wilthy;
+  return { api, wilthy };
 });
 import { TurnChangesCard } from '../TurnChangesCard';
 import { ChatTabSourceProvider } from '../chat-source';
@@ -97,7 +97,7 @@ beforeEach(() => {
     addEventListener: () => {},
     removeEventListener: () => {},
   }));
-  window.dela = dela;
+  window.wilthy = wilthy;
   host = document.createElement('div');
   document.body.append(host);
   root = createRoot(host);
@@ -106,7 +106,7 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount());
   host.remove();
-  delete window.dela;
+  delete window.wilthy;
   vi.clearAllMocks();
 });
 
@@ -128,7 +128,7 @@ it('审阅与打开按解析出的标签键落位，已删除文件的打开被�
   });
 
   api['chat:locateFile'].mockResolvedValue('E:\\workspace\\Test\\src\\app.ts');
-  const open = host.querySelector<HTMLButtonElement>('[title="在 Dela 中打开"]')!;
+  const open = host.querySelector<HTMLButtonElement>('[title="在 Wilthy 中打开"]')!;
   await act(async () => open.click());
   expect(api['chat:locateFile']).toHaveBeenCalledWith({ sessionId, path: 'src/app.ts' });
   await act(async () => {});
@@ -156,7 +156,9 @@ it('随聊只列文件并提供打开，不读取 diff 详情或显示审阅与�
   });
   expect(host.querySelectorAll('[aria-label="选择打开方式"]')).toHaveLength(2);
 
-  await act(async () => host.querySelector<HTMLButtonElement>('[title="在 Dela 中打开"]')!.click());
+  await act(async () =>
+    host.querySelector<HTMLButtonElement>('[title="在 Wilthy 中打开"]')!.click(),
+  );
   expect(api['chat:locateFile']).toHaveBeenCalledWith({ sessionId, path: 'src/app.ts' });
   expect(workbench.openDocument).toHaveBeenCalledWith('E:\\workspace\\Test\\src\\app.ts', {
     aside: true,

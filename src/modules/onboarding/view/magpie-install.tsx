@@ -28,7 +28,7 @@ export function MagpieInstallButton({ install }: { install: MagpieInstall }) {
     <Button
       size="sm"
       variant="outline"
-      disabled={install.isPending || !window.dela}
+      disabled={install.isPending || !window.wilthy}
       onClick={() => install.mutate()}
     >
       {install.isPending && <Spinner />}
@@ -41,7 +41,7 @@ export function MagpieInstallStatus({ install }: { install: MagpieInstall }) {
   if (install.data === true) {
     return (
       <p className="text-xs leading-relaxed text-ink-3">
-        在 magpie 的 Agents 页面打开 Dela 即可连接。
+        在 magpie 的 Agents 页面打开 Wilthy 即可连接。
       </p>
     );
   }

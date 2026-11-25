@@ -7,7 +7,7 @@ import { showToast } from '../../../ui/toast';
 import { MailDraftDialog } from './MailDraftDialog';
 import { mailClient } from './use-mail';
 
-/** `dela prepare_email` 经 bash 调用，输出里带 "draftId":"<uuid>"。 */
+/** `wilthy prepare_email` 经 bash 调用，输出里带 "draftId":"<uuid>"。 */
 export const MailReplyActions: ChatReplyActions = ({ tools }) => {
   const draftIds = [
     ...new Set(

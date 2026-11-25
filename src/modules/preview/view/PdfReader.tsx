@@ -270,7 +270,7 @@ export function PdfReader({
           ref={host}
           className="absolute inset-0 overflow-auto overscroll-contain bg-inset [overflow-anchor:none] [scrollbar-gutter:stable]"
         >
-          <div ref={pages} className="pdfViewer dela-pdf-pages" />
+          <div ref={pages} className="pdfViewer wilthy-pdf-pages" />
         </div>
         {error && (
           <ErrorText size="sm" className="absolute inset-x-0 top-0 bg-surface p-3">

@@ -22,7 +22,7 @@ export function Workbench({
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.nativeEvent.isComposing) return;
     const target = event.target instanceof HTMLElement ? event.target : null;
-    const mac = window.dela?.platform === 'darwin';
+    const mac = window.wilthy?.platform === 'darwin';
     const action = matchShortcut(bindings, event.nativeEvent, 'workbench', mac ? 'mac' : 'other');
     if (!action) return;
     if (target?.closest('[role="dialog"]')) return;

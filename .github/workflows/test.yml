@@ -15,7 +15,7 @@ jobs:
       run:
         shell: bash
     env:
-      DELA_REMOTE_HOST: ''
+      WILTHY_REMOTE_HOST: ''
     steps:
       - uses: actions/checkout@v6
         with:

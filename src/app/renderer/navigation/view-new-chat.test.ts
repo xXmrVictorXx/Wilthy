@@ -14,12 +14,12 @@ const creates = vi.hoisted(() => {
     'agent:open-session': ({ sessionId }: { sessionId: string }) =>
       useSessions.getState().chats[sessionId]!,
   };
-  window.dela = {
+  window.wilthy = {
     bridge: {
       invoke: async (channel: string, input: never) => handlers[channel]!(input),
       subscribe: () => () => {},
     },
-  } as unknown as NonNullable<typeof window.dela>;
+  } as unknown as NonNullable<typeof window.wilthy>;
   return creates;
 });
 import { useSessions } from '../../../modules/chat/view';

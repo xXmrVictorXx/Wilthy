@@ -56,7 +56,10 @@ export const coreSchema: Schema = {
     '20261123-mineru-document': (db) => {
       const { userData, home } = hostPorts().paths;
       rmSync(join(userData(), 'components', 'document-reading'), { recursive: true, force: true });
-      rmSync(join(home(), '.dela', 'skills', 'document-reading'), { recursive: true, force: true });
+      rmSync(join(home(), '.wilthy', 'skills', 'document-reading'), {
+        recursive: true,
+        force: true,
+      });
       db.exec(
         `UPDATE workspace_settings SET value=json_insert(value, '$[#]', 'read_document') WHERE key='tools-disabled'`,
       );

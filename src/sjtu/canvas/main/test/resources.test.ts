@@ -19,7 +19,7 @@ vi.mock('../api', () => ({
 import { cachedFile, getSource, readCanvasSource } from '../api';
 import { canvasWorkspaceSource } from '../resources';
 
-const root = mkdtempSync(join(tmpdir(), 'dela-canvas-resource-'));
+const root = mkdtempSync(join(tmpdir(), 'wilthy-canvas-resource-'));
 beforeEach(() => vi.clearAllMocks());
 afterAll(() => rmSync(root, { recursive: true, force: true }));
 

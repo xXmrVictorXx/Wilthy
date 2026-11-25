@@ -32,7 +32,7 @@ async function restart() {
       ['.', ...(process.argv.includes('--smoke-test') ? ['--smoke-test'] : [])],
       {
         stdio: 'inherit',
-        env: { ...process.env, DELA_DEV_URL: 'http://127.0.0.1:5173' },
+        env: { ...process.env, WILTHY_DEV_URL: 'http://127.0.0.1:5173' },
       },
     );
     child = current;

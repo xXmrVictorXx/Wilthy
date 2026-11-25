@@ -1,4 +1,4 @@
-// 私钥路径随连接保存，真正的凭据始终由 ssh 从 ~/.ssh 与 agent 读取，Dela 不落任何密码。
+// 私钥路径随连接保存，真正的凭据始终由 ssh 从 ~/.ssh 与 agent 读取，Wilthy 不落任何密码。
 import { randomUUID } from 'node:crypto';
 import { hostPorts } from '../../../core/ports';
 import type {

@@ -112,7 +112,7 @@ export function shuiyuanPostsHtml(posts: readonly ShuiyuanSnapshotPost[]): strin
         escapeHtml(post.createdAt.slice(0, 10)),
         ...(post.replyToPostNumber ? [`回复第 ${post.replyToPostNumber} 楼`] : []),
       ].join(' · ');
-      return `<section class="dela-post"><header class="dela-post-head"><b>${escapeHtml(
+      return `<section class="wilthy-post"><header class="wilthy-post-head"><b>${escapeHtml(
         post.username,
       )}</b><span>· ${head}</span></header>${post.cooked}</section>`;
     })

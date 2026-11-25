@@ -9,7 +9,7 @@ type ChatDraft = { prompt: string; comments?: ChatComment[] };
 
 export const emptyDraft: ChatDraft = { prompt: '' };
 
-const STORAGE_KEY = 'dela.session.drafts';
+const STORAGE_KEY = 'wilthy.session.drafts';
 const MAX_SESSIONS = 30;
 
 export function registerChatAttachmentCheck(check: () => boolean): () => void {

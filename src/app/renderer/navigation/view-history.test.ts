@@ -33,7 +33,7 @@ describe('导航历史', () => {
 
     useNavigationStore.getState().goBack();
     expect(useNavigationStore.getState()).toMatchObject({ view: 'workbench', projectId: 'p1' });
-    expect(localStorage.getItem('dela.workspace.project')).toBe('p1');
+    expect(localStorage.getItem('wilthy.workspace.project')).toBe('p1');
   });
 
   it('同视图切到通用池（资料）也记历史', () => {

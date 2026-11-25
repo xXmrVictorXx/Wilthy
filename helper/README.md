@@ -1,7 +1,7 @@
-# dela-helper
+# wilthy-helper
 
-Dela 在远端 Linux 主机上运行的常驻 runtime：远程项目的全部工具调用、目录树、预览与端口发现
-都经它执行，没有一次性 ssh 的退路。Dela 把它上传到 `~/.dela/helper/<版本>-<sha8>/` 并启动，
+Wilthy 在远端 Linux 主机上运行的常驻 runtime：远程项目的全部工具调用、目录树、预览与端口发现
+都经它执行，没有一次性 ssh 的退路。Wilthy 把它上传到 `~/.wilthy/helper/<版本>-<sha8>/` 并启动，
 再经 `ssh -L` 隧道访问；协议表在本文下方。
 
 共享 HOME 的节点可复用同一份可执行文件。每个节点将 `run.json`、`token`、`lock` 和 `helper.log` 放在版本目录下的 `runtime/<主机名>/`。
@@ -12,15 +12,15 @@ Dela 在远端 Linux 主机上运行的常驻 runtime：远程项目的全部工
 
 ## 生命周期
 
-- **不随隧道**：隧道断开只结束那一条 HTTP 连接，任务照跑。Dela 重连后用同一个 token 回到同一个实例，
+- **不随隧道**：隧道断开只结束那一条 HTTP 连接，任务照跑。Wilthy 重连后用同一个 token 回到同一个实例，
   按偏移接回任务输出。
 - **复用实例**：启动脚本读取本节点的 `run.json`（端口、pid、版本）。pid 活着且 `/proc/<pid>/exe`
-  指向共享的 `dela-helper`，就读回本节点的 `token`（0600）并复用实例，否则启动新实例。
-- **只起一个**：`--lock-file` 用 `flock` 独占加锁。两个 Dela 同时起时抢输的那个退出码 3，
+  指向共享的 `wilthy-helper`，就读回本节点的 `token`（0600）并复用实例，否则启动新实例。
+- **只起一个**：`--lock-file` 用 `flock` 独占加锁。两个 Wilthy 同时起时抢输的那个退出码 3，
   启动脚本转而等对方的 `run.json`。
 - **空闲 1 小时退出**：连续 `--idle-timeout`（默认 1h）收不到**任何请求**就退出，并终止在跑的任务。
-  Dela 开着时每 30 秒一次心跳，所以计时等于从最后一个客户端断开算起；在跑的任务不续命。
-  Dela 退出时只停心跳，不发退出请求；要立刻收掉就 `kill` 它的 pid（SIGTERM 同样是优雅退出）。
+  Wilthy 开着时每 30 秒一次心跳，所以计时等于从最后一个客户端断开算起；在跑的任务不续命。
+  Wilthy 退出时只停心跳，不发退出请求；要立刻收掉就 `kill` 它的 pid（SIGTERM 同样是优雅退出）。
 - **安全面**：没有任何连接时它最多再活 1 小时，期间持有 token 的同一 SSH 用户的进程都能访问它。
   这与该用户本来就能 `ssh` 进来执行任意命令的权限相同。
 
@@ -29,7 +29,7 @@ Dela 在远端 Linux 主机上运行的常驻 runtime：远程项目的全部工
 需要 Go 工具链（本仓库用 1.27.2 验证过，`go.mod` 要求 1.22 以上）。
 
 ```powershell
-pnpm build:helper          # linux/amd64，产物在 vendor/dela-helper/
+pnpm build:helper          # linux/amd64，产物在 vendor/wilthy-helper/
 pnpm build:helper --all    # 同时出 linux/arm64
 ```
 
@@ -81,7 +81,7 @@ nvm、conda），stdout 与 stderr 进同一根管道，交织顺序与终端里
 ## glob 与 search
 
 有 ripgrep 就交给它（`rg --files`、`rg --json`），没有就在 Go 里遍历，两条路返回同一种结构。
-Dela 把随包的 rg（Linux musl 静态版）上传到 `~/.dela/rg/<sha8>/rg`，以 `--rg` 传给 helper 优先使用；
+Wilthy 把随包的 rg（Linux musl 静态版）上传到 `~/.wilthy/rg/<sha8>/rg`，以 `--rg` 传给 helper 优先使用；
 它不可用时退回远端 PATH 里的 rg。rg 与 helper 分目录放，helper 升版不必重传 rg。
 差异：rg 额外遵守 `.gitignore`；Go 遍历只跳过 `.git` 与 `node_modules`，正则按 RE2 解析，
 不支持反向引用与环视，写了会报错，不会静默返回空结果。单行文本截到 500 字节。

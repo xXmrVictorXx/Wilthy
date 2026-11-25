@@ -399,12 +399,12 @@ export function LlmSection() {
   const providerList = useQuery({
     queryKey: ['llm', 'list'],
     queryFn: () => llmClient.list(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   });
   const catalogList = useQuery({
     queryKey: ['llm', 'catalog'],
     queryFn: () => llmClient.catalog(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   });
   const providers = providerList.data;
   const catalog = catalogList.data ?? [];
@@ -419,7 +419,7 @@ export function LlmSection() {
       : defaultDetail(providers ?? []);
 
   const run = async (operation: () => Promise<void>) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     setBusy(true);
     setSelection(detail);
     try {
@@ -431,7 +431,7 @@ export function LlmSection() {
     setBusy(false);
   };
 
-  if (!window.dela) {
+  if (!window.wilthy) {
     return (
       <div className="grid gap-10" data-setting-id="providers">
         <SectionHeader title="模型服务" />
@@ -680,7 +680,7 @@ function ProviderDetail({
   };
 
   const verify = () => {
-    if (!window.dela || verifying) return;
+    if (!window.wilthy || verifying) return;
     verifyConnection.mutate(
       { id: provider?.id, baseUrl, apiKey: apiKey || undefined },
       { onSuccess: (result) => result.baseUrl && adoptApiBase(result.baseUrl) },
@@ -688,7 +688,7 @@ function ProviderDetail({
   };
 
   const verifyModel = async (id: string) => {
-    if (!window.dela || modelChecks[id]?.result === null) return;
+    if (!window.wilthy || modelChecks[id]?.result === null) return;
     const inputs = { baseUrl, apiKey, settings: modelConfigs[id] };
     setModelChecks((current) => ({ ...current, [id]: { ...inputs, result: null } }));
     const request = {
@@ -719,7 +719,7 @@ function ProviderDetail({
 
   /** 编辑态即时保存：整体写入当前表单，next 覆盖尚未渲染出来的最新改动；创建态由「保存」显式提交。 */
   const persist = async (next: Partial<typeof form> = {}) => {
-    if (creating || !window.dela) return;
+    if (creating || !window.wilthy) return;
     const d = { ...form, ...next };
     if (!d.name.trim()) {
       setError('名称不能为空');
@@ -747,7 +747,7 @@ function ProviderDetail({
   };
 
   const save = async () => {
-    if (!window.dela || saving) return;
+    if (!window.wilthy || saving) return;
     setSaving(true);
     setError(null);
     try {
@@ -886,7 +886,7 @@ function ProviderDetail({
             value={apiKey}
           />
           <p className="text-xs leading-relaxed text-ink-3">
-            密钥以明文保存在本机的 ~/.dela/config.json 中。留空即沿用已保存的密钥。
+            密钥以明文保存在本机的 ~/.wilthy/config.json 中。留空即沿用已保存的密钥。
           </p>
         </div>
         <div className="grid gap-2 text-sm">

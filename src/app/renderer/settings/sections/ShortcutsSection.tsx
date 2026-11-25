@@ -17,7 +17,7 @@ import { showToast } from '../../../../ui/toast';
 import { ErrorText } from '../../../../ui/error-text';
 import { errorMessage } from '../../../../core/protocol/contract';
 
-const platform = window.dela?.platform === 'darwin' ? 'mac' : 'other';
+const platform = window.wilthy?.platform === 'darwin' ? 'mac' : 'other';
 
 function acceleratorText(accelerator: string | null, family?: 'digit'): string {
   if (!accelerator) return '未绑定';

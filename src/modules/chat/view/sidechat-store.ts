@@ -45,7 +45,7 @@ export async function openSidechat(
   parentId: string,
   options: { quote?: string; prompt?: string } = {},
 ) {
-  if (!window.dela) return;
+  if (!window.wilthy) return;
   const key = sidechatDraftKey(parentId);
   const drafts = useChatDrafts.getState();
   const draft = drafts.drafts[key] ?? emptyDraft;

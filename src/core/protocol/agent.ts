@@ -7,7 +7,7 @@ import { defineContract } from './contract';
 export const AGENT_PROTOCOL_VERSION = 1;
 
 const uuid = z.string().uuid();
-/** 模型服务的 id 是 ~/.dela/config.json 里的键：Dela 取厂商名或域名，用户和 magpie 等工具可以手写。 */
+/** 模型服务的 id 是 ~/.wilthy/config.json 里的键：Wilthy 取厂商名或域名，用户和 magpie 等工具可以手写。 */
 export const providerIdSchema = z.string().regex(/^[\w.-]{1,64}$/);
 const sessionId = uuid;
 const projectId = uuid.nullable();
@@ -262,8 +262,8 @@ export interface BackgroundBashDetails {
   background: true;
 }
 
-/** Dela 自己实现的会话命令（对应 Pi 终端界面的同名命令）：输入以它们开头时不发给模型，
- * 优先级 Dela 命令 > 扩展命令 > 提示模板 > 普通消息。 */
+/** Wilthy 自己实现的会话命令（对应 Pi 终端界面的同名命令）：输入以它们开头时不发给模型，
+ * 优先级 Wilthy 命令 > 扩展命令 > 提示模板 > 普通消息。 */
 export const SESSION_COMMANDS = [
   { name: 'compact', description: '压缩上下文', argumentHint: '[压缩时的说明]' },
   { name: 'reload', description: '重新加载 Skills、扩展与 AGENTS.md' },

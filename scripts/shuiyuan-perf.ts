@@ -24,11 +24,14 @@ import { saveShuiyuanCredential } from '../src/sjtu/shuiyuan/main/credentials';
 import { provideHostPorts } from '../src/core/ports';
 import { electronPorts } from '../src/app/main/host-electron';
 
-const profile = mkdtempSync(join(tmpdir(), 'dela-shuiyuan-perf-'));
+const profile = mkdtempSync(join(tmpdir(), 'wilthy-shuiyuan-perf-'));
 app.setPath('userData', profile);
 app.commandLine.appendSwitch('js-flags', '--expose-gc');
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'dela-resource', privileges: { standard: true, secure: true, supportFetchAPI: true } },
+  {
+    scheme: 'wilthy-resource',
+    privileges: { standard: true, secure: true, supportFetchAPI: true },
+  },
 ]);
 const label = process.argv[2] ?? 'after-warm';
 const floors = Number(process.argv[3] ?? 3000);
@@ -71,7 +74,7 @@ app
         Math.ceil(((index + 1) * images) / floors) - Math.ceil((index * images) / floors);
       const pictures = Array.from({ length: count }, () => {
         const id = (++imageIndex).toString(16).padStart(32, '0');
-        return `<div class="lightbox-wrapper"><a class="lightbox"><img width="690" height="518" src="dela-resource://shuiyuan-snapshot/42/${id}.jpg"${pending ? ' data-snapshot-pending' : ''}></a></div>`;
+        return `<div class="lightbox-wrapper"><a class="lightbox"><img width="690" height="518" src="wilthy-resource://shuiyuan-snapshot/42/${id}.jpg"${pending ? ' data-snapshot-pending' : ''}></a></div>`;
       }).join('');
       return {
         postNumber: index + 1,
@@ -85,7 +88,7 @@ app
     if (pending || active)
       for (const post of posts)
         post.cooked = post.cooked.replaceAll(
-          'dela-resource://shuiyuan-snapshot/42/',
+          'wilthy-resource://shuiyuan-snapshot/42/',
           active ? 'https://fixture.invalid/images/' : 'https://shuiyuan.sjtu.edu.cn/uploads/',
         );
     const json = JSON.stringify({ title: `${floors} 楼 / ${images} 张大图`, savedAt, posts });
@@ -159,14 +162,14 @@ app
       for (let index = 1; index <= images; index++)
         await link(original, join(dir, 'images', `${index.toString(16).padStart(32, '0')}.jpg`));
     }
-    protocol.handle('dela-resource', (request) => {
+    protocol.handle('wilthy-resource', (request) => {
       imageRequests++;
       return handleShuiyuanSnapshotRequest(new URL(request.url));
     });
     const preload = join(profile, 'preload.cjs');
     await writeFile(
       preload,
-      `const {contextBridge,ipcRenderer}=require('electron');contextBridge.exposeInMainWorld('benchmark',{read:()=>ipcRenderer.invoke('bench:read'),report:v=>ipcRenderer.send('bench:report',v)});contextBridge.exposeInMainWorld('dela',{bridge:{invoke:async(c,i)=>c==='shuiyuan:sourceRef'?{title:'性能基准',author:'benchmark',postsCount:${floors},snapshot:null}:c==='shuiyuan:snapshotPage'?ipcRenderer.invoke('bench:page',i):undefined,subscribe:()=>()=>{}}});`,
+      `const {contextBridge,ipcRenderer}=require('electron');contextBridge.exposeInMainWorld('benchmark',{read:()=>ipcRenderer.invoke('bench:read'),report:v=>ipcRenderer.send('bench:report',v)});contextBridge.exposeInMainWorld('wilthy',{bridge:{invoke:async(c,i)=>c==='shuiyuan:sourceRef'?{title:'性能基准',author:'benchmark',postsCount:${floors},snapshot:null}:c==='shuiyuan:snapshotPage'?ipcRenderer.invoke('bench:page',i):undefined,subscribe:()=>()=>{}}});`,
     );
     ipcMain.handle('bench:read', async () => {
       const start = performance.now();

@@ -62,7 +62,7 @@ export async function exportSession(id: string, owner: ClientHandle | null) {
   const { title } = row(id);
   const filePath = await hostPorts().desktop.pickSavePath(owner, {
     title: '导出会话',
-    defaultPath: 'Dela - ' + (safeName(title) || '会话') + '.zip',
+    defaultPath: 'Wilthy - ' + (safeName(title) || '会话') + '.zip',
     extension: 'zip',
   });
   if (!filePath) return { saved: false, missing: [] };
@@ -71,7 +71,7 @@ export async function exportSession(id: string, owner: ClientHandle | null) {
   const branch = await sessionExportBranch(id);
   if (!branch.some((entry) => entry.type === 'message'))
     throw new Error('这个会话还没有可导出的记录');
-  const staging = await mkdtemp(join(dirname(filePath), '.dela-export-'));
+  const staging = await mkdtemp(join(dirname(filePath), '.wilthy-export-'));
   const temporaryZip = join(staging, 'session.zip');
   try {
     const missing = await writeSessionArchive(temporaryZip, title, branch);
@@ -110,7 +110,7 @@ async function writeSessionArchive(
       const images = (typeof message.content === 'string' ? [] : message.content)
         .filter((block) => block.type === 'image')
         .map((image, index) => addImage(image, meta.images?.[index]?.name));
-      // 文本附件没有磁盘副本，正文来自 Dela 写入提示词的附件块。
+      // 文本附件没有磁盘副本，正文来自 Wilthy 写入提示词的附件块。
       const sourcePrefix = meta.sources?.length
         ? sourcesBlock(meta.sources.map(({ key }) => key))
         : '';

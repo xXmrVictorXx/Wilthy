@@ -2,7 +2,7 @@ import type { HtmlFrameDocumentOptions } from '../../../ui/lib/html-frame-docume
 import { SHUIYUAN_HOST } from '../contract';
 import { SHUIYUAN_ORIGIN } from './shuiyuan-format';
 
-const SNAPSHOT_IMAGE_PREFIX = 'dela-resource://shuiyuan-snapshot/';
+const SNAPSHOT_IMAGE_PREFIX = 'wilthy-resource://shuiyuan-snapshot/';
 
 /** 楼层的阅读样式。iframe 取不到外层 CSS 变量，色值手动镜像 design token；尺寸一律 rem。 */
 const SHUIYUAN_STYLESHEET = `
@@ -124,8 +124,8 @@ const SHUIYUAN_STYLESHEET = `
     sup a { text-decoration: none; }
 
     audio { max-width: 100%; }
-    .dela-post-head { color: var(--fg-muted); font-size: 0.8125rem; margin: 0 0 0.125rem; }
-    .dela-post-head b { color: var(--fg); }
+    .wilthy-post-head { color: var(--fg-muted); font-size: 0.8125rem; margin: 0 0 0.125rem; }
+    .wilthy-post-head b { color: var(--fg); }
   `;
 
 // 同站媒体匿名加载会被水源登录墙拦下（403/302 到登录页），改写为主进程
@@ -133,7 +133,7 @@ const SHUIYUAN_STYLESHEET = `
 const toMediaUrl = (value: string): string => {
   const parsed = new URL(value);
   if (parsed.hostname !== SHUIYUAN_HOST) return value;
-  return `dela-resource://shuiyuan${parsed.pathname}${parsed.search}`;
+  return `wilthy-resource://shuiyuan${parsed.pathname}${parsed.search}`;
 };
 
 /** 水源楼层 HTML（Discourse cooked）在通用消毒之后的改写，主题随应用明暗。 */
@@ -174,9 +174,9 @@ export function shuiyuanFrame(dark: boolean): HtmlFrameDocumentOptions {
         // 本地快照图片进入视野才加载缩略图，点开看原图。
         if (img.getAttribute('src')?.startsWith(SNAPSHOT_IMAGE_PREFIX)) {
           const src = img.getAttribute('src')!;
-          if (lightbox) img.setAttribute('data-dela-zoom', src);
+          if (lightbox) img.setAttribute('data-wilthy-zoom', src);
           img.setAttribute(
-            'data-dela-lazy',
+            'data-wilthy-lazy',
             /\.(jpg|png|webp|bmp)$/i.test(src) ? `${src}?thumbnail=1` : src,
           );
           img.removeAttribute('src');
@@ -213,7 +213,7 @@ export function shuiyuanFrame(dark: boolean): HtmlFrameDocumentOptions {
         const src = original?.startsWith('http') ? original : img.getAttribute('src');
         if (src) {
           img.setAttribute('src', toMediaUrl(src));
-          if (lightbox) img.setAttribute('data-dela-zoom', toMediaUrl(src));
+          if (lightbox) img.setAttribute('data-wilthy-zoom', toMediaUrl(src));
         } else {
           // 无可用地址的图片换成安静的文字占位，避免浏览器破图图标。
           const fallback = doc.createElement('span');

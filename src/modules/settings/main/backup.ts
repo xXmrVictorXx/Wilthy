@@ -10,7 +10,7 @@ import type { BackupResult } from '../contract';
 import { cacheDirectoryNames } from './cache';
 
 // 数据库走 VACUUM INTO 取一致快照；-wal/-shm 属于当前连接，跟着复制只会得到不自洽的副本。
-const databaseFiles = new Set(['dela.db', 'dela.db-wal', 'dela.db-shm', 'dela.db-journal']);
+const databaseFiles = new Set(['wilthy.db', 'wilthy.db-wal', 'wilthy.db-shm', 'wilthy.db-journal']);
 const skippedDataEntries = new Set(databaseFiles);
 
 /** 模块登记不随备份导出的 userData 顶层条目名。 */
@@ -21,7 +21,7 @@ export function excludeFromBackup(name: string): void {
 function backupFolderName(now: Date) {
   const pad = (value: number) => String(value).padStart(2, '0');
   const date = [now.getFullYear(), pad(now.getMonth() + 1), pad(now.getDate())].join('-');
-  return `Dela 备份 ${date} ${pad(now.getHours())}-${pad(now.getMinutes())}`;
+  return `Wilthy 备份 ${date} ${pad(now.getHours())}-${pad(now.getMinutes())}`;
 }
 
 function isInside(parent: string, child: string) {
@@ -58,7 +58,7 @@ export async function exportUserData(window: BrowserWindow | null): Promise<Back
   // 目标落在源目录里面会让导出边写边读自己（复制到一半才发现，还会留下半个文件夹）。
   for (const source of [dataDirectory, workspace, skills]) {
     if (isInside(source, parent)) {
-      return { status: 'failed', reason: '不能保存到 Dela 的数据目录里，请另选一个位置' };
+      return { status: 'failed', reason: '不能保存到 Wilthy 的数据目录里，请另选一个位置' };
     }
   }
 
@@ -67,7 +67,7 @@ export async function exportUserData(window: BrowserWindow | null): Promise<Back
   await mkdir(backupData, { recursive: true });
   hostPorts()
     .database()
-    .exec(`VACUUM INTO '${join(backupData, 'dela.db').replaceAll("'", "''")}'`);
+    .exec(`VACUUM INTO '${join(backupData, 'wilthy.db').replaceAll("'", "''")}'`);
 
   const skipped: string[] = [];
   for (const entry of await readdir(dataDirectory)) {
@@ -82,7 +82,7 @@ export async function exportUserData(window: BrowserWindow | null): Promise<Back
     }
   }
 
-  // 工作目录（默认「文档/Dela」）与 userData 互不相干，各放一层，恢复时不会互相覆盖。
+  // 工作目录（默认「文档/Wilthy」）与 userData 互不相干，各放一层，恢复时不会互相覆盖。
   if (existsSync(workspace)) {
     try {
       await cp(workspace, join(destination, '工作目录'), {
@@ -93,7 +93,7 @@ export async function exportUserData(window: BrowserWindow | null): Promise<Back
       skipped.push('工作目录');
     }
   }
-  // 用户自己写的 Skill 与内置 Skill 同处 ~/.dela/skills，分不开，整层带走。
+  // 用户自己写的 Skill 与内置 Skill 同处 ~/.wilthy/skills，分不开，整层带走。
   if (existsSync(skills)) {
     try {
       await cp(skills, join(destination, '技能'), { recursive: true, filter: skipLinks });
@@ -101,7 +101,7 @@ export async function exportUserData(window: BrowserWindow | null): Promise<Back
       skipped.push('技能');
     }
   }
-  // 模型服务与 MCP 配置是 ~/.dela 下的明文 JSON，含 API Key，与 Skill 并列放一层。
+  // 模型服务与 MCP 配置是 ~/.wilthy 下的明文 JSON，含 API Key，与 Skill 并列放一层。
   for (const name of ['config.json', 'mcp.json'] as const) {
     if (!existsSync(configFilePath(name))) continue;
     try {

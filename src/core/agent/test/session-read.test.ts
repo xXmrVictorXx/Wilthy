@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { Message } from '@earendil-works/pi-ai';
 import type { SessionManager as Manager } from '@earendil-works/pi-coding-agent';
 
-const root = mkdtempSync(join(tmpdir(), 'dela-session-read-'));
+const root = mkdtempSync(join(tmpdir(), 'wilthy-session-read-'));
 const state = vi.hoisted(() => ({ db: null as Database.Database | null }));
 vi.mock('electron', () => ({ app: { getPath: () => root }, shell: {} }));
 vi.mock('../providers', () => ({ llmProviders: () => [], usableLlmProviders: () => [] }));
@@ -25,7 +25,7 @@ let clock = 1_000;
 
 const user = (text: string, turnId: string, meta: object = {}): Message => ({
   role: 'user',
-  content: `<dela-meta>${JSON.stringify({ turnId, body: text, ...meta })}</dela-meta>\n${text}`,
+  content: `<wilthy-meta>${JSON.stringify({ turnId, body: text, ...meta })}</wilthy-meta>\n${text}`,
   timestamp: (clock += 1000),
 });
 const assistant = (
@@ -43,7 +43,7 @@ const assistant = (
         : []),
     ],
     api: 'openai-completions',
-    provider: 'dela',
+    provider: 'wilthy',
     model: 'm',
     usage: {},
     stopReason,

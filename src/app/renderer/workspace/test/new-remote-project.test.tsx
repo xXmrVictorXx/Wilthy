@@ -3,7 +3,7 @@ import { act, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import type { DelaApi } from '../../../preload/api';
+import type { WilthyApi } from '../../../preload/api';
 import type { WorkspaceEntry, WorkspaceState } from '../../../../modules/workspace/contract';
 import type {
   RemoteBrowseResult,
@@ -27,9 +27,9 @@ const { workspaceApi, remotesApi, listeners, bridge } = vi.hoisted(() => {
     },
     subscribe,
   };
-  window.dela = {
+  window.wilthy = {
     bridge,
-  } as unknown as DelaApi;
+  } as unknown as WilthyApi;
   return { workspaceApi: handlers, remotesApi: remotes, listeners, bridge };
 });
 import { NewRemoteProjectDialog } from '../remote/NewRemoteProjectDialog';
@@ -41,7 +41,7 @@ let container: HTMLDivElement;
 let root: Root;
 let queryClient: QueryClient;
 
-const emptyState: WorkspaceState = { entries: [], directory: '/tmp/dela' };
+const emptyState: WorkspaceState = { entries: [], directory: '/tmp/wilthy' };
 
 const saved: RemoteConnection = {
   id: 'r-1',
@@ -105,7 +105,7 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
-  delete window.dela;
+  delete window.wilthy;
   vi.unstubAllGlobals();
 });
 
@@ -148,7 +148,7 @@ function api(overrides: Record<string, unknown> = {}, workspace = {}) {
   };
   Object.assign(remotesApi, remotes);
   Object.assign(workspaceApi, { state: async () => emptyState, ...workspace });
-  window.dela = { bridge } as unknown as DelaApi;
+  window.wilthy = { bridge } as unknown as WilthyApi;
   return {
     remotes,
     emit: (progress: RemoteSetupProgress) => listeners.get('remotes:setupProgress')!(progress),

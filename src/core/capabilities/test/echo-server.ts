@@ -1,9 +1,9 @@
 // 测试用最小 MCP echo 服务器（stdio：按行分隔的 JSON-RPC，无任何外部依赖）。
 // 工具：echo（正常往返）、fail（isError 结果）、die（应答后退出进程，模拟服务器崩溃）。
-// DELA_TOOL_NAME 可重命名 echo 工具（构造归一化同名冲突场景），缺省 'echo'。
+// WILTHY_TOOL_NAME 可重命名 echo 工具（构造归一化同名冲突场景），缺省 'echo'。
 import process from 'node:process';
 
-const echoToolName = process.env.DELA_TOOL_NAME ?? 'echo';
+const echoToolName = process.env.WILTHY_TOOL_NAME ?? 'echo';
 
 interface JsonRpcRequest {
   jsonrpc: '2.0';

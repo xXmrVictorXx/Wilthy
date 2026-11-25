@@ -98,7 +98,7 @@ export const llmContract = defineContract(
     },
   },
   {
-    /** ~/.dela/config.json 被 Dela 以外的工具改动后推送最新列表。 */
+    /** ~/.wilthy/config.json 被 Wilthy 以外的工具改动后推送最新列表。 */
     list: z.custom<LlmProviderView[]>(),
   },
 );

@@ -6,7 +6,7 @@ export function storageDirectory() {
   const row = getDatabase()
     .prepare("SELECT value FROM workspace_settings WHERE key='storage-directory'")
     .get() as { value: string } | undefined;
-  return row?.value ?? join(hostPorts().paths.documents(), 'Dela');
+  return row?.value ?? join(hostPorts().paths.documents(), 'Wilthy');
 }
 
 export function setStorageDirectory(path: string) {

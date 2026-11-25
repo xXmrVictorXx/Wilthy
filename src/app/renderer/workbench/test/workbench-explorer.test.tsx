@@ -16,8 +16,8 @@ const { api, desktop, mediaStub } = vi.hoisted(() => {
         channel.startsWith('remotes:') ? [] : handlers[channel.slice('workspace:'.length)]?.(input),
       subscribe,
     },
-  } as unknown as NonNullable<typeof window.dela>;
-  window.dela = desktop;
+  } as unknown as NonNullable<typeof window.wilthy>;
+  window.wilthy = desktop;
   // explorer-state 在模块求值时就调 window.matchMedia，jsdom 没有这个 API。
   const mediaStub = () => ({
     matches: false,
@@ -60,7 +60,7 @@ const localProject: WorkspaceEntry = {
   name: '本地项目',
   kind: 'project',
   sourceId: null,
-  path: 'D:/dela/workspace/本地项目',
+  path: 'D:/wilthy/workspace/本地项目',
   remoteId: null,
   updatedAt: '2026-10-09T00:00:00.000Z',
 };
@@ -71,14 +71,14 @@ const localFolder: WorkspaceEntry = {
   name: '资料',
   kind: 'folder',
   sourceId: null,
-  path: 'D:/dela/workspace/本地项目/资料',
+  path: 'D:/wilthy/workspace/本地项目/资料',
   remoteId: null,
   updatedAt: '2026-10-09T00:00:00.000Z',
 };
 
 const workspace: WorkspaceState = {
   entries: [remoteProject, localProject],
-  directory: 'D:/dela',
+  directory: 'D:/wilthy',
 };
 
 beforeEach(() => {
@@ -89,7 +89,7 @@ beforeEach(() => {
   container = document.createElement('div');
   document.body.append(container);
   root = createRoot(container);
-  delete window.dela;
+  delete window.wilthy;
   for (const name of Object.keys(api)) delete api[name];
   useWorkspaceStore.setState({ workspace, loaded: true, error: null });
   useTreeState.setState({ expanded: [], query: '', selected: null, pendingCreate: null });
@@ -147,14 +147,14 @@ const key = (input: HTMLInputElement, name: string) =>
 it('creates files inline: double-click shows a name row, Enter submits, no dialog', async () => {
   const created: WorkspaceEntry = {
     ...localProject,
-    id: 'D:/dela/workspace/本地项目/a/b.md',
+    id: 'D:/wilthy/workspace/本地项目/a/b.md',
     name: 'b.md',
     kind: 'file',
   };
   const create = vi.fn(async () => created);
   api.create = create;
   api.state = async () => workspace;
-  window.dela = desktop;
+  window.wilthy = desktop;
   const { onAction, onCreated } = await render(localProject.id);
   expect(newButton()).toBeTruthy();
 

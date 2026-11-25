@@ -43,7 +43,7 @@ function createDb(): Database.Database {
 
 function bindShuiyuan(boundAt = '2026-09-16T00:00:00.000Z'): void {
   vi.mocked(loadShuiyuanCredential).mockReturnValue({
-    username: 'dela-user',
+    username: 'wilthy-user',
     key: 'test-key',
     clientId: 'test-client',
     boundAt,
@@ -99,7 +99,7 @@ describe('Shuiyuan notice source', () => {
     await refreshNotifications();
     expect(getNotificationState(['shuiyuan']).items).toHaveLength(2);
     expect(systemNotifyItem).toHaveBeenCalledTimes(1);
-    expect(vi.mocked(systemNotifyItem).mock.calls[0]![0].id).toBe('shuiyuan:dela-user:8');
+    expect(vi.mocked(systemNotifyItem).mock.calls[0]![0].id).toBe('shuiyuan:wilthy-user:8');
   });
 
   it('keeps errors and cached notifications without writing the remote read state', async () => {
@@ -153,7 +153,7 @@ describe('Shuiyuan notice source', () => {
     await refreshNotifications();
     expect(getNotificationState(['shuiyuan']).unreadCount).toBe(1);
     expect(vi.mocked(systemNotifyItem).mock.calls.map(([item]) => item.id)).toEqual([
-      'shuiyuan:dela-user:2',
+      'shuiyuan:wilthy-user:2',
     ]);
     await markAllNotificationsRead();
     await refreshNotifications();
@@ -168,7 +168,7 @@ describe('Shuiyuan notice source', () => {
 
     await refreshNotifications();
     const consolidated = getNotificationState(['shuiyuan']).items.find(
-      (item) => item.id === 'shuiyuan:dela-user:9',
+      (item) => item.id === 'shuiyuan:wilthy-user:9',
     )!;
     expect(consolidated.target).toEqual({ page: 'shuiyuan', postId: 4926962 });
     expect(consolidated.body).toBe('alice 赞了你的 3 个帖子');
@@ -177,7 +177,7 @@ describe('Shuiyuan notice source', () => {
       'alice 赞了你的 3 个帖子',
     );
 
-    await markNotificationRead('shuiyuan:dela-user:9');
+    await markNotificationRead('shuiyuan:wilthy-user:9');
     expect(getNotificationState(['shuiyuan']).unreadCount).toBe(1);
     await refreshNotifications();
     expect(vi.mocked(systemNotifyItem).mock.calls.at(-1)![1]).toBe('alice 赞了你的 5 个帖子');

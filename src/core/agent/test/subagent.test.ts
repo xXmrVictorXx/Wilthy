@@ -8,7 +8,7 @@ import type { SubagentDetails } from '../../protocol/agent';
 import type { StoredLlmProvider } from '../llm-config';
 import { mockFrames, type MockOpenAiServer, type RecordedRequest } from './mock-openai-server';
 
-const root = mkdtempSync(join(tmpdir(), 'dela-subagent-'));
+const root = mkdtempSync(join(tmpdir(), 'wilthy-subagent-'));
 const state = vi.hoisted(() => ({
   db: null as Database.Database | null,
   provider: null as StoredLlmProvider | null,

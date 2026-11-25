@@ -10,11 +10,11 @@ export function TimetableOnboardingStep({ onDone }: { onDone: () => void }) {
   const [state, setState] = useState<StepButtonState>('idle');
   const [error, setError] = useState<string | null>(null);
 
-  if (!window.dela) {
+  if (!window.wilthy) {
     return (
       <DesktopOnlyNotice
         description="教学信息服务网的登录会话和本地课表缓存不会暴露给浏览器。"
-        title="课表仅在 Dela 桌面端可用"
+        title="课表仅在 Wilthy 桌面端可用"
       />
     );
   }
@@ -39,7 +39,7 @@ export function TimetableOnboardingStep({ onDone }: { onDone: () => void }) {
       <header className="grid gap-2">
         <h2 className="text-2xl font-semibold tracking-tight">连接教学信息服务网</h2>
         <p className="text-sm leading-relaxed text-ink-3">
-          登录在独立窗口完成，Dela 只读取你的个人课表。
+          登录在独立窗口完成，Wilthy 只读取你的个人课表。
         </p>
       </header>
       {error && <ErrorText size="sm">{error}</ErrorText>}

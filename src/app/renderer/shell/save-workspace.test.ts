@@ -5,9 +5,9 @@ import { afterEach, beforeEach, expect, it, vi, type Mock } from 'vitest';
 const invoke = vi.hoisted(() => {
   const invoke = vi.fn();
   const subscribe = () => () => {};
-  window.dela = {
+  window.wilthy = {
     bridge: { invoke, subscribe },
-  } as unknown as NonNullable<typeof window.dela>;
+  } as unknown as NonNullable<typeof window.wilthy>;
   return invoke;
 });
 import { registerComposeSave } from '../../../modules/mail/view';
@@ -82,7 +82,7 @@ it('保存所有文件草稿和邮件、写入聊天与布局后才安装', asyn
   useWorkbenchLayout.setState({ ready: true });
   install = vi.fn(async () => {
     expect(useUpdateState.getState().preparingInstall).toBe(true);
-    expect(JSON.parse(localStorage.getItem('dela.session.drafts')!)).toEqual({
+    expect(JSON.parse(localStorage.getItem('wilthy.session.drafts')!)).toEqual({
       session: { prompt: '未发送文字' },
     });
     order.push('install');

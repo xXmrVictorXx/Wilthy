@@ -1,6 +1,6 @@
 // 远程会话的接线验证（不需要真实主机，也不发任何模型请求）：
 // 以远端 POSIX 路径作 cwd 创建 Pi 会话要能成功，并且七个工具名下的生效定义必须是
-// Dela 注入的远程版本——若同名覆盖失效，模型会拿远端路径调用 Pi 内置工具，
+// Wilthy 注入的远程版本——若同名覆盖失效，模型会拿远端路径调用 Pi 内置工具，
 // 在 Windows 上就会写到 E:\root\... 这类本地盘上，后果是静默改错文件。
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -27,12 +27,12 @@ const provider: StoredLlmProvider = {
 };
 
 beforeEach(() => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-remote-session-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-remote-session-'));
 });
 afterEach(() => rmSync(state.root, { force: true, recursive: true }));
 
 describe('远程会话接线', () => {
-  it('cwd 用远端路径建会话，七个工具是 Dela 的远程版本且不在本地建目录', async () => {
+  it('cwd 用远端路径建会话，七个工具是 Wilthy 的远程版本且不在本地建目录', async () => {
     const session = await openPiSession({
       cwd: remotePath,
       selection: { provider, model: 'test-model', effort: null },

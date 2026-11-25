@@ -13,7 +13,7 @@ import {
 import { requireCanvasConfigured } from './helpers';
 
 export const searchCanvasSourcesTool = tool(
-  '按标题查找已缓存的 Canvas 资料（只读本地缓存；只匹配缓存标题，不是正文全文检索）。返回的 ref 经 dela read_resource 命令读取正文；未同步或同步出错的课程在 courses 中标注。',
+  '按标题查找已缓存的 Canvas 资料（只读本地缓存；只匹配缓存标题，不是正文全文检索）。返回的 ref 经 wilthy read_resource 命令读取正文；未同步或同步出错的课程在 courses 中标注。',
   z
     .object({
       query,

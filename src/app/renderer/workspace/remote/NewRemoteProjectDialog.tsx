@@ -187,7 +187,7 @@ function NewRemoteProjectPanel({
     if (value.startsWith('config:')) {
       // config 里的主机：别名就是目的地，其余交给 ssh 解析。先存成连接，再连。
       const alias = value.slice('config:'.length);
-      if (!window.dela) return;
+      if (!window.wilthy) return;
       void remotesClient
         .save({ label: alias, host: alias, port: null, keyPath: null })
         .then(async (saved) => {
@@ -218,7 +218,7 @@ function NewRemoteProjectPanel({
     .slice(0, 5);
 
   const importProject = async () => {
-    if (!window.dela || !connectionId || !target || importing) return;
+    if (!window.wilthy || !connectionId || !target || importing) return;
     onImportingChange(true);
     setError(null);
     const projectName = name.trim() || undefined;

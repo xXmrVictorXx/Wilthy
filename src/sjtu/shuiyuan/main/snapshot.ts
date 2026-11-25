@@ -43,7 +43,7 @@ const PROGRESS_INTERVAL_MS = 500;
 const DRAFT_INTERVAL_MS = 5_000;
 const PENDING_ATTRIBUTE = 'data-snapshot-pending';
 const POSTS_FILE = 'posts.ndjson';
-const SNAPSHOT_URL = 'dela-resource://shuiyuan-snapshot';
+const SNAPSHOT_URL = 'wilthy-resource://shuiyuan-snapshot';
 
 type Progress = NonNullable<ShuiyuanSnapshotState['progress']>;
 

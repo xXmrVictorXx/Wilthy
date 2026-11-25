@@ -8,7 +8,7 @@ import { remoteById, remoteDocumentMime, targetOf, withinRemoteRoot } from '../.
 import { readRemoteRange, statRemoteFile } from '../../../core/remote/operations';
 import { projectLocation, resolveWorkspaceAsset, workspacePreviewPath } from './api';
 
-const previewScheme = 'dela-resource';
+const previewScheme = 'wilthy-resource';
 
 type PreviewHost = (request: Request, url: URL) => Promise<Response>;
 const previewHosts = new Map<string, PreviewHost>();

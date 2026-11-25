@@ -104,7 +104,7 @@ export function remoteAssetUrl(
   }
   const target = segments.join('/') || '/';
   if (!withinRemotePath(root, target)) return src;
-  return `dela-resource://remote-raw/${encodeURIComponent(projectId)}?path=${encodeURIComponent(target)}`;
+  return `wilthy-resource://remote-raw/${encodeURIComponent(projectId)}?path=${encodeURIComponent(target)}`;
 }
 
 const remoteNodeIdPattern =

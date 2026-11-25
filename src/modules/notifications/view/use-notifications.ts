@@ -4,7 +4,7 @@ import { createClient, errorMessage } from '../../../core/protocol/contract';
 import { showToast } from '../../../ui/toast';
 import { notificationsContract, type NotificationItem, type NotificationTarget } from '../contract';
 
-export const notificationsClient = createClient(notificationsContract, window.dela?.bridge);
+export const notificationsClient = createClient(notificationsContract, window.wilthy?.bridge);
 
 export function notifyFailure(reason: unknown): void {
   showToast({ variant: 'error', title: '通知操作失败', description: errorMessage(reason) });

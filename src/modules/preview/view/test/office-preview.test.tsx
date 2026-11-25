@@ -69,7 +69,7 @@ it('switches worksheets from the tab bar', async () => {
     'fetch',
     vi.fn(async () => new Response(new Uint8Array(workbook))),
   );
-  await act(async () => root.render(<OfficePreview url="dela-resource://book" kind="xlsx" />));
+  await act(async () => root.render(<OfficePreview url="wilthy-resource://book" kind="xlsx" />));
   const tabs = await vi.waitFor(() => {
     const found = [...container.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
     expect(found.map((tab) => tab.textContent)).toEqual(['甲', '乙']);

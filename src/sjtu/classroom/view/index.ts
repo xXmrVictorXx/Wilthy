@@ -12,7 +12,7 @@ export const classroomView = defineView({
   },
   settings: { storage: ClassroomStorage },
   start() {
-    subscribe(classroomContract, window.dela?.bridge, 'downloadEnded', ({ name, state }) =>
+    subscribe(classroomContract, window.wilthy?.bridge, 'downloadEnded', ({ name, state }) =>
       showToast(
         state === 'completed'
           ? { variant: 'success', title: '下载完成', description: name }

@@ -37,5 +37,5 @@ export function decodeAssetPath(path: string): string {
 }
 
 export function noteAssetUrl(entryId: string, ref: string): string {
-  return `dela-resource://note-asset/${encodeURIComponent(ref)}?id=${encodeURIComponent(entryId)}`;
+  return `wilthy-resource://note-asset/${encodeURIComponent(ref)}?id=${encodeURIComponent(entryId)}`;
 }

@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	// 一次 POST 的 paths 上限：Dela 每次重发当前展开的全部目录，给足余量即可。
+	// 一次 POST 的 paths 上限：Wilthy 每次重发当前展开的全部目录，给足余量即可。
 	watchMaxPaths    = 4096
 	watchMaxIDLength = 128
 	// 读缓冲区：一次 read 尽量把内核队列取空，少几次系统调用。
@@ -59,7 +59,7 @@ func splitInotifyEvents(buffer []byte) []inotifyEvent {
 }
 
 // watchHub 持有进程里唯一的 inotify 实例，fd 惰性创建：没人 watch 就不占内核资源。
-// 目录与 id 是多对多（Dela 可能有多个 id 看着同一棵树），所以按路径做全局记账，
+// 目录与 id 是多对多（Wilthy 可能有多个 id 看着同一棵树），所以按路径做全局记账，
 // 同一目录只加一次内核 watch，watchedDir.ids 的大小就是引用计数；否则重复的 watch 会
 // 先把 inotify 额度耗光，再让删除时的解引用变得没法对账。
 type watchHub struct {
@@ -423,10 +423,10 @@ func (s *server) watchStream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// 立刻把响应头刷出去。net/http 是懒发送：不刷的话要等第一条事件客户端才拿得到响应，
-	// 「流已建立」和「第一条变化」就分不开了（Dela 侧只能一直等）。
+	// 「流已建立」和「第一条变化」就分不开了（Wilthy 侧只能一直等）。
 	stream.flusher.Flush()
 
-	// 保活：安静的目录可能几小时没有结构变化，而 Dela 侧把「这条流多久没有字节」当作
+	// 保活：安静的目录可能几小时没有结构变化，而 Wilthy 侧把「这条流多久没有字节」当作
 	// 隧道半死的信号（心跳走的是另一条请求，不给这条流带数据）。注释帧不算事件，
 	// 客户端只认 data: 前缀，所以它既续了看门狗，又不会被当成变化。
 	keepAlive := time.NewTicker(watchKeepAlive)

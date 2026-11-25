@@ -29,12 +29,12 @@ export function SystemNotifications() {
   const messageAlertsQuery = useQuery({
     queryKey: ['notifications', 'messageAlerts'],
     queryFn: () => notificationsClient.messageAlerts(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   });
   const taskQuery = useQuery({
     queryKey: ['settings', 'taskNotifications'],
     queryFn: () => settingsClient.taskNotifications(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   });
   const messageAlerts = messageAlertsQuery.data;
   const task = taskQuery.data;
@@ -51,7 +51,7 @@ export function SystemNotifications() {
     const save = async () => {
       queryClient.setQueryData(
         ['notifications', 'messageAlerts'],
-        window.dela ? await notificationsClient.setMessageAlerts(next) : next,
+        window.wilthy ? await notificationsClient.setMessageAlerts(next) : next,
       );
     };
     try {
@@ -69,7 +69,7 @@ export function SystemNotifications() {
     const previous = task;
     queryClient.setQueryData(['settings', 'taskNotifications'], { ...task, [key]: next });
     const save = async () => {
-      const saved = window.dela
+      const saved = window.wilthy
         ? await settingsClient.setTaskNotifications({ ...task, [key]: next })
         : ({ ...task, [key]: next } satisfies TaskNotificationPrefs);
       queryClient.setQueryData(['settings', 'taskNotifications'], saved);
@@ -84,7 +84,7 @@ export function SystemNotifications() {
   };
 
   const changeSnooze = async (until: string | null) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     setBusy(true);
     const failureTitle = until === null ? '恢复通知失败' : '暂停通知失败';
     try {
@@ -142,7 +142,7 @@ export function SystemNotifications() {
           title="暂停通知"
         >
           <div className="flex flex-wrap items-center gap-2">
-            {window.dela ? (
+            {window.wilthy ? (
               <>
                 <Button
                   disabled={busy}

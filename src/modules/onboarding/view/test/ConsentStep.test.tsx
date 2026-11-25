@@ -7,9 +7,9 @@ import terms from '../../../../../docs/terms.md?raw';
 
 // 契约客户端在模块加载时取 bridge，须先于导入页面装好。
 vi.hoisted(() => {
-  window.dela = {
+  window.wilthy = {
     bridge: { invoke: async () => undefined, subscribe: () => () => {} },
-  } as unknown as NonNullable<typeof window.dela>;
+  } as unknown as NonNullable<typeof window.wilthy>;
 });
 import { ConsentStep } from '../ConsentStep';
 

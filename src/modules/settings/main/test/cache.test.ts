@@ -52,15 +52,15 @@ function write(path: string, size: number) {
 
 beforeEach(() => {
   state.failRemove = false;
-  state.root = mkdtempSync(join(tmpdir(), 'dela-cache-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-cache-'));
   write(join(state.root, 'Cache', 'Cache_Data', 'a.bin'), 1000);
   write(join(state.root, 'Code Cache', 'js', 'b.js'), 2000);
   // 校园会话的分区：缓存目录在分区里面，用户的 Local Storage 也在里面，只删前者。
-  write(join(state.root, 'Partitions', 'dela-campus', 'Cache', 'c.bin'), 500);
-  write(join(state.root, 'Partitions', 'dela-campus', 'Local Storage', 'leveldb', 'd.lld'), 700);
+  write(join(state.root, 'Partitions', 'wilthy-campus', 'Cache', 'c.bin'), 500);
+  write(join(state.root, 'Partitions', 'wilthy-campus', 'Local Storage', 'leveldb', 'd.lld'), 700);
   write(join(state.root, 'Local Storage', 'leveldb', 'e.lld'), 4000);
   write(join(state.root, 'misc', 'Cache'), 700);
-  write(join(state.root, 'dela.db'), 8000);
+  write(join(state.root, 'wilthy.db'), 8000);
 });
 
 afterEach(() => {
@@ -93,12 +93,12 @@ it('清除只删缓存目录，其余文件原地不动', async () => {
   expect(await cacheSize()).toBe(0);
   expect(existsSync(join(state.root, 'Cache'))).toBe(false);
   expect(existsSync(join(state.root, 'Code Cache'))).toBe(false);
-  expect(existsSync(join(state.root, 'Partitions', 'dela-campus', 'Cache'))).toBe(false);
+  expect(existsSync(join(state.root, 'Partitions', 'wilthy-campus', 'Cache'))).toBe(false);
   // 分区里真正属于用户的数据只删了缓存兄弟目录，自己还在。
-  expect(existsSync(join(state.root, 'Partitions', 'dela-campus', 'Local Storage'))).toBe(true);
+  expect(existsSync(join(state.root, 'Partitions', 'wilthy-campus', 'Local Storage'))).toBe(true);
   expect(existsSync(join(state.root, 'Local Storage', 'leveldb', 'e.lld'))).toBe(true);
   expect(existsSync(join(state.root, 'misc', 'Cache'))).toBe(true);
-  expect(statSync(join(state.root, 'dela.db')).size).toBe(8000);
+  expect(statSync(join(state.root, 'wilthy.db')).size).toBe(8000);
 });
 
 it('有文件删不掉时如实回报 blocked', async () => {

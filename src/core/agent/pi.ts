@@ -27,7 +27,7 @@ export function loadPi(): Promise<Sdk> {
 }
 
 /** Pi 的全局目录（auth/models/skills 等）放应用数据下，与 ~/.pi 隔离；唯独 bin 只认
- * PI_CODING_AGENT_DIR（Dela 不设），rg/fd 仍在 ~/.pi/agent/bin（Pi 1.1.0，2026-10）。 */
+ * PI_CODING_AGENT_DIR（Wilthy 不设），rg/fd 仍在 ~/.pi/agent/bin（Pi 1.1.0，2026-10）。 */
 export function piAgentDir(): string {
   return join(hostPorts().paths.userData(), 'pi');
 }
@@ -36,8 +36,8 @@ function piSessionsDir(): string {
   return join(piAgentDir(), 'sessions');
 }
 
-/** 每个 Dela 提供商注册成独立的 Pi 提供商：鉴权按名字查，共用一个名字时各会话的地址与密钥会互相覆盖。 */
-const piProviderName = (provider: StoredLlmProvider) => `dela-${provider.id}`;
+/** 每个 Wilthy 提供商注册成独立的 Pi 提供商：鉴权按名字查，共用一个名字时各会话的地址与密钥会互相覆盖。 */
+const piProviderName = (provider: StoredLlmProvider) => `wilthy-${provider.id}`;
 
 export interface SessionModel {
   provider: StoredLlmProvider;
@@ -182,7 +182,7 @@ export function isInside(path: string, dir: string): boolean {
   return rest !== '' && !rest.startsWith('..') && !isAbsolute(rest);
 }
 
-/** Pi 还会加载项目里的 .pi/skills；Dela 的项目 Skill 只认 .agents/skills。 */
+/** Pi 还会加载项目里的 .pi/skills；Wilthy 的项目 Skill 只认 .agents/skills。 */
 export function isPiProjectSkill(path: string, cwd: string): boolean {
   return isInside(path, join(cwd, '.pi', 'skills'));
 }
@@ -229,7 +229,7 @@ export async function openPiSession(input: OpenSessionInput): Promise<AgentSessi
     noExtensions: true,
     noPromptTemplates: true,
     noThemes: true,
-    // 内联扩展不受 noExtensions 限制，由 Dela 自己提供。
+    // 内联扩展不受 noExtensions 限制，由 Wilthy 自己提供。
     extensionFactories: input.beforeTool
       ? [(api) => void api.on('tool_call', async () => void (await input.beforeTool!()))]
       : [],
@@ -313,7 +313,7 @@ export async function verifyModel(input: {
         id: input.model,
         name: input.model,
         api: 'openai-completions',
-        provider: 'dela-verify',
+        provider: 'wilthy-verify',
         baseUrl: input.baseUrl.replace(/\/+$/, ''),
         reasoning: input.reasoning,
         input: ['text'],

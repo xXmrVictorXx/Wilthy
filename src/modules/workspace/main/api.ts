@@ -556,7 +556,7 @@ export function linkProjectFolder(path: unknown): WorkspaceEntry {
   if (!statSync(resolved, { throwIfNoEntry: false })?.isDirectory())
     throw new Error('请选择一个文件夹');
   if (resolved === resolve(containerPath(null)))
-    throw new Error('这是 Dela 的工作区目录本身，请在其中新建项目');
+    throw new Error('这是 Wilthy 的工作区目录本身，请在其中新建项目');
   const db = hostPorts().database();
   const existing = db
     .prepare(
@@ -757,7 +757,7 @@ export async function readWorkspaceEntry(id: string): Promise<DocumentContent> {
   }
   if (format === 'binary') return { title: item.name, format, revision: version };
   if (streamedFormats.has(format)) {
-    const previewUrl = `dela-resource://workspace/${encodeURIComponent(id)}?v=${version}`;
+    const previewUrl = `wilthy-resource://workspace/${encodeURIComponent(id)}?v=${version}`;
     if (format === 'pdf')
       return { title: item.name, format, previewUrl, mime: 'application/pdf', revision: version };
     return {

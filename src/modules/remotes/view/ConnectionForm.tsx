@@ -62,7 +62,7 @@ export function ConnectionForm({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     const invalid = problem();
     if (invalid) {
       setError(invalid);
@@ -88,7 +88,7 @@ export function ConnectionForm({
   };
 
   const remove = async () => {
-    if (!window.dela || !connection || busy) return;
+    if (!window.wilthy || !connection || busy) return;
     setBusy(true);
     setError(null);
     try {
@@ -109,7 +109,7 @@ export function ConnectionForm({
   };
 
   const pickKey = async () => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     try {
       const picked = await remotesClient.pickKey();
       if (picked) setKeyPath(picked);
@@ -169,7 +169,7 @@ export function ConnectionForm({
           </div>
         </Field>
       </div>
-      {/* 不提供密码输入：Dela 只支持密钥与 ssh agent，放一个点了没用的控件更糟。 */}
+      {/* 不提供密码输入：Wilthy 只支持密钥与 ssh agent，放一个点了没用的控件更糟。 */}
       <p className="text-xs leading-relaxed text-ink-3">
         暂不支持密码登录：请使用密钥或 ssh agent，或在 ~/.ssh/config 中为该主机配置好认证。
       </p>

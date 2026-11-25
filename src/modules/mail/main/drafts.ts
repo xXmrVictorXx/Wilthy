@@ -127,7 +127,7 @@ function openLocalDraft(id: string): PreparedEmail {
       if (total > 70 * 1024 * 1024) throw new Error('附件总大小超过 70 MB');
       const file = restoreComposeFile(stored.name, stored.kind, content);
       files.push(file);
-      html = html.replaceAll(`cid:${stored.id}@dela`, `cid:${file.id}@dela`);
+      html = html.replaceAll(`cid:${stored.id}@wilthy`, `cid:${file.id}@wilthy`);
     }
     return {
       id,

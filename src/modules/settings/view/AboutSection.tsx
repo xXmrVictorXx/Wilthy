@@ -1,7 +1,7 @@
 import { Feather, Globe, Heart } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Button } from '../../../ui/button';
-import { DelaBrand } from './dela-brand';
+import { WilthyBrand } from './wilthy-brand';
 import {
   creditSections,
   type CreditPerson,
@@ -122,12 +122,12 @@ function PersonIdentity({ person }: { person: CreditPerson }) {
         <span aria-hidden="true" className="inline-grid size-6">
           <img
             alt=""
-            className="dela-brand-light col-start-1 row-start-1 size-full object-contain"
+            className="wilthy-brand-light col-start-1 row-start-1 size-full object-contain"
             src={person.logo.light}
           />
           <img
             alt=""
-            className="dela-brand-dark col-start-1 row-start-1 size-full object-contain"
+            className="wilthy-brand-dark col-start-1 row-start-1 size-full object-contain"
             src={person.logo.dark}
           />
         </span>
@@ -185,10 +185,10 @@ export function AboutSection() {
     <div className="grid gap-10" data-setting-id="about">
       <SectionHeader title="关于" />
       <section className="grid justify-items-center gap-1.5 px-6 pb-10 pt-6 text-center">
-        <DelaBrand className="h-48 w-48" />
-        <h2 className="text-4xl font-script tracking-tight">Dela</h2>
-        <p className="text-sm text-ink-3">The world keeps changing. Dela stays with you.</p>
-        <p className="mt-5 text-xs text-ink-3">版本 {window.dela?.version ?? '浏览器预览'}</p>
+        <WilthyBrand className="h-48 w-48" />
+        <h2 className="text-4xl font-script tracking-tight">Wilthy</h2>
+        <p className="text-sm text-ink-3">The world keeps changing. Wilthy stays with you.</p>
+        <p className="mt-5 text-xs text-ink-3">版本 {window.wilthy?.version ?? '浏览器预览'}</p>
         <div className="mt-1 flex items-center justify-center gap-1.5">
           {projectLinks.map(({ icon, label, url }) => (
             <Button asChild aria-label={label} key={url} size="icon-sm" variant="ghost">

@@ -76,7 +76,7 @@ function MailUnavailable() {
     <div className="grid h-full place-items-center p-8">
       <div className="grid w-full max-w-115 gap-2">
         <p className="text-xs font-medium text-ink-3">浏览器预览</p>
-        <h2 className="text-lg font-semibold tracking-tight">邮箱仅在 Dela 桌面端可用</h2>
+        <h2 className="text-lg font-semibold tracking-tight">邮箱仅在 Wilthy 桌面端可用</h2>
         <p className="text-sm leading-relaxed text-ink-3">
           邮件账户、凭据与本地缓存不会暴露给浏览器。请通过 Electron 窗口测试同步和阅读。
         </p>
@@ -91,7 +91,7 @@ export function MailView({
   drawerContainer,
   openRequest,
 }: MailViewProps) {
-  if (!window.dela) return <MailUnavailable />;
+  if (!window.wilthy) return <MailUnavailable />;
   return (
     <DesktopMailView
       mobileDrawerOpen={mobileDrawerOpen}
@@ -392,7 +392,7 @@ function DesktopMailView({
 
   useEffect(
     () =>
-      subscribe(mailContract, window.dela?.bridge, 'syncStatus', (status) => {
+      subscribe(mailContract, window.wilthy?.bridge, 'syncStatus', (status) => {
         queryClient.setQueryData<MailState>(
           mailStateKey,
           (prev) => prev && { ...prev, sync: status },

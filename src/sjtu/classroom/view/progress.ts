@@ -1,6 +1,6 @@
 // 课堂视频的播放进度按录像 id 保存在本机 localStorage：与下载进度无关，
 // 也不依赖校园会话或签名媒体地址，重新登录、重启应用后仍可恢复。
-const KEY_PREFIX = 'dela.classroom.progress.';
+const KEY_PREFIX = 'wilthy.classroom.progress.';
 const MIN_SAVE_SECONDS = 1;
 const SAVE_INTERVAL_SECONDS = 5;
 // 距结尾不足 1 秒视为已看完；正常播放结束也会主动清除，这里兜底异常退出留下的尾部进度。

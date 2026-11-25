@@ -128,7 +128,7 @@ export function ProjectFileTree({
       );
       return workspaceClient.searchLocal({ rootId, query: term });
     },
-    enabled: Boolean(term) && Boolean(window.dela),
+    enabled: Boolean(term) && Boolean(window.wilthy),
   });
   const searching = trimmedQuery !== '';
   useEffect(() => {

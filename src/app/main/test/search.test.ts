@@ -29,7 +29,7 @@ const hitsOf = (query: string, group: string) =>
   querySearch(query).find((item) => item.id === group)?.hits ?? [];
 
 beforeAll(() => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-search-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-search-'));
   provideTestHostPorts({ database: getDatabase });
   openDatabase([remotesModule, workspaceModule, mailModule]);
   workspaceModule.register?.();

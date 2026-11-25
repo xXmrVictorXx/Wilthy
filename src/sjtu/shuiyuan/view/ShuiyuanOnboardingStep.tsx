@@ -16,11 +16,11 @@ export function ShuiyuanOnboardingStep({ onDone }: { onDone: () => void }) {
   const [state, setState] = useState<StepButtonState>('idle');
   const [error, setError] = useState<string | null>(null);
 
-  if (!window.dela) {
+  if (!window.wilthy) {
     return (
       <DesktopOnlyNotice
         description="水源的授权会话不会暴露给浏览器。"
-        title="水源社区仅在 Dela 桌面端可用"
+        title="水源社区仅在 Wilthy 桌面端可用"
       />
     );
   }

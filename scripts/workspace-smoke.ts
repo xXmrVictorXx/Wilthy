@@ -41,7 +41,7 @@ import { previewModule } from '../src/modules/preview';
 import { canvasModule } from '../src/sjtu/canvas';
 import { registerAgentIpc } from '../src/app/main/agent-ipc';
 
-const profile = mkdtempSync(join(tmpdir(), 'dela-workspace-test-'));
+const profile = mkdtempSync(join(tmpdir(), 'wilthy-workspace-test-'));
 for (const name of ['userData', 'home'] as const) app.setPath(name, profile);
 registerPreviewScheme();
 const pdf = new TextEncoder().encode('%PDF-1.4\nfixture');
@@ -155,7 +155,7 @@ app
     ]);
     assert.equal(first.format, 'pdf');
     assert.equal(first.bytes, undefined);
-    assert.match(second.previewUrl ?? '', /^dela-resource:\/\/canvas\/canvas-file%3A3/);
+    assert.match(second.previewUrl ?? '', /^wilthy-resource:\/\/canvas\/canvas-file%3A3/);
     assert.equal(storageGets, 1);
     const canvasKey = createHash('sha256').update('3:2026-09-01').digest('hex');
     const cachedPath = (
@@ -410,25 +410,25 @@ app
       maximized: null,
     };
     await invoke(
-      `await window.dela.bridge.invoke('workspace:saveLayout', { projectId: ${JSON.stringify(promoted.id)}, layout: ${JSON.stringify(layout)} });`,
+      `await window.wilthy.bridge.invoke('workspace:saveLayout', { projectId: ${JSON.stringify(promoted.id)}, layout: ${JSON.stringify(layout)} });`,
     );
     const provider = await invoke(
-      `return await window.dela.bridge.invoke('llm:save', { name: '致远一号', baseUrl: 'https://models.sjtu.edu.cn/api/v1', apiKey: 'test-model-key', models: ['qwen', 'deepseek-chat', 'minimax'] });`,
+      `return await window.wilthy.bridge.invoke('llm:save', { name: '致远一号', baseUrl: 'https://models.sjtu.edu.cn/api/v1', apiKey: 'test-model-key', models: ['qwen', 'deepseek-chat', 'minimax'] });`,
     );
-    const providers = await invoke(`return await window.dela.bridge.invoke('llm:list');`);
+    const providers = await invoke(`return await window.wilthy.bridge.invoke('llm:list');`);
     assert.equal(providers.length, 1);
     assert.equal(providers[0].enabled, true);
     assert.equal('apiKey' in providers[0], false);
     const verified = await invoke(
-      `return await window.dela.bridge.invoke('llm:verify', { id: ${JSON.stringify(providers[0].id)}, baseUrl: ${JSON.stringify(providers[0].baseUrl)} });`,
+      `return await window.wilthy.bridge.invoke('llm:verify', { id: ${JSON.stringify(providers[0].id)}, baseUrl: ${JSON.stringify(providers[0].baseUrl)} });`,
     );
     assert.equal(verified.ok, true, verified.message);
     assert.deepEqual(verified.models, ['qwen', 'minimax']);
     await invoke(
-      `await window.dela.bridge.invoke('llm:setEnabled', { id: ${JSON.stringify(provider.id)}, enabled: false });`,
+      `await window.wilthy.bridge.invoke('llm:setEnabled', { id: ${JSON.stringify(provider.id)}, enabled: false });`,
     );
     assert.equal(
-      (await invoke(`return await window.dela.bridge.invoke('llm:list');`))[0].enabled,
+      (await invoke(`return await window.wilthy.bridge.invoke('llm:list');`))[0].enabled,
       false,
     );
     const email = prepareEmail({
@@ -439,7 +439,7 @@ app
     });
     assert.equal(email.sent, false);
     const prepared = await invoke(
-      `return await window.dela.bridge.invoke('mail:openDraft', ${JSON.stringify(email.draftId)});`,
+      `return await window.wilthy.bridge.invoke('mail:openDraft', ${JSON.stringify(email.draftId)});`,
     );
     assert.equal(prepared.subject, '报告草稿');
     assert.equal(prepared.text, '请查看附件');
@@ -447,7 +447,7 @@ app
     assert.equal(prepared.files[0].size, Buffer.byteLength('# 恢复测试'));
     assert.equal('path' in prepared.files[0], false);
     await invoke(
-      `await window.dela.bridge.invoke('mail:releaseComposeFiles', ${JSON.stringify(prepared.files.map((file: { id: string }) => file.id))});`,
+      `await window.wilthy.bridge.invoke('mail:releaseComposeFiles', ${JSON.stringify(prepared.files.map((file: { id: string }) => file.id))});`,
     );
     await invoke(`await document.fonts.ready;`);
     assert.equal(
@@ -461,13 +461,15 @@ app
       join(process.cwd(), '.tools', 'agent-home.png'),
       (await win.webContents.capturePage()).toPNG(),
     );
-    await invoke(`await window.dela.bridge.invoke('workspace:remove', ${JSON.stringify(moveTo)});`);
+    await invoke(
+      `await window.wilthy.bridge.invoke('workspace:remove', ${JSON.stringify(moveTo)});`,
+    );
     assert.equal((await readWorkspaceEntry(ref2.id)).format, 'html');
     assert(existsSync(path));
     openDatabase(modules);
     assert.deepEqual(
       await invoke(
-        `return await window.dela.bridge.invoke('workspace:layout', ${JSON.stringify(promoted.id)});`,
+        `return await window.wilthy.bridge.invoke('workspace:layout', ${JSON.stringify(promoted.id)});`,
       ),
       layout,
     );

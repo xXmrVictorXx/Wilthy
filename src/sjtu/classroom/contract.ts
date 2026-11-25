@@ -25,7 +25,7 @@ export interface VideoTranscript {
 export interface VideoStream {
   view: number;
   duration: number;
-  /** dela-resource 播放代理地址（token 在本次应用运行期间有效），界面只作 video.src 使用。 */
+  /** wilthy-resource 播放代理地址（token 在本次应用运行期间有效），界面只作 video.src 使用。 */
   playbackUrl: string;
 }
 export interface VideoDownload {

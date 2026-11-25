@@ -52,7 +52,7 @@ let pty: {
 };
 
 beforeAll(() => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-terminal-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-terminal-'));
 });
 
 beforeEach(() => {
@@ -109,7 +109,7 @@ describe('跟随系统 shell', () => {
     expect(args).toEqual(['-NoLogo']);
     expect(snapshot).toMatchObject({ title: 'PowerShell' });
     expect(options).toMatchObject({ cwd: 'E:\\项目 ; & 中文', useConptyDll: true });
-    expect(options.env.DELA_COMMAND_URL).toBeUndefined();
+    expect(options.env.WILTHY_COMMAND_URL).toBeUndefined();
   });
 
   it('macOS 以登录 shell 启动用户自己的 shell，取不到时用 zsh', async () => {

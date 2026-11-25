@@ -11,7 +11,7 @@ import { useChatDrafts } from './drafts';
 
 const EDGE_REM = 0.5;
 // 样式见 globals.css 的 ::highlight。
-const HIGHLIGHT = 'dela-reply-comment';
+const HIGHLIGHT = 'wilthy-reply-comment';
 
 export interface FloatingAnchor {
   top: number;

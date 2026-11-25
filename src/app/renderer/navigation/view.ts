@@ -21,7 +21,7 @@ type ShellTarget = 'projects' | 'chat' | 'sources' | 'settings';
 
 export type AppView = ShellView | Exclude<keyof NavTargets, ShellTarget>;
 
-const projectStorageKey = 'dela.workspace.project';
+const projectStorageKey = 'wilthy.workspace.project';
 
 interface NavigationState {
   view: AppView;
@@ -209,7 +209,7 @@ export const useNavigationStore = create<NavigationState>((set, get) => {
       // 落点跟着发起处走：首页发起的随聊留在首页，工作台里发起的（项目或资料）就地开在焦点组，
       // 不跳页、不分屏。main 对同一池复用未发送的空会话，所以连续新建不会堆出空标签。
       const onHome = projectId === null && get().view !== 'workbench';
-      if (!window.dela || !get().navigate(onHome ? 'home' : 'workbench')) return null;
+      if (!window.wilthy || !get().navigate(onHome ? 'home' : 'workbench')) return null;
       try {
         const chat = await agentClient['create-session']({ projectId });
         if (!chat.sessionId) throw new Error('会话创建失败');

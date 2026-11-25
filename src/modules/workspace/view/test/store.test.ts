@@ -8,12 +8,15 @@ const { api, bridge } = vi.hoisted(() => {
       handlers[channel.slice('workspace:'.length)]!(input),
     subscribe: vi.fn(() => () => undefined),
   };
-  Object.defineProperty(globalThis, 'window', { configurable: true, value: { dela: { bridge } } });
+  Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: { wilthy: { bridge } },
+  });
   return { api: handlers, bridge };
 });
 import { useWorkspaceStore } from '../store';
 
-const workspaceState = { entries: [], directory: 'C:/dela' };
+const workspaceState = { entries: [], directory: 'C:/wilthy' };
 
 function installDela(handlers: { workspace?: () => Promise<unknown> }) {
   const state = vi.fn(handlers.workspace ?? (async () => workspaceState));

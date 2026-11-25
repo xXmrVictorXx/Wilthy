@@ -89,7 +89,7 @@ export const useWorkspaceStore = create<Store>((set, get) => ({
     set({ overview: next, workspace: mergeDirectories(next, get().directories, get().workspace) });
   },
   ensureDirectory: (id, force = false) => {
-    if (!window.dela) return Promise.resolve();
+    if (!window.wilthy) return Promise.resolve();
     const pending = get().directoryRequests[id];
     if (!force && pending) return pending;
     if (!force && get().directories[id]) return Promise.resolve();
@@ -141,7 +141,7 @@ export const useWorkspaceStore = create<Store>((set, get) => ({
   watchingChanges: false,
   setError: (error) => set({ error: error === null ? null : errorMessage(error) }),
   load: () => {
-    if (get().loaded || !window.dela) return Promise.resolve();
+    if (get().loaded || !window.wilthy) return Promise.resolve();
     if (!get().watchingChanges) {
       set({ watchingChanges: true });
       onWorkspaceEvent('changed', (paths) => {
@@ -164,7 +164,7 @@ export const useWorkspaceStore = create<Store>((set, get) => ({
     return loading;
   },
   refresh: (paths) => {
-    if (!window.dela) return Promise.resolve();
+    if (!window.wilthy) return Promise.resolve();
     const queued = get().refreshQueue;
     set({
       refreshQueue: {

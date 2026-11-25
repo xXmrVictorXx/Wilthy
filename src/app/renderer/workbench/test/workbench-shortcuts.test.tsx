@@ -35,7 +35,7 @@ let container: HTMLDivElement;
 let root: Root;
 beforeEach(async () => {
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
-  window.dela = { platform: 'darwin' } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { platform: 'darwin' } as unknown as NonNullable<typeof window.wilthy>;
   state.closeTab.mockReset();
   container = document.createElement('div');
   document.body.append(container);
@@ -47,7 +47,7 @@ beforeEach(async () => {
 afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
-  delete window.dela;
+  delete window.wilthy;
   vi.unstubAllGlobals();
 });
 const press = (target: Element, modifiers: KeyboardEventInit) => {
@@ -73,7 +73,7 @@ it('弹窗内不关闭后方工作台标签', () => {
   expect(state.closeTab).not.toHaveBeenCalled();
 });
 it('Windows 保留原有输入区域守卫与 Ctrl+W 行为', () => {
-  window.dela = { platform: 'win32' } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { platform: 'win32' } as unknown as NonNullable<typeof window.wilthy>;
   expect(press(container.querySelector('textarea')!, { ctrlKey: true }).defaultPrevented).toBe(
     false,
   );

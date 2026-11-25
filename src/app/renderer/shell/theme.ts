@@ -9,8 +9,8 @@ import {
 } from '../../../modules/settings/contract';
 import { settingsClient } from '../../../modules/settings/view';
 
-const themeStorageKey = 'dela.theme';
-const fontSizeStorageKey = 'dela.font-size';
+const themeStorageKey = 'wilthy.theme';
+const fontSizeStorageKey = 'wilthy.font-size';
 function clampFontSize(value: number): number {
   return Math.min(fontSizeMax, Math.max(fontSizeMin, Math.round(value)));
 }
@@ -28,7 +28,7 @@ function initialFontSize(): number {
 
 export function useAppearance() {
   const queryClient = useQueryClient();
-  const enabled = Boolean(window.dela);
+  const enabled = Boolean(window.wilthy);
   const theme =
     useQuery({ queryKey: ['settings', 'theme'], queryFn: () => settingsClient.theme(), enabled })
       .data ?? initialTheme();
@@ -62,28 +62,28 @@ export function useAppearance() {
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSize}px`;
     localStorage.setItem(fontSizeStorageKey, String(fontSize));
-    if (!window.dela) document.documentElement.style.zoom = String(zoom);
+    if (!window.wilthy) document.documentElement.style.zoom = String(zoom);
   }, [fontSize, zoom]);
 
   // 浏览器预览没有主进程，直接写缓存；桌面端以主进程回写的规范值为准。
   const changeTheme = async (next: ThemePreference) => {
     queryClient.setQueryData(
       ['settings', 'theme'],
-      window.dela ? await settingsClient.setTheme(next) : next,
+      window.wilthy ? await settingsClient.setTheme(next) : next,
     );
   };
 
   const changeZoom = async (next: ZoomPreference) => {
     queryClient.setQueryData(
       ['settings', 'zoom'],
-      window.dela ? await settingsClient.setZoom(next) : next,
+      window.wilthy ? await settingsClient.setZoom(next) : next,
     );
   };
 
   const changeFontSize = async (next: number) => {
     queryClient.setQueryData(
       ['settings', 'fontSize'],
-      window.dela ? await settingsClient.setFontSize(next) : clampFontSize(next),
+      window.wilthy ? await settingsClient.setFontSize(next) : clampFontSize(next),
     );
   };
 

@@ -85,7 +85,7 @@ function convert(provider: V10Provider) {
   };
 }
 
-/** Dela 预设改由 Pi 内置厂商承担（presetId 换成 piProvider）；对应不上的配置都作为自定义服务保留。 */
+/** Wilthy 预设改由 Pi 内置厂商承担（presetId 换成 piProvider）；对应不上的配置都作为自定义服务保留。 */
 export function v10tov11(_db: Database.Database, { userData, seal }: MigrationContext): void {
   const path = join(userData, 'llm-providers.bin');
   if (!existsSync(path)) return;

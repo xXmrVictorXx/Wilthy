@@ -8,7 +8,7 @@ import type { ToolDefinition } from '@earendil-works/pi-coding-agent';
 import type { BackgroundBashDetails } from '../../protocol/agent';
 import type { HelperExecOptions, HelperExecResult } from '../../remote/helper';
 
-const root = mkdtempSync(join(tmpdir(), 'dela-remote-tasks-'));
+const root = mkdtempSync(join(tmpdir(), 'wilthy-remote-tasks-'));
 const helper = vi.hoisted(() => ({
   execs: [] as {
     command: string;

@@ -31,7 +31,7 @@ export function openDatabase(modules: ModuleDefinition[]): Database.Database {
   closeDatabase();
   const dir = hostPorts().paths.userData();
   mkdirSync(dir, { recursive: true });
-  const db = new Database(join(dir, 'dela.db'));
+  const db = new Database(join(dir, 'wilthy.db'));
   try {
     db.pragma('journal_mode = WAL');
     const version = db.pragma('user_version', { simple: true }) as number;
@@ -91,7 +91,7 @@ function applySchemas(db: Database.Database, owners: Owner[]): void {
       continue;
     }
     if (done.some((name) => name !== baseline && !migrations.some(([known]) => known === name)))
-      throw new Error('数据库由更新版本的 Dela 创建，请升级到最新版本');
+      throw new Error('数据库由更新版本的 Wilthy 创建，请升级到最新版本');
     for (const [name, run] of migrations)
       if (!done.includes(name)) pending.push({ owner: schema.owner, name, run });
   }

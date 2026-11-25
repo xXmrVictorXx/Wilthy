@@ -7,7 +7,7 @@ const path = 'src/main/agent/session.ts';
 
 describe('reviewTabId / parseReviewTabId', () => {
   it('轮次变体往返无损：路径段含冒号（Windows 盘符）也能解析', () => {
-    const windowsPath = 'E:\\Zhixi\\Documents\\Dela\\workspace\\Test\\quicksort.py';
+    const windowsPath = 'E:\\Zhixi\\Documents\\Wilthy\\workspace\\Test\\quicksort.py';
     const tabId = reviewTabId({ kind: 'turn', sessionId, turnId, path: windowsPath });
     expect(parseReviewTabId(tabId)).toEqual({
       kind: 'turn',

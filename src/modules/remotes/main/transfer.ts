@@ -56,7 +56,7 @@ export async function uploadLocalFile(
 const openedFiles = new Set<string>();
 
 export async function openRemoteFile(target: RemoteTarget, remotePath: string): Promise<void> {
-  const directory = join(app.getPath('temp'), 'dela-remote-open');
+  const directory = join(app.getPath('temp'), 'wilthy-remote-open');
   await mkdir(directory, { recursive: true });
   const key = createHash('sha256')
     .update(`${target.host}:${remotePath}`)

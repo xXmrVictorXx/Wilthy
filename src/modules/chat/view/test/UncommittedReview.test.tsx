@@ -7,21 +7,21 @@ import type { FileChangeDetail } from '../../../../core/protocol/agent';
 import type { UncommittedChanges } from '../../../../core/protocol/changes';
 
 // 契约客户端在模块加载时取 bridge，须先于导入面板装好；各用例只重编程 handler。
-const { api, dela } = vi.hoisted(() => {
+const { api, wilthy } = vi.hoisted(() => {
   const api = {
     readUncommittedChanges: vi.fn<(sessionId: string) => Promise<UncommittedChanges>>(),
     readUncommittedFileChange:
       vi.fn<(input: { sessionId: string; path: string }) => Promise<FileChangeDetail>>(),
   };
-  const dela = {
+  const wilthy = {
     bridge: {
       invoke: (channel: string, input: never) =>
         api[channel.slice('chat:'.length) as keyof typeof api](input),
       subscribe: () => () => {},
     },
-  } as unknown as NonNullable<typeof window.dela>;
-  window.dela = dela;
-  return { api, dela };
+  } as unknown as NonNullable<typeof window.wilthy>;
+  window.wilthy = wilthy;
+  return { api, wilthy };
 });
 import { UncommittedReview } from '../review/UncommittedReview';
 
@@ -86,7 +86,7 @@ beforeEach(() => {
   api.readUncommittedFileChange.mockImplementation(async ({ path }) => detailOf(path));
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
   queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  window.dela = dela;
+  window.wilthy = wilthy;
   host = document.createElement('div');
   document.body.append(host);
   root = createRoot(host);
@@ -95,7 +95,7 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount());
   host.remove();
-  delete window.dela;
+  delete window.wilthy;
   vi.clearAllMocks();
 });
 

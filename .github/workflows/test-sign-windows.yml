@@ -38,7 +38,7 @@ jobs:
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
           organization-id: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
-          project-slug: Dela
+          project-slug: Wilthy
           signing-policy-slug: test-signing
           github-artifact-id: ${{ needs.windows.outputs.installer-artifact-id }}
           wait-for-completion: true
@@ -48,8 +48,8 @@ jobs:
         timeout-minutes: 5
         shell: pwsh
         run: |
-          $installers = @(Get-ChildItem signed/Dela-*-win-x64.exe -File)
-          if ($installers.Count -ne 1) { throw 'Expected one signed Dela installer' }
+          $installers = @(Get-ChildItem signed/Wilthy-*-win-x64.exe -File)
+          if ($installers.Count -ne 1) { throw 'Expected one signed Wilthy installer' }
           $path = $installers[0].FullName
           Write-Host 'Reading embedded installer certificate'
           $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new(
@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: test-signed-windows-installer
-          path: signed/Dela-*-win-x64.exe
+          path: signed/Wilthy-*-win-x64.exe
           if-no-files-found: error
           compression-level: 0
           retention-days: 7

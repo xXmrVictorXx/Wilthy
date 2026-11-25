@@ -135,12 +135,12 @@ beforeEach(() => {
     },
   ];
   state.modelSwitches = [];
-  state.root = mkdtempSync(join(tmpdir(), 'dela-session-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-session-'));
   provideTestHostPorts({
     paths: {
       userData: () => state.root,
       documents: () => state.root,
-      storage: () => join(state.root, 'Dela'),
+      storage: () => join(state.root, 'Wilthy'),
     },
     database: () => state.db!,
     projects: {
@@ -390,7 +390,7 @@ const assistant = (content: unknown[], extra: object = {}) =>
     role: 'assistant',
     content,
     api: 'openai-completions',
-    provider: 'dela',
+    provider: 'wilthy',
     model: 'm',
     usage: {},
     stopReason: 'toolUse',
@@ -502,7 +502,7 @@ describe('会话归属与 cwd', () => {
 
   it('随聊会话的 cwd 是存储目录下 chat-sessions/<id> 的私有目录，目录随即建好', () => {
     const chat = newSession(null);
-    const dir = join(state.root, 'Dela', 'chat-sessions', chat.sessionId!);
+    const dir = join(state.root, 'Wilthy', 'chat-sessions', chat.sessionId!);
     expect(chat.cwd).toBe(dir);
     expect(statSync(dir).isDirectory()).toBe(true);
     expect(newSession(null).sessionId).toBe(chat.sessionId);
@@ -510,7 +510,7 @@ describe('会话归属与 cwd', () => {
   });
 
   it('旧的课件目录空会话与 cwd 为 NULL 的通用会话都不复用，新会话落在私有目录', () => {
-    const courses = join(state.root, 'Dela', 'courses');
+    const courses = join(state.root, 'Wilthy', 'courses');
     state
       .db!.prepare(
         `INSERT INTO sessions (id, project_id, file, cwd, created_at, updated_at)
@@ -519,7 +519,7 @@ describe('会话归属与 cwd', () => {
       .run(courses);
     const chat = newSession(null);
     expect(['old-null', 'old-courses']).not.toContain(chat.sessionId);
-    expect(chat.cwd).toBe(join(state.root, 'Dela', 'chat-sessions', chat.sessionId!));
+    expect(chat.cwd).toBe(join(state.root, 'Wilthy', 'chat-sessions', chat.sessionId!));
     expect(newSession(null).sessionId).toBe(chat.sessionId);
   });
 
@@ -541,7 +541,7 @@ describe('会话归属与 cwd', () => {
       )
       .run();
     expect(openSession('old-project').cwd).toBe(state.root);
-    expect(openSession('old-chat').cwd).toBe(join(state.root, 'Dela', 'workspace'));
+    expect(openSession('old-chat').cwd).toBe(join(state.root, 'Wilthy', 'workspace'));
   });
 
   it('项目目录不存在时拒绝新建会话，不回退到其他目录', () => {

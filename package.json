@@ -1,9 +1,9 @@
 {
-  "name": "dela",
+  "name": "wilthy",
   "version": "3.1.0",
   "private": true,
   "description": "A local-first campus agent workspace for BNUZ students",
-  "author": "Dela contributors",
+  "author": "Wilthy contributors",
   "license": "GPL-3.0-or-later",
   "type": "module",
   "main": "out/main/index.cjs",

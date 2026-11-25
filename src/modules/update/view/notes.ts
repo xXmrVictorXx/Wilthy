@@ -8,7 +8,7 @@ export interface ReleaseNote {
   items: string[];
 }
 
-const lastSeenKey = 'dela.release-notes.last-seen';
+const lastSeenKey = 'wilthy.release-notes.last-seen';
 
 /**
  * 只收已发布版本（`## <版本> - <日期>`，跳过 Unreleased），条目就是弹窗内容。

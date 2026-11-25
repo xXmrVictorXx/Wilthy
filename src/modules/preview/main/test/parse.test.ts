@@ -21,7 +21,7 @@ function minimalXlsx(): Promise<Buffer> {
 }
 
 it('uses content detection for Office previews even when the extension is absent', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'dela-file-type-'));
+  const directory = await mkdtemp(join(tmpdir(), 'wilthy-file-type-'));
   try {
     const path = join(directory, 'download');
     await writeFile(path, await minimalXlsx());

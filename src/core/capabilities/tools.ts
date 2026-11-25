@@ -37,8 +37,8 @@ const tools: Omit<AgentCapabilityView, 'enabled'>[] = [
     label: '执行命令',
     description:
       process.platform === 'darwin'
-        ? '在 Bash 中执行命令（含 dela 校园命令）'
-        : '在 Git Bash 中执行命令（含 dela 校园命令）',
+        ? '在 Bash 中执行命令（含 wilthy 校园命令）'
+        : '在 Git Bash 中执行命令（含 wilthy 校园命令）',
     domain: 'core',
     domainLabel: '基础',
   },

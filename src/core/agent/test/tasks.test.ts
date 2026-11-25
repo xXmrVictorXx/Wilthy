@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { afterAll, beforeEach, expect, it, vi } from 'vitest';
 import type { ToolDefinition } from '@earendil-works/pi-coding-agent';
 
-const root = mkdtempSync(join(tmpdir(), 'dela-tasks-'));
+const root = mkdtempSync(join(tmpdir(), 'wilthy-tasks-'));
 const delivered: { parentId: string; notice: TaskNotice }[] = [];
 vi.mock('electron', () => ({
   app: { getPath: () => root, isPackaged: false, getAppPath: () => root },

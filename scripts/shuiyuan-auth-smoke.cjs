@@ -11,7 +11,7 @@ if (root.endsWith('.asar')) {
   Object.defineProperty(app, 'isPackaged', { value: true });
   process.resourcesPath = dirname(root);
 }
-const profile = mkdtempSync(join(tmpdir(), 'dela-shuiyuan-auth-'));
+const profile = mkdtempSync(join(tmpdir(), 'wilthy-shuiyuan-auth-'));
 for (const name of ['userData', 'documents', 'home']) app.setPath(name, profile);
 process.argv.push('--terminal-smoke-test');
 
@@ -62,7 +62,7 @@ async function run(window) {
     assert.equal(url, 'https://shuiyuan.sjtu.edu.cn/session/current.json');
     return new Response(JSON.stringify({ current_user: { username: 'desktop-fixture' } }));
   };
-  await js("window.dela.bridge.invoke('shuiyuan:startAuth')");
+  await js("window.wilthy.bridge.invoke('shuiyuan:startAuth')");
   const first = authorization;
   assert.ok(first);
   assert.equal(first.getParentWindow(), window);
@@ -76,14 +76,14 @@ async function run(window) {
   assert.equal(preferences.sandbox, true);
   assert.equal(preferences.nodeIntegration, false);
   assert.ok(!preferences.preload);
-  await js("window.dela.bridge.invoke('shuiyuan:startAuth')");
+  await js("window.wilthy.bridge.invoke('shuiyuan:startAuth')");
   assert.equal(authorization, first);
   assert.equal(BrowserWindow.getAllWindows().length, 2);
   first.close();
   await wait(() => first.isDestroyed(), 'authorization closed');
   assert.equal(window.isEnabled(), true);
   const bound = await js(
-    `window.dela.bridge.invoke('shuiyuan:bind', ${JSON.stringify(encrypted)})`,
+    `window.wilthy.bridge.invoke('shuiyuan:bind', ${JSON.stringify(encrypted)})`,
   );
   assert.equal(bound.connected, true);
   assert.equal(bound.username, 'desktop-fixture');

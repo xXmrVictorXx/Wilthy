@@ -4,5 +4,5 @@ export { onWorkspaceEvent, workspaceClient } from './client';
 export { useWorkspaceStore } from './store';
 
 export function localPathsOf(files: File[]): string[] {
-  return files.map((file) => window.dela?.pathForFile(file) ?? '').filter(Boolean);
+  return files.map((file) => window.wilthy?.pathForFile(file) ?? '').filter(Boolean);
 }

@@ -6,13 +6,13 @@ import type { ShuiyuanPost, ShuiyuanTopicDetail } from '../../contract';
 // 契约客户端在模块加载时取 bridge，须先于导入装好。
 const api = vi.hoisted(() => {
   const handlers: Record<string, (input: never) => Promise<unknown>> = {};
-  window.dela = {
+  window.wilthy = {
     bridge: {
       invoke: (channel: string, input: never) =>
         handlers[channel.slice('shuiyuan:'.length)]!(input),
       subscribe: () => () => {},
     },
-  } as unknown as NonNullable<typeof window.dela>;
+  } as unknown as NonNullable<typeof window.wilthy>;
   return handlers;
 });
 const toast = vi.hoisted(() => vi.fn());

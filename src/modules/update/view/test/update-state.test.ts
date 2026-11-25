@@ -34,7 +34,7 @@ const harness = vi.hoisted(() => {
       return () => {};
     },
   };
-  window.dela = { bridge } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { bridge } as unknown as NonNullable<typeof window.wilthy>;
   return { state, bridge };
 });
 
@@ -57,7 +57,7 @@ beforeEach(() => {
     'update:install': async () => base,
     'update:openDownloadPage': async () => {},
   };
-  window.dela = { bridge: harness.bridge } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { bridge: harness.bridge } as unknown as NonNullable<typeof window.wilthy>;
   useUpdateState.setState({ snapshot: null, preparingInstall: false, dismissedVersion: null });
 });
 

@@ -12,7 +12,7 @@ import { useChatTabSource } from './chat-source';
 import { reviewTabId } from './review/tab-id';
 import { basenameOf, dirnameOf } from './review/view-utils';
 
-const fileManagerName = window.dela?.platform === 'darwin' ? 'Finder' : '资源管理器';
+const fileManagerName = window.wilthy?.platform === 'darwin' ? 'Finder' : '资源管理器';
 
 function TurnFileRow({
   sessionId,
@@ -48,7 +48,7 @@ function TurnFileRow({
               })
           : undefined
       }
-      openTitle="在 Dela 中打开"
+      openTitle="在 Wilthy 中打开"
       openWith={[
         {
           key: 'vscode',

@@ -50,7 +50,7 @@ func fixture(t *testing.T) string {
 	return root
 }
 
-// 有 rg 与没有 rg 时结果要一致：Dela 侧只认一种结构。
+// 有 rg 与没有 rg 时结果要一致：Wilthy 侧只认一种结构。
 func TestGlobBackendsAgree(t *testing.T) {
 	root := fixture(t)
 	walk, err := globFiles(context.Background(), root, globPattern("*.ts"), 100)

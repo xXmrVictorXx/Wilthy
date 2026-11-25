@@ -60,7 +60,7 @@ class InlineImageWidget extends WidgetType {
 
   toDOM(view: EditorView) {
     const wrap = document.createElement('span');
-    wrap.className = 'dela-chat-image';
+    wrap.className = 'wilthy-chat-image';
     const preview = getChatMediaPreview(this.id);
     if (preview) {
       const image = document.createElement('img');
@@ -72,7 +72,7 @@ class InlineImageWidget extends WidgetType {
       wrap.appendChild(image);
     } else {
       const fallback = document.createElement('span');
-      fallback.className = 'dela-chat-image-fallback';
+      fallback.className = 'wilthy-chat-image-fallback';
       fallback.textContent = this.name || '图片';
       wrap.appendChild(fallback);
     }
@@ -84,7 +84,7 @@ class InlineImageWidget extends WidgetType {
     remove.addEventListener('click', () => {
       // 每次从当前文档重新定位 token，不缓存可能因编辑失效的区间。
       const text = view.state.doc.toString();
-      const match = new RegExp(`!\\[[^\\]\\n]*\\]\\(dela-img:${this.id}\\)`).exec(text);
+      const match = new RegExp(`!\\[[^\\]\\n]*\\]\\(wilthy-img:${this.id}\\)`).exec(text);
       if (match)
         view.dispatch({ changes: { from: match.index, to: match.index + match[0].length } });
     });
@@ -156,7 +156,7 @@ class ReferenceIconWidget extends WidgetType {
   }
   toDOM() {
     const span = document.createElement('span');
-    span.className = 'dela-ref-icon';
+    span.className = 'wilthy-ref-icon';
     span.setAttribute('aria-hidden', 'true');
     span.title = this.title;
     span.innerHTML = this.session ? SESSION_ICON_SVG : FILE_ICON_SVG;
@@ -222,20 +222,20 @@ const composerTheme = EditorView.theme({
   // CM 默认的内边距会让光标/正文相对自绘占位符偏移，统一归零，共用同一原点。
   '.cm-content': { caretColor: 'inherit', padding: '0' },
   '.cm-line': { padding: '0' },
-  '.dela-chat-image': {
+  '.wilthy-chat-image': {
     position: 'relative',
     display: 'inline-flex',
     verticalAlign: 'bottom',
     margin: '0.125rem 0',
   },
-  '.dela-chat-image img': {
+  '.wilthy-chat-image img': {
     display: 'block',
     maxHeight: '4.75rem',
     maxWidth: '11.25rem',
     borderRadius: 'var(--radius-window)',
     border: '1px solid var(--line)',
   },
-  '.dela-chat-image-fallback': {
+  '.wilthy-chat-image-fallback': {
     display: 'inline-block',
     maxWidth: '10rem',
     overflow: 'hidden',
@@ -247,7 +247,7 @@ const composerTheme = EditorView.theme({
     color: 'var(--ink-3)',
     fontSize: '0.75rem',
   },
-  '.dela-chat-image button': {
+  '.wilthy-chat-image button': {
     position: 'absolute',
     top: '-0.4375rem',
     right: '-0.4375rem',
@@ -264,16 +264,16 @@ const composerTheme = EditorView.theme({
     lineHeight: '1',
     cursor: 'pointer',
   },
-  '.dela-chat-image button:hover': { color: 'var(--ink)' },
+  '.wilthy-chat-image button:hover': { color: 'var(--ink)' },
   '.cm-ref-name': { color: 'var(--accent-ink)', fontWeight: 600 },
-  '.dela-ref-icon': {
+  '.wilthy-ref-icon': {
     display: 'inline-flex',
     alignItems: 'center',
     marginRight: '0.125rem',
     color: 'var(--ink-2)',
     verticalAlign: '-0.125em',
   },
-  '.dela-ref-icon svg': { width: '1em', height: '1em' },
+  '.wilthy-ref-icon svg': { width: '1em', height: '1em' },
 });
 
 const heroTheme = EditorView.theme({

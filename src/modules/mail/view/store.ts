@@ -5,7 +5,7 @@ type MailPreferences = { foldersCollapsed: boolean };
 
 export const useMailPreferences = create<MailPreferences>()(
   persist((): MailPreferences => ({ foldersCollapsed: true }), {
-    name: 'dela.mail.preferences',
+    name: 'wilthy.mail.preferences',
     version: 1,
   }),
 );

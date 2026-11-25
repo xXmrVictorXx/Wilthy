@@ -17,7 +17,7 @@ const defaultLayout: WorkbenchLayout = {
 /** 当前项目 id：与 App 导航一致的 localStorage 键；空串表示无项目（通用布局）。 */
 function currentProjectId(): string | null {
   const raw =
-    typeof localStorage === 'undefined' ? null : localStorage.getItem('dela.workspace.project');
+    typeof localStorage === 'undefined' ? null : localStorage.getItem('wilthy.workspace.project');
   return raw ? raw : null;
 }
 
@@ -27,7 +27,7 @@ export function WorkspaceSection() {
   const [resetConfirm, setResetConfirm] = useState(false);
 
   const chooseDirectory = () => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     void workspaceClient
       .chooseDirectory()
       .then(() => useWorkspaceStore.getState().refresh())
@@ -37,7 +37,7 @@ export function WorkspaceSection() {
   };
 
   const resetLayout = async () => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     setBusy(true);
     try {
       await workspaceClient.saveLayout({ projectId: currentProjectId(), layout: defaultLayout });
@@ -82,7 +82,7 @@ export function WorkspaceSection() {
               </div>
             ) : (
               <Button
-                disabled={busy || !window.dela}
+                disabled={busy || !window.wilthy}
                 onClick={() => {
                   setResetConfirm(true);
                 }}

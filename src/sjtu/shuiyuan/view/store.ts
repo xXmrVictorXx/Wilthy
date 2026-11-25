@@ -26,7 +26,7 @@ interface ShuiyuanUi {
   uploads: Readonly<Record<string, string>>;
 }
 
-const READ_STORAGE_KEY = 'dela.shuiyuan.read';
+const READ_STORAGE_KEY = 'wilthy.shuiyuan.read';
 const READ_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
 
 function loadReadMarks(): ReadMarks {

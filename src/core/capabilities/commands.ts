@@ -1,4 +1,4 @@
-// dela 命令域注册表：core 不认识具体业务，命令连同教 Agent 使用它们的 Skill 由模块注册。
+// wilthy 命令域注册表：core 不认识具体业务，命令连同教 Agent 使用它们的 Skill 由模块注册。
 import type { z } from 'zod';
 
 export interface Command {
@@ -33,7 +33,7 @@ export function commandPrompt(disabledSkills: ReadonlySet<string>): string | nul
   const enabled = enabledCommandDomains(disabledSkills);
   if (enabled.length === 0) return null;
   return [
-    "下列能力在 bash 里用 `dela <命令> '<JSON>'` 调用，先 `dela help` 查看命令与参数；对应领域的 skill 有更完整的说明：",
+    "下列能力在 bash 里用 `wilthy <命令> '<JSON>'` 调用，先 `wilthy help` 查看命令与参数；对应领域的 skill 有更完整的说明：",
     ...enabled.map((domain) => `- ${domain.name}：${domain.description}`),
   ].join('\n');
 }

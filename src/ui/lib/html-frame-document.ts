@@ -9,7 +9,7 @@ export type HtmlFrameDocumentOptions = {
   fitWidth?: boolean;
   /** 不给时用白纸阅读样式。 */
   stylesheet?: string;
-  /** 模块自己的可信改写，运行在消毒与地址过滤之后；可用 data-dela-lazy、data-dela-zoom 标记图片。 */
+  /** 模块自己的可信改写，运行在消毒与地址过滤之后；可用 data-wilthy-lazy、data-wilthy-zoom 标记图片。 */
   transform?: (doc: Document) => void;
 };
 
@@ -25,13 +25,13 @@ export const FRAME_SCRIPT = `(() => {
   };
   const reportLink = (event, link) => {
     event.preventDefault();
-    post({ source: 'dela-frame-link', href: link.href });
+    post({ source: 'wilthy-frame-link', href: link.href });
   };
   document.addEventListener('click', (event) => {
-    const image = event.target.closest('[data-dela-zoom]');
+    const image = event.target.closest('[data-wilthy-zoom]');
     if (image) {
       event.preventDefault();
-      post({ source: 'dela-frame-image', src: image.dataset.delaZoom, alt: image.getAttribute('alt') ?? '' });
+      post({ source: 'wilthy-frame-image', src: image.dataset.wilthyZoom, alt: image.getAttribute('alt') ?? '' });
       return;
     }
     const link = linkOf(event);
@@ -43,25 +43,25 @@ export const FRAME_SCRIPT = `(() => {
   });
   const lazy = new IntersectionObserver((entries) => {
     for (const { target, isIntersecting } of entries)
-      if (isIntersecting) target.src = target.dataset.delaLazy;
+      if (isIntersecting) target.src = target.dataset.wilthyLazy;
       else target.removeAttribute('src');
   });
-  for (const image of document.querySelectorAll('img[data-dela-lazy]')) {
+  for (const image of document.querySelectorAll('img[data-wilthy-lazy]')) {
     image.addEventListener('load', () => {
       if (image.naturalWidth) image.style.aspectRatio = image.naturalWidth + ' / ' + image.naturalHeight;
     });
     lazy.observe(image);
   }
-  addEventListener('scroll', () => post({ source: 'dela-frame-scroll', top: scrollY }));
+  addEventListener('scroll', () => post({ source: 'wilthy-frame-scroll', top: scrollY }));
   addEventListener('message', (event) => {
-    if (event.source === parent && event.data?.source === 'dela-frame-scroll-to') scrollTo(0, event.data.top);
+    if (event.source === parent && event.data?.source === 'wilthy-frame-scroll-to') scrollTo(0, event.data.top);
   });
-  const reportHeight = () => post({ source: 'dela-frame-height', height: document.body.scrollHeight });
+  const reportHeight = () => post({ source: 'wilthy-frame-height', height: document.body.scrollHeight });
   new ResizeObserver(reportHeight).observe(document.documentElement);
   reportHeight();
 })();`;
 
-const FRAME_SCRIPT_HASH = "'sha256-PfGxIRUvrV5qaB60zCEb7j5r4rnkp92XLHbCa0R7SqQ='";
+const FRAME_SCRIPT_HASH = "'sha256-Fi7TBzr1/e5lnJtP1/WNi4ocM5A76zTwXrpUmJPmZsQ='";
 
 const PAPER_STYLESHEET = `:root{color-scheme:light}body{margin:0;padding:1rem;padding-bottom:max(0.75rem,12px)!important;font-family:Arial,"Microsoft YaHei",sans-serif;font-size:0.875rem;line-height:1.6;color:#202124;background:#fff;overflow-wrap:break-word}img{max-width:100%;height:auto}a{text-decoration:underline!important;text-underline-offset:0.125rem}blockquote{margin:1rem 0;padding:.75rem 1rem;border-inline-start:0.1875rem solid #cbd5e1;border-radius:0 .5rem .5rem 0;background:#f8fafc;color:#475569}blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:0}blockquote blockquote{margin:.75rem 0 0;border-color:#e2e8f0;background:#fff}code{padding:.125rem .375rem;border-radius:.25rem;background:#f1f5f9;color:#334155;font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.9em}pre{margin:1rem 0;padding:.875rem 1rem;overflow:auto;border:1px solid #1e293b;border-radius:.5rem;background:#0f172a;color:#e2e8f0;font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.875em;line-height:1.6;white-space:pre}pre code{padding:0;border:0;border-radius:0;background:transparent;color:inherit;font:inherit}hr{height:1px;margin:1.5rem 0;border:0;background:#e2e8f0}footer{margin-top:2rem;padding-top:1rem;border-top:1px solid #e2e8f0;color:#64748b;font-size:.8125em;line-height:1.55}figcaption{margin-top:.5rem;color:#64748b;font-size:.8125em;text-align:center}table{border-collapse:collapse}::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{border:3px solid transparent;border-radius:999px;background:rgba(0,0,0,.22);background-clip:padding-box}::-webkit-scrollbar-thumb:hover{background-color:rgba(0,0,0,.38)}`;
 
@@ -85,7 +85,7 @@ export function htmlFrameDocument(
     fill = false,
   }: HtmlFrameDocumentOptions & { rootSize: number; fill?: boolean },
 ): string {
-  // DOMPurify 默认的地址白名单不认 dela-resource:，本地图片前缀要并进去。
+  // DOMPurify 默认的地址白名单不认 wilthy-resource:，本地图片前缀要并进去。
   const localPattern = localImages?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const clean = DOMPurify.sanitize(html || '<p>此内容没有正文。</p>', {
     WHOLE_DOCUMENT: true,
@@ -100,7 +100,7 @@ export function htmlFrameDocument(
   const doc = new DOMParser().parseFromString(clean, 'text/html');
   for (const element of doc.querySelectorAll('*'))
     for (const attribute of Array.from(element.attributes))
-      if (attribute.name.startsWith('data-dela-')) element.removeAttribute(attribute.name);
+      if (attribute.name.startsWith('data-wilthy-')) element.removeAttribute(attribute.name);
 
   const httpUrl = (value: string) => {
     try {

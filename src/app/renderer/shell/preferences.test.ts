@@ -9,17 +9,17 @@ async function loadPreferences() {
 beforeEach(() => localStorage.clear());
 
 it('旧键的值并入新 store，之后旧键被删', async () => {
-  localStorage.setItem('dela.shell.sidebar-collapsed', 'true');
-  localStorage.setItem('dela.project.open-target', 'explorer');
-  localStorage.setItem('dela.mail.folders-collapsed', 'false');
-  localStorage.setItem('dela.todo.show-completed', 'false');
-  localStorage.setItem('dela.classroom.sidebarWidth', '280');
-  localStorage.setItem('dela.classroom.sidebarCollapsed', '1');
-  localStorage.setItem('dela.workspace.sidebarWidth', '220');
-  localStorage.setItem('dela.workspace.collapsed', 'true');
-  localStorage.setItem('dela.nav-entries', '{"state":{"hidden":["mail"]},"version":0}');
-  localStorage.setItem('dela.project-nav', '{"state":{"projects":{"p1":{"pinned":true}}}}');
-  localStorage.setItem('dela.remote.lastDirectory', '{"gpu-box":"/home/me"}');
+  localStorage.setItem('wilthy.shell.sidebar-collapsed', 'true');
+  localStorage.setItem('wilthy.project.open-target', 'explorer');
+  localStorage.setItem('wilthy.mail.folders-collapsed', 'false');
+  localStorage.setItem('wilthy.todo.show-completed', 'false');
+  localStorage.setItem('wilthy.classroom.sidebarWidth', '280');
+  localStorage.setItem('wilthy.classroom.sidebarCollapsed', '1');
+  localStorage.setItem('wilthy.workspace.sidebarWidth', '220');
+  localStorage.setItem('wilthy.workspace.collapsed', 'true');
+  localStorage.setItem('wilthy.nav-entries', '{"state":{"hidden":["mail"]},"version":0}');
+  localStorage.setItem('wilthy.project-nav', '{"state":{"projects":{"p1":{"pinned":true}}}}');
+  localStorage.setItem('wilthy.remote.lastDirectory', '{"gpu-box":"/home/me"}');
 
   const state = (await loadPreferences()).getState();
 
@@ -32,13 +32,13 @@ it('旧键的值并入新 store，之后旧键被删', async () => {
     projectNav: { p1: { pinned: true } },
     remoteLastDirectory: { 'gpu-box': '/home/me' },
   });
-  expect(Object.keys(localStorage)).toEqual(['dela.preferences']);
+  expect(Object.keys(localStorage)).toEqual(['wilthy.preferences']);
 });
 
 it('旧值不合法时取默认值', async () => {
-  localStorage.setItem('dela.workspace.sidebarWidth', 'abc');
-  localStorage.setItem('dela.nav-entries', 'not json');
-  localStorage.setItem('dela.remote.lastDirectory', '[1]');
+  localStorage.setItem('wilthy.workspace.sidebarWidth', 'abc');
+  localStorage.setItem('wilthy.nav-entries', 'not json');
+  localStorage.setItem('wilthy.remote.lastDirectory', '[1]');
 
   expect((await loadPreferences()).getState()).toMatchObject({
     workspaceSidebarWidth: 300,
@@ -48,11 +48,14 @@ it('旧值不合法时取默认值', async () => {
 });
 
 it('新键已存在时不再读旧键', async () => {
-  localStorage.setItem('dela.preferences', '{"state":{"shellSidebarCollapsed":false},"version":1}');
-  localStorage.setItem('dela.shell.sidebar-collapsed', 'true');
+  localStorage.setItem(
+    'wilthy.preferences',
+    '{"state":{"shellSidebarCollapsed":false},"version":1}',
+  );
+  localStorage.setItem('wilthy.shell.sidebar-collapsed', 'true');
 
   const state = (await loadPreferences()).getState();
 
   expect(state.shellSidebarCollapsed).toBe(false);
-  expect(localStorage.getItem('dela.shell.sidebar-collapsed')).toBe('true');
+  expect(localStorage.getItem('wilthy.shell.sidebar-collapsed')).toBe('true');
 });

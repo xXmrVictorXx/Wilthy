@@ -12,7 +12,7 @@ if (packaged) {
   Object.defineProperty(app, 'isPackaged', { value: true });
   process.resourcesPath = dirname(root);
 }
-const profile = mkdtempSync(join(tmpdir(), 'dela-desktop-smoke-'));
+const profile = mkdtempSync(join(tmpdir(), 'wilthy-desktop-smoke-'));
 for (const name of ['userData', 'documents', 'home']) app.setPath(name, profile);
 process.argv.push('--terminal-smoke-test');
 app.setLoginItemSettings = () => {
@@ -60,7 +60,7 @@ async function run(window) {
     throw new Error(`Timed out: ${label}`);
   };
   await wait(() => js("!!document.querySelector('main')"), 'app mounted');
-  assert.equal(await js('window.dela.platform'), process.platform);
+  assert.equal(await js('window.wilthy.platform'), process.platform);
   if (process.platform === 'darwin') {
     // 品牌源图是 1254 像素，Dock 必须用构建生成的 1024 画布图标，而不是未加留白的源图。
     assert.ok(dockIcon && !dockIcon.isEmpty(), 'Dock icon must use generated macOS assets');
@@ -136,13 +136,13 @@ async function run(window) {
   }
   if (process.platform === 'darwin') {
     // 更新平台门已与 Windows 一致放开；打包冒烟停在初始状态，不触发真实联网检查。
-    const update = await js("window.dela.bridge.invoke('update:state')");
+    const update = await js("window.wilthy.bridge.invoke('update:state')");
     assert.equal(update.phase, 'idle');
     if (!packaged) {
-      const checked = await js("window.dela.bridge.invoke('update:check')");
+      const checked = await js("window.wilthy.bridge.invoke('update:check')");
       assert.equal(checked.phase, 'unsupported');
       assert.equal(checked.reason, 'not-packaged');
-      assert.deepEqual(await js("window.dela.bridge.invoke('update:state')"), checked);
+      assert.deepEqual(await js("window.wilthy.bridge.invoke('update:state')"), checked);
     }
     assert.equal(
       await js('document.querySelector(\'header button[aria-label="关闭"]\') === null'),
@@ -182,21 +182,21 @@ async function run(window) {
   } else assert.equal(Menu.getApplicationMenu(), null);
 
   const project = await js(
-    "window.dela.bridge.invoke('workspace:create', { parentId: null, name: '生命周期测试', kind: 'project' })",
+    "window.wilthy.bridge.invoke('workspace:create', { parentId: null, name: '生命周期测试', kind: 'project' })",
   );
   const id = randomUUID();
   await js(
-    `window.dela.bridge.invoke('terminal:create', { projectId: '${project.id}', id: '${id}' })`,
+    `window.wilthy.bridge.invoke('terminal:create', { projectId: '${project.id}', id: '${id}' })`,
   );
   const checkRuntime = async (marker) => {
     // 终端跟随系统 shell，不能再假设 bash 语法；echo 在 PowerShell 与 zsh 下一致。
     await js(
-      `window.dela.bridge.invoke('terminal:write', { id: '${id}', data: ${JSON.stringify(`echo ${marker}\r`)} })`,
+      `window.wilthy.bridge.invoke('terminal:write', { id: '${id}', data: ${JSON.stringify(`echo ${marker}\r`)} })`,
     );
     await wait(
       () =>
         js(
-          `window.dela.bridge.invoke('terminal:list', '${project.id}').then(items => items.some(item => item.id === '${id}' && item.buffer.includes('${marker}\\r\\n') && item.exitCode === null))`,
+          `window.wilthy.bridge.invoke('terminal:list', '${project.id}').then(items => items.some(item => item.id === '${id}' && item.buffer.includes('${marker}\\r\\n') && item.exitCode === null))`,
         ),
       'live PTY',
     );
@@ -222,7 +222,7 @@ async function run(window) {
   await wait(() => window.isVisible(), 'reopen after cancelled exit');
 
   await js(
-    "window.dela.bridge.subscribe('mail:requestClose', quitting => { window.mailQuitRequested = quitting; }); window.dela.bridge.invoke('mail:setComposeActive', true)",
+    "window.wilthy.bridge.subscribe('mail:requestClose', quitting => { window.mailQuitRequested = quitting; }); window.wilthy.bridge.invoke('mail:setComposeActive', true)",
   );
   app.quit();
   await wait(() => js('window.mailQuitRequested === true'), 'mail receives quit request');
@@ -230,7 +230,7 @@ async function run(window) {
   window.close();
   assert.equal(window.isVisible(), false);
   await js(
-    "window.onbeforeunload = null; window.dela.bridge.invoke('mail:setComposeActive', false)",
+    "window.onbeforeunload = null; window.wilthy.bridge.invoke('mail:setComposeActive', false)",
   );
   console.log(
     'Desktop smoke passed: Mac titlebar safe area/zoom/font sizing, platform preload/menu, unsupported Mac conversion guard, focused-window close, close/reopen, cancelled note/mail exit preserves live PTY; no login registration.',

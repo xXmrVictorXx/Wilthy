@@ -70,7 +70,7 @@ export function projectGitCheckout(id: unknown, branch: string): Promise<void> {
   return gitCheckout(location.path, branch);
 }
 
-/** VS Code 读不到 Dela 的连接记录，端口与私钥须由用户在 ssh config 里给出。 */
+/** VS Code 读不到 Wilthy 的连接记录，端口与私钥须由用户在 ssh config 里给出。 */
 const remoteSshHint =
   '远端项目还需在 VS Code 中安装 Remote - SSH 扩展，并把该主机配置进 ssh config。';
 

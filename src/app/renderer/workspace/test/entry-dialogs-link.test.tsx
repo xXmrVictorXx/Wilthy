@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import type { DelaApi } from '../../../preload/api';
+import type { WilthyApi } from '../../../preload/api';
 import type { WorkspaceEntry } from '../../../../modules/workspace/contract';
 
 // 契约客户端在模块加载时取 bridge，须先于导入视图装好；会话镜像也在加载时订阅推送。
@@ -16,8 +16,8 @@ const { api, desktop } = vi.hoisted(() => {
         handlers[channel.slice('workspace:'.length)]!(input),
       subscribe,
     },
-  } as unknown as DelaApi;
-  window.dela = desktop;
+  } as unknown as WilthyApi;
+  window.wilthy = desktop;
   return { api: handlers, desktop };
 });
 import { EntryDialogs } from '../entry-dialogs';
@@ -32,7 +32,7 @@ function entry(
 }
 
 const workspace = {
-  directory: '/tmp/dela',
+  directory: '/tmp/wilthy',
   entries: [
     entry('课程项目', 'project'),
     entry('子文件夹', 'folder', '课程项目'),
@@ -69,13 +69,13 @@ beforeEach(() => {
   document.body.append(container);
   root = createRoot(container);
   useWorkspaceStore.setState({ workspace, loaded: true, error: null });
-  window.dela = desktop;
+  window.wilthy = desktop;
 });
 
 afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
-  delete window.dela;
+  delete window.wilthy;
   Element.prototype.scrollIntoView = scrollIntoView;
   vi.unstubAllGlobals();
 });

@@ -115,7 +115,7 @@ it('ends a stalled response body instead of leaving the player waiting indefinit
 
 it('rejects forged tokens before resolving sources or contacting the media host', async () => {
   const response = await handleVsjtuMediaRequest(
-    new Request(`dela-resource://vsjtu/video/${videoId}/1?t=${'0'.repeat(32)}`),
+    new Request(`wilthy-resource://vsjtu/video/${videoId}/1?t=${'0'.repeat(32)}`),
   );
   expect(response.status).toBe(403);
   expect(upstream.streams).not.toHaveBeenCalled();

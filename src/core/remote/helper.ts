@@ -1,4 +1,4 @@
-/** 远端 runtime（dela-helper）通道：远程项目的工具调用全经这里，没有一次性 ssh 的退路。
+/** 远端 runtime（wilthy-helper）通道：远程项目的工具调用全经这里，没有一次性 ssh 的退路。
  * helper 在远端常驻、生命周期不随隧道：断线只让本地进入 reconnecting，远端任务不受影响。 */
 import { spawn, type ChildProcess } from 'node:child_process';
 import { createHash, randomBytes } from 'node:crypto';
@@ -53,7 +53,7 @@ function helperArch(machine: string): 'amd64' | 'arm64' | null {
 }
 
 export function helperArtifact(arch: string): string | null {
-  const path = join(hostPorts().paths.bundled('dela-helper'), `dela-helper-linux-${arch}`);
+  const path = join(hostPorts().paths.bundled('wilthy-helper'), `wilthy-helper-linux-${arch}`);
   return existsSync(path) ? path : null;
 }
 
@@ -65,7 +65,7 @@ function rgArtifact(arch: string): string | null {
 
 /** 远端目录按「版本-sha8」分家：旧版本目录留着便于回退，不自动清理。 */
 function helperRemoteDir(digest: string): string {
-  return `$HOME/.dela/helper/${HELPER_VERSION}-${digest.slice(0, 8)}`;
+  return `$HOME/.wilthy/helper/${HELPER_VERSION}-${digest.slice(0, 8)}`;
 }
 
 interface Artifact {
@@ -103,7 +103,7 @@ async function diagnoseEnvironment(target: RemoteTarget, dir: string): Promise<s
       `printf 'mount='; findmnt -no OPTIONS -T "$dir" 2>/dev/null || true`,
       `printf '|writable='; [ -w "$dir" ] && echo yes || echo no`,
       `printf '|selinux='; getenforce 2>/dev/null || echo absent`,
-      `printf '|direct='; "$dir/dela-helper" --version >/dev/null 2>&1 && echo ok || echo "exit-$?"`,
+      `printf '|direct='; "$dir/wilthy-helper" --version >/dev/null 2>&1 && echo ok || echo "exit-$?"`,
     ].join('\n');
     const result = await exec(target, script, { timeoutMs: BOOTSTRAP_TIMEOUT_MS });
     if (result.code !== 0) return null;
@@ -611,12 +611,12 @@ async function findOrStart(
     'runtime="$dir/runtime/$node"',
     'umask 077',
     'mkdir -p "$runtime"',
-    'alive() { [ -s "$runtime/run.json" ] && pid=$(sed -n \'s/.*"pid":\\([0-9]*\\).*/\\1/p\' "$runtime/run.json") && [ -n "$pid" ] && [ "$(readlink "/proc/$pid/exe" 2>/dev/null)" = "$dir/dela-helper" ]; }',
+    'alive() { [ -s "$runtime/run.json" ] && pid=$(sed -n \'s/.*"pid":\\([0-9]*\\).*/\\1/p\' "$runtime/run.json") && [ -n "$pid" ] && [ "$(readlink "/proc/$pid/exe" 2>/dev/null)" = "$dir/wilthy-helper" ]; }',
     'if alive; then printf REUSE; cat "$runtime/run.json"; printf "\\n"; cat "$runtime/token"; exit 0; fi',
     `printf '%s' ${shellQuote(token)} > "$runtime/token.new"`,
     'mv -f "$runtime/token.new" "$runtime/token"',
     'rm -f "$runtime/run.json"',
-    `setsid nohup "$dir/dela-helper" --port 0 --token-file "$runtime/token" --run-file "$runtime/run.json" --lock-file "$runtime/lock" --idle-timeout ${IDLE_TIMEOUT}${rg ? ` --rg "${rg}"` : ''} >> "$runtime/helper.log" 2>&1 < /dev/null &`,
+    `setsid nohup "$dir/wilthy-helper" --port 0 --token-file "$runtime/token" --run-file "$runtime/run.json" --lock-file "$runtime/lock" --idle-timeout ${IDLE_TIMEOUT}${rg ? ` --rg "${rg}"` : ''} >> "$runtime/helper.log" 2>&1 < /dev/null &`,
     'for i in $(seq 1 40); do alive && break; sleep 0.25; done',
     'if alive; then printf START; cat "$runtime/run.json"; printf "\\n"; cat "$runtime/token"; else printf START-FAILED; tail -n 3 "$runtime/helper.log" 2>/dev/null; exit 4; fi',
   ].join('\n');
@@ -661,13 +661,13 @@ async function bootstrap(
   const digest = sha256Of(readFileSync(helper));
   const dir = helperRemoteDir(digest);
   const artifacts: Artifact[] = [
-    { label: 'helper', dir, file: 'dela-helper', local: helper, digest },
+    { label: 'helper', dir, file: 'wilthy-helper', local: helper, digest },
   ];
   // rg 单独按 sha8 存：helper 换版本时不必重传这约 5MB。
   let remoteRg: string | null = null;
   if (rg) {
     const rgDigest = sha256Of(readFileSync(rg));
-    const rgDir = `$HOME/.dela/rg/${rgDigest.slice(0, 8)}`;
+    const rgDir = `$HOME/.wilthy/rg/${rgDigest.slice(0, 8)}`;
     artifacts.push({ label: 'rg', dir: rgDir, file: 'rg', local: rg, digest: rgDigest });
     remoteRg = `${rgDir}/rg`;
   }

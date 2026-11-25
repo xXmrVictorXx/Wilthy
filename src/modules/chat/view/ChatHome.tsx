@@ -39,7 +39,7 @@ export function ChatHome({ request }: { request: HomeChatRequest | null }) {
   const queryKey = ['home-chat', request?.seq ?? 0];
   const { data: sessionId, error } = useQuery({
     queryKey,
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
     staleTime: Infinity,
     gcTime: 0,
     queryFn: async () => {

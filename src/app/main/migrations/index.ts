@@ -30,12 +30,12 @@ const migrations: Migration[] = [
 ];
 
 /** 每一步改动的文件：迁移前整份备份，任何一步失败都整体还原。 */
-const touchedFiles = ['dela.db', 'llm-providers.bin', 'mcp-servers.bin'];
+const touchedFiles = ['wilthy.db', 'llm-providers.bin', 'mcp-servers.bin'];
 
 export class UnsupportedDataVersionError extends Error {
   constructor(version: number) {
     super(
-      `本机数据来自过旧的 Dela 版本（数据格式 v${version}），无法自动升级。请先备份数据目录，再删除其中的 dela.db 后重新打开。`,
+      `本机数据来自过旧的 Wilthy 版本（数据格式 v${version}），无法自动升级。请先备份数据目录，再删除其中的 wilthy.db 后重新打开。`,
     );
     this.name = 'UnsupportedDataVersionError';
   }
@@ -49,14 +49,14 @@ const lastVersion = 17;
  * user_version 为 0）与已经过渡的库不迁移。返回执行的步数。
  */
 export function runMigrations(context: MigrationContext, target = lastVersion): number {
-  const path = join(context.userData, 'dela.db');
+  const path = join(context.userData, 'wilthy.db');
   if (!existsSync(path)) return 0;
   const db = new Database(path);
   try {
     const version = db.pragma('user_version', { simple: true }) as number;
     const baseline = target === lastVersion;
     if (version === 0 || version > lastVersion || (version === target && !baseline)) return 0;
-    if (version > target) throw new Error('数据库由更新版本的 Dela 创建，请升级到最新版本');
+    if (version > target) throw new Error('数据库由更新版本的 Wilthy 创建，请升级到最新版本');
     const steps: Migration[] = [];
     for (let from = version; from < target; from++) {
       const step = migrations.find((migration) => migration.from === from);

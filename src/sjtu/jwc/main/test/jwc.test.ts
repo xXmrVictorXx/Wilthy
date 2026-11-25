@@ -42,7 +42,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   request.mockReset();
   vi.stubGlobal('fetch', request);
-  vi.stubEnv('DELA_DEV_URL', '');
+  vi.stubEnv('WILTHY_DEV_URL', '');
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(new Date('2026-11-02T04:00:00Z'));
   Object.defineProperty(app, 'isPackaged', { value: true, configurable: true });
@@ -104,7 +104,7 @@ it('首次导入历史不提醒，此后同日新增文章仅收集一次，304 
 
 it.each([true, false])('首次导入近两个月通知且不提醒（正式版：%s）', async (isPackaged) => {
   Object.defineProperty(app, 'isPackaged', { value: isPackaged });
-  vi.stubEnv('DELA_DEV_URL', isPackaged ? '' : 'http://127.0.0.1:5173');
+  vi.stubEnv('WILTHY_DEV_URL', isPackaged ? '' : 'http://127.0.0.1:5173');
   request
     .mockResolvedValueOnce(page(list(row(10), 'mxxsdtz/98.htm')))
     .mockResolvedValueOnce(page(list(row(9, '02', '2026.09') + row(8, '01', '2026.09'), '97.htm')));

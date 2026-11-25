@@ -23,7 +23,7 @@ const run = (sql: string, ...values: unknown[]) =>
     .run(...values);
 
 beforeAll(() => {
-  state.root = mkdtempSync(join(tmpdir(), 'dela-canvas-search-'));
+  state.root = mkdtempSync(join(tmpdir(), 'wilthy-canvas-search-'));
   openDatabase([{ id: 'canvas', schema: canvasSchema }]);
 });
 afterAll(() => {

@@ -6,14 +6,14 @@ import type { UpdateSnapshot } from '../../contract';
 // 契约客户端在模块加载时取 bridge，须先于导入视图装好；各用例只替换通道实现。
 const bridge = vi.hoisted(() => {
   const procedures = new Map<string, () => Promise<unknown>>();
-  const dela = {
+  const wilthy = {
     bridge: {
       invoke: async (channel: string) => procedures.get(channel)?.(),
       subscribe: () => () => {},
     },
-  } as unknown as NonNullable<typeof window.dela>;
-  window.dela = dela;
-  return { procedures, dela };
+  } as unknown as NonNullable<typeof window.wilthy>;
+  window.wilthy = wilthy;
+  return { procedures, wilthy };
 });
 import { UpdatePrompt } from '../UpdatePrompt';
 import { useUpdateState } from '../update';
@@ -64,7 +64,7 @@ afterEach(async () => {
   container.remove();
   useUpdateState.setState({ snapshot: null, preparingInstall: false, dismissedVersion: null });
   bridge.procedures.clear();
-  window.dela = bridge.dela;
+  window.wilthy = bridge.wilthy;
   vi.unstubAllGlobals();
 });
 

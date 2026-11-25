@@ -35,7 +35,7 @@ jobs:
         shell: bash
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-      DELA_REMOTE_HOST: ''
+      WILTHY_REMOTE_HOST: ''
     steps:
       - uses: actions/checkout@v6
         with:
@@ -44,12 +44,12 @@ jobs:
         if: inputs.helper
         with:
           name: helper-linux-amd64
-          path: vendor/dela-helper
+          path: vendor/wilthy-helper
       - uses: actions/download-artifact@v7
         if: inputs.helper
         with:
           name: helper-linux-arm64
-          path: vendor/dela-helper
+          path: vendor/wilthy-helper
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
@@ -77,13 +77,13 @@ jobs:
         run: pnpm exec electron-builder --win --x64 --publish never
       - name: Verify packaged helper
         run: |
-          cmp vendor/dela-helper/dela-helper-linux-amd64 dist/win-unpacked/resources/dela-helper/dela-helper-linux-amd64
-          cmp vendor/dela-helper/dela-helper-linux-arm64 dist/win-unpacked/resources/dela-helper/dela-helper-linux-arm64
+          cmp vendor/wilthy-helper/wilthy-helper-linux-amd64 dist/win-unpacked/resources/wilthy-helper/wilthy-helper-linux-amd64
+          cmp vendor/wilthy-helper/wilthy-helper-linux-arm64 dist/win-unpacked/resources/wilthy-helper/wilthy-helper-linux-arm64
           cmp .build/remote-rg/rg-linux-amd64 dist/win-unpacked/resources/remote-rg/rg-linux-amd64
           cmp .build/remote-rg/rg-linux-arm64 dist/win-unpacked/resources/remote-rg/rg-linux-arm64
       - name: Smoke test packaged app
         env:
-          PACKAGED_EXECUTABLE: dist/win-unpacked/Dela.exe
+          PACKAGED_EXECUTABLE: dist/win-unpacked/Wilthy.exe
         run: '"$PACKAGED_EXECUTABLE" --smoke-test'
       - name: Upload unsigned installer
         if: inputs.upload-installer
@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: unsigned-windows-installer
-          path: dist/Dela-*-win-x64.exe
+          path: dist/Wilthy-*-win-x64.exe
           if-no-files-found: error
           compression-level: 0
           retention-days: 7

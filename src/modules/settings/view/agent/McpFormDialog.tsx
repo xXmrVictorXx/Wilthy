@@ -16,7 +16,7 @@ export type McpEditState = { mode: 'create' } | { mode: 'edit'; server: McpServe
 const codeAreaClass = 'min-h-20 resize-y py-2 font-mono text-xs';
 const transports = ['stdio', 'http'] as const;
 const transportLabels = { stdio: '本地命令', http: '远程地址' };
-const secretHint = '填写的值以明文保存在本机的 ~/.dela/mcp.json 中。';
+const secretHint = '填写的值以明文保存在本机的 ~/.wilthy/mcp.json 中。';
 
 export function McpFormDialog({
   editing,
@@ -41,7 +41,7 @@ export function McpFormDialog({
   const [error, setError] = useState<string | null>(null);
 
   const submit = async () => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     const parsed = parseMcpForm(
       { transport, name, command, argsText, envText, url, headersText },
       { isEdit },
@@ -129,7 +129,7 @@ export function McpFormDialog({
               </Field>
               <Field
                 label="环境变量（每行 KEY=VALUE）"
-                hint={<>子进程默认继承 Dela 进程的环境变量；{secretHint}</>}
+                hint={<>子进程默认继承 Wilthy 进程的环境变量；{secretHint}</>}
               >
                 <Textarea
                   className={codeAreaClass}

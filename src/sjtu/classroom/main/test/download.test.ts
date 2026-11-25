@@ -65,7 +65,7 @@ it('returns available views and duration with an opaque playback route, never th
   const [stream] = streams;
   expect(stream?.view).toBe(5);
   expect(stream?.duration).toBe(3283);
-  expect(stream?.playbackUrl).toMatch(/^dela-resource:\/\/vsjtu\/video\/60\/5\?t=[0-9a-f]{32}$/);
+  expect(stream?.playbackUrl).toMatch(/^wilthy-resource:\/\/vsjtu\/video\/60\/5\?t=[0-9a-f]{32}$/);
 });
 
 it('reports network interruption distinctly from a user cancellation and never reveals an incomplete file', async () => {

@@ -46,7 +46,7 @@ export function CompletionOverlay({ onFinished }: { onFinished: () => void }) {
             animationDuration: `${lineSeconds}s`,
           }}
         >
-          Dela always stays with you
+          Wilthy always stays with you
         </span>
       </h1>
     </div>

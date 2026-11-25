@@ -4,9 +4,9 @@ import { dirname, join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const home = mkdtempSync(join(tmpdir(), 'dela-skills-'));
+const home = mkdtempSync(join(tmpdir(), 'wilthy-skills-'));
 // 项目放在 home 之外：Pi 沿项目目录向上找 .agents/skills，不能撞上测试里的本机目录。
-const projects = mkdtempSync(join(tmpdir(), 'dela-skill-projects-'));
+const projects = mkdtempSync(join(tmpdir(), 'wilthy-skill-projects-'));
 let database: DatabaseSync;
 const localProjects: { id: string; name: string; path: string }[] = [];
 const projectPort = { find: () => null, local: () => localProjects, remoteOf: () => null };
@@ -97,7 +97,7 @@ describe('分组', () => {
 });
 
 it('restores user-edited builtin skills to the bundled version', async () => {
-  const path = join(home, '.dela', 'skills', 'canvas', 'SKILL.md');
+  const path = join(home, '.wilthy', 'skills', 'canvas', 'SKILL.md');
   const bundled = readFileSync(path, 'utf8');
   writeFileSync(path, `${bundled}\n用户补充的指引\n`);
   vi.resetModules();

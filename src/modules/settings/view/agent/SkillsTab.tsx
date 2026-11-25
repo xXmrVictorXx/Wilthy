@@ -39,8 +39,8 @@ const FILTER_LABELS: Record<'all' | SkillOrigin, string> = {
   ...ORIGIN_LABELS,
 };
 const ORIGIN_DESCRIPTIONS: Record<SkillOrigin, string> = {
-  builtin: '随 Dela 安装，写在 ~/.dela/skills',
-  user: '~/.dela/skills 与 ~/.agents/skills 里你自己放的',
+  builtin: '随 Wilthy 安装，写在 ~/.wilthy/skills',
+  user: '~/.wilthy/skills 与 ~/.agents/skills 里你自己放的',
   project: '项目里的 .agents/skills',
 };
 
@@ -60,7 +60,7 @@ function groupSkills(skills: SkillView[]): SkillGroup[] {
       group = {
         key,
         origin: skill.origin,
-        title: skill.group?.label ?? (skill.origin === 'builtin' ? 'Dela 内置' : '本机'),
+        title: skill.group?.label ?? (skill.origin === 'builtin' ? 'Wilthy 内置' : '本机'),
         items: [],
       };
       groups.push(group);
@@ -87,7 +87,7 @@ export function SkillsTab() {
   const list = useQuery({
     queryKey: ['capabilities', 'skills'],
     queryFn: () => capabilitiesClient.listSkills(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   });
   const skills = list.data;
   const [busy, setBusy] = useState(false);
@@ -98,7 +98,7 @@ export function SkillsTab() {
   const refresh = () => void list.refetch();
 
   const toggle = async (skill: SkillView, next: boolean) => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     setBusy(true);
     const previous = skills;
     setSkills(
@@ -124,7 +124,7 @@ export function SkillsTab() {
     );
   };
 
-  if (!window.dela) {
+  if (!window.wilthy) {
     return (
       <div className="grid gap-10">
         <SectionHeader title="Skills" />
@@ -163,7 +163,7 @@ export function SkillsTab() {
           <div className="grid gap-1 py-3.5">
             <span className="text-sm font-medium text-ink">还没有发现 Skill</span>
             <span className="text-xs leading-relaxed text-ink-3">
-              在用户主目录的 .dela/skills 或 .agents/skills，或项目里的 .agents/skills 放入包含
+              在用户主目录的 .wilthy/skills 或 .agents/skills，或项目里的 .agents/skills 放入包含
               SKILL.md 的子文件夹（frontmatter 带 name 与 description），回到此页刷新。
             </span>
           </div>
@@ -319,7 +319,7 @@ function SkillUploadDialog({ onClose, skill }: { onClose: () => void; skill: Ski
   const project = projects.find((entry) => entry.id === projectId);
 
   const upload = async (overwrite: boolean) => {
-    if (!window.dela || busy || !project) return;
+    if (!window.wilthy || busy || !project) return;
     setBusy(true);
     try {
       setUploaded(

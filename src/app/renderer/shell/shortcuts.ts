@@ -20,7 +20,7 @@ export const useShortcuts = create<Store>((set) => ({
   bindings: defaultKeybindings(),
 
   load: async () => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     try {
       set({ bindings: mergeKeybindings(await settingsClient.keybindings()) });
     } catch {
@@ -29,12 +29,12 @@ export const useShortcuts = create<Store>((set) => ({
   },
 
   setBinding: async (id, accelerator) => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     set({ bindings: mergeKeybindings(await settingsClient.setKeybindings({ [id]: accelerator })) });
   },
 
   resetAll: async () => {
-    if (!window.dela) return;
+    if (!window.wilthy) return;
     set({ bindings: mergeKeybindings(await settingsClient.resetKeybindings()) });
   },
 }));

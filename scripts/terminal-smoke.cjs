@@ -11,7 +11,7 @@ if (root.endsWith('.asar')) {
   Object.defineProperty(app, 'isPackaged', { value: true });
   process.resourcesPath = dirname(root);
 }
-const profile = mkdtempSync(join(tmpdir(), 'dela-terminal-smoke-'));
+const profile = mkdtempSync(join(tmpdir(), 'wilthy-terminal-smoke-'));
 app.setPath('userData', profile);
 app.setPath('documents', profile);
 // PSReadLine 会按历史预测补全，历史放进临时目录，既不污染用户历史也不干扰断言。
@@ -49,7 +49,7 @@ const lines = (buffer) =>
 async function run(window) {
   const js = (source) => window.webContents.executeJavaScript(source);
   let projectId;
-  const sessions = () => js(`window.dela.bridge.invoke('terminal:list', '${projectId}')`);
+  const sessions = () => js(`window.wilthy.bridge.invoke('terminal:list', '${projectId}')`);
   const wait = async (check, label) => {
     const until = Date.now() + 15000;
     while (Date.now() < until) {
@@ -84,7 +84,7 @@ async function run(window) {
 
   projectId = (
     await js(
-      `window.dela.bridge.invoke('workspace:create', { parentId: null, name: '${PROJECT}', kind: 'project' })`,
+      `window.wilthy.bridge.invoke('workspace:create', { parentId: null, name: '${PROJECT}', kind: 'project' })`,
     )
   ).id;
   await new Promise((resolve) => {
@@ -116,31 +116,31 @@ async function run(window) {
   // 回归：pwsh 7 的模块路径漏给 5.1 时，PSReadLine 加载失败。
   assert.doesNotMatch(first.buffer, /Cannot load PSReadline/i);
 
-  await type('echo DELA_EDITX');
+  await type('echo WILTHY_EDITX');
   for (const keyCode of ['Left', 'Delete', 'Enter']) await press(keyCode);
-  await printed(first.id, 'DELA_EDIT');
+  await printed(first.id, 'WILTHY_EDIT');
 
   // Control+C 不能被剪贴板快捷键吞掉。Windows 控制台中断时清空输入缓冲，
   // 必须等提示符回来再写下一条命令。
   await js(
-    `window.dela.bridge.invoke('terminal:write', { id: '${first.id}', data: 'echo INTERRUPT_READY; sleep 30\\r' })`,
+    `window.wilthy.bridge.invoke('terminal:write', { id: '${first.id}', data: 'echo INTERRUPT_READY; sleep 30\\r' })`,
   );
   await printed(first.id, 'INTERRUPT_READY');
   await press('c', ['control']);
   await promptAfter(first.id, 'INTERRUPT_READY');
   await js(
-    `window.dela.bridge.invoke('terminal:write', { id: '${first.id}', data: 'echo INTERRUPT_OK\\r' })`,
+    `window.wilthy.bridge.invoke('terminal:write', { id: '${first.id}', data: 'echo INTERRUPT_OK\\r' })`,
   );
   await printed(first.id, 'INTERRUPT_OK');
 
   // 隔离剪贴板夹具，不改写真实系统剪贴板。
   await js(`Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {
-    readText: async () => 'echo DELA_PASTE',
+    readText: async () => 'echo WILTHY_PASTE',
     writeText: async (text) => { window.terminalCopiedText = text; }
   } })`);
   await press('v', clipboardModifiers);
   await press('Enter');
-  await printed(first.id, 'DELA_PASTE');
+  await printed(first.id, 'WILTHY_PASTE');
 
   const box = await js(`(() => {
     const span = [...document.querySelectorAll('.xterm-rows span')]
@@ -179,9 +179,9 @@ async function run(window) {
   await wait(async () => (await sessions()).length === 2, 'second session');
   const second = (await sessions()).find((item) => item.id !== first.id);
   await js(
-    `window.dela.bridge.invoke('terminal:write', { id: '${second.id}', data: 'echo DELA_SECOND; pwd\\r' })`,
+    `window.wilthy.bridge.invoke('terminal:write', { id: '${second.id}', data: 'echo WILTHY_SECOND; pwd\\r' })`,
   );
-  await printed(second.id, 'DELA_SECOND');
+  await printed(second.id, 'WILTHY_SECOND');
   await wait(
     async () => (await sessions()).find((item) => item.id === second.id).buffer.includes(PROJECT),
     'project cwd',

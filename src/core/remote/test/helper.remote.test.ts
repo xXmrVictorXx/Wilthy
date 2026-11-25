@@ -1,4 +1,4 @@
-// helper 通道真机回归：需要 DELA_REMOTE_HOST（如 root@1.2.3.4），由 pnpm test:remote 运行，
+// helper 通道真机回归：需要 WILTHY_REMOTE_HOST（如 root@1.2.3.4），由 pnpm test:remote 运行，
 // 不在默认 pnpm test 与 CI 里。
 import { describe, expect, it, vi } from 'vitest';
 
@@ -19,14 +19,14 @@ import {
 } from '../helper';
 
 const target: RemoteTarget = {
-  host: process.env.DELA_REMOTE_HOST!,
-  keyPath: process.env.DELA_REMOTE_KEY ?? null,
+  host: process.env.WILTHY_REMOTE_HOST!,
+  keyPath: process.env.WILTHY_REMOTE_KEY ?? null,
 };
 
 const digest = createHash('sha256')
   .update(readFileSync(helperArtifact('amd64')!))
   .digest('hex');
-const remoteDir = `$HOME/.dela/helper/${HELPER_VERSION}-${digest.slice(0, 8)}`;
+const remoteDir = `$HOME/.wilthy/helper/${HELPER_VERSION}-${digest.slice(0, 8)}`;
 const runtimeDir = `"${remoteDir}/runtime/$(hostname)"`;
 
 async function helperPid(): Promise<string> {
@@ -49,7 +49,7 @@ async function killLocalTunnels(): Promise<void> {
 describe('helper 通道（真机）', () => {
   it('上传、启动、隧道、握手一次走通，远端产物与本地一致', async () => {
     await readyHelper(target);
-    const check = await exec(target, `sha256sum ${remoteDir}/dela-helper | cut -d' ' -f1`);
+    const check = await exec(target, `sha256sum ${remoteDir}/wilthy-helper | cut -d' ' -f1`);
     expect(check.stdout.toString().trim()).toBe(digest);
   }, 180_000);
 
@@ -59,7 +59,7 @@ describe('helper 通道（真机）', () => {
     expect(pid).toMatch(/^\d+$/);
     const check = await exec(
       target,
-      `set -e; runtime=${runtimeDir}; test -s "$runtime/token"; test -f "$runtime/lock"; test -f "$runtime/helper.log"; test "$(readlink /proc/${pid}/exe)" = "${remoteDir}/dela-helper"`,
+      `set -e; runtime=${runtimeDir}; test -s "$runtime/token"; test -f "$runtime/lock"; test -f "$runtime/helper.log"; test "$(readlink /proc/${pid}/exe)" = "${remoteDir}/wilthy-helper"`,
     );
     expect(check.code).toBe(0);
   }, 60_000);
@@ -67,11 +67,11 @@ describe('helper 通道（真机）', () => {
   it('二进制读写往返一致，写入时自动建父目录', async () => {
     const session = helperSession(target);
     const body = Buffer.from(Array.from({ length: 4096 }, (_, index) => index % 251));
-    await session.writeFile('/tmp/dela-helper-test/deep/roundtrip.bin', body);
-    expect((await session.readFile('/tmp/dela-helper-test/deep/roundtrip.bin')).equals(body)).toBe(
-      true,
-    );
-    await exec(target, 'rm -rf /tmp/dela-helper-test');
+    await session.writeFile('/tmp/wilthy-helper-test/deep/roundtrip.bin', body);
+    expect(
+      (await session.readFile('/tmp/wilthy-helper-test/deep/roundtrip.bin')).equals(body),
+    ).toBe(true);
+    await exec(target, 'rm -rf /tmp/wilthy-helper-test');
   }, 60_000);
 
   it('执行命令拿到退出码、工作目录与注入的环境变量', async () => {
@@ -126,7 +126,7 @@ describe('helper 通道（真机）', () => {
     expect(await helperPid()).toBe(pidBefore);
   }, 120_000);
 
-  it('Dela 关掉通道再连回来：复用同一个远端实例', async () => {
+  it('Wilthy 关掉通道再连回来：复用同一个远端实例', async () => {
     await readyHelper(target);
     const pidBefore = await helperPid();
     closeHelper();
@@ -146,7 +146,7 @@ describe('helper 通道（真机）', () => {
 
   it('glob 与 search 在远端仓库上给出结构化结果', async () => {
     const session = helperSession(target);
-    const dir = '/tmp/dela-search-test';
+    const dir = '/tmp/wilthy-search-test';
     await session.writeFile(`${dir}/src/a.ts`, 'const alpha = 1;\nconst beta = 2;\n');
     await session.writeFile(`${dir}/name:colon.txt`, 'alpha\n');
     expect((await session.glob(dir, '*.ts', 100)).files).toEqual(['src/a.ts']);
@@ -165,7 +165,7 @@ describe('helper 通道（真机）', () => {
 
   it('随包上传的 rg 生效：远端没装 rg 也按 .gitignore 跳过文件', async () => {
     const session = helperSession(target);
-    const dir = '/tmp/dela-rg-test';
+    const dir = '/tmp/wilthy-rg-test';
     await exec(target, `rm -rf ${dir} && mkdir -p ${dir}/.git`);
     await session.writeFile(`${dir}/.gitignore`, 'dist/\n');
     await session.writeFile(`${dir}/src/kept.ts`, 'const alpha = 1;\n');
@@ -178,7 +178,7 @@ describe('helper 通道（真机）', () => {
 
   it('watch：远端自己改的目录会推事件，撤销后不再推', async () => {
     const session = helperSession(target);
-    const dir = '/tmp/dela-watch-test';
+    const dir = '/tmp/wilthy-watch-test';
     await exec(target, `rm -rf ${dir} && mkdir -p ${dir}`);
     const events: WatchEvent[] = [];
     const controller = new AbortController();
@@ -191,7 +191,7 @@ describe('helper 通道（真机）', () => {
     };
 
     expect((await session.setWatch('watch-test', [dir])).watching).toBe(1);
-    // 关键：这条 ssh 完全不经过 Dela 的工具路径——watch 就是要覆盖它。
+    // 关键：这条 ssh 完全不经过 Wilthy 的工具路径——watch 就是要覆盖它。
     let mark = events.length;
     await exec(target, `touch ${dir}/outside.txt`);
     await waitNew('远端自己在被监视目录里建文件后应有 change', mark);

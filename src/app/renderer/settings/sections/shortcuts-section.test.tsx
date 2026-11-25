@@ -2,13 +2,13 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import type { DelaApi } from '../../../preload/api';
+import type { WilthyApi } from '../../../preload/api';
 
 // 契约客户端在模块加载时取 bridge，须先于导入页面装好。
 const { invoke } = vi.hoisted(() => {
   const invoke = vi.fn();
-  window.dela = { bridge: { invoke, subscribe: () => () => {} } } as unknown as NonNullable<
-    typeof window.dela
+  window.wilthy = { bridge: { invoke, subscribe: () => () => {} } } as unknown as NonNullable<
+    typeof window.wilthy
   >;
   return { invoke };
 });
@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
-  delete window.dela;
+  delete window.wilthy;
   vi.unstubAllGlobals();
 });
 
@@ -43,7 +43,7 @@ it('rejects a digit-family recording that conflicts at other digits', async () =
     writes.push(patch);
     return patch;
   });
-  window.dela = {} as unknown as DelaApi;
+  window.wilthy = {} as unknown as WilthyApi;
   await act(async () => root.render(<ShortcutsSection />));
   await act(async () =>
     container

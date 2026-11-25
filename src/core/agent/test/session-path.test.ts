@@ -4,7 +4,7 @@ import { join, resolve } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { resolveSessionFile } from '../session-path';
 
-const root = mkdtempSync(join(tmpdir(), 'dela-session-file-'));
+const root = mkdtempSync(join(tmpdir(), 'wilthy-session-file-'));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
 
 const cwd = join(root, 'project');

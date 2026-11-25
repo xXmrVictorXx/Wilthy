@@ -36,17 +36,17 @@ export function LlmStep({ onDone }: { onDone: () => void }) {
   const catalogQuery = useQuery({
     queryKey: ['llm', 'catalog'],
     queryFn: () => llmClient.catalog(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
     retry: false,
   });
   const catalog: LlmCatalogProvider[] | null =
     catalogQuery.data ?? (catalogQuery.isError ? [] : null);
 
-  if (!window.dela) {
+  if (!window.wilthy) {
     return (
       <DesktopOnlyNotice
         description="模型服务的凭据不会暴露给浏览器。"
-        title="模型服务仅在 Dela 桌面端可用"
+        title="模型服务仅在 Wilthy 桌面端可用"
       />
     );
   }
@@ -72,7 +72,7 @@ export function LlmStep({ onDone }: { onDone: () => void }) {
 
   /** 内置厂商直接检测所选模型；自定义服务只验证连通性，哪些模型进配置由用户在弹层里勾选。 */
   const verify = async () => {
-    if (!window.dela || verifyBusy || (vendor ? !selected : !baseUrl.trim())) return;
+    if (!window.wilthy || verifyBusy || (vendor ? !selected : !baseUrl.trim())) return;
     setVerifyBusy(true);
     setVerifyResult(null);
     setImportNotice(null);
@@ -105,7 +105,7 @@ export function LlmStep({ onDone }: { onDone: () => void }) {
 
   const save = async () => {
     if (state === 'success') return onDone();
-    if (state === 'busy' || !window.dela || !selected) return;
+    if (state === 'busy' || !window.wilthy || !selected) return;
     setState('busy');
     setError(null);
     // 引导里选的模型排到列表首位：还没有会话可以沿用时，新会话取第一个可用提供商的首个模型。

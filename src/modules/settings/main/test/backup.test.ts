@@ -65,7 +65,7 @@ function exported(result: BackupResult): Extract<BackupResult, { status: 'export
 }
 
 beforeEach(() => {
-  base = mkdtempSync(join(tmpdir(), 'dela-backup-'));
+  base = mkdtempSync(join(tmpdir(), 'wilthy-backup-'));
   state.documents = join(base, 'documents');
   pickedDirectory = join(base, '选定的位置');
   mkdirSync(pickedDirectory, { recursive: true });
@@ -79,37 +79,37 @@ beforeEach(() => {
   for (const cache of [
     join('Cache', 'x'),
     join('Code Cache', 'y'),
-    join('Partitions', 'dela-campus', 'Code Cache', 'z'),
+    join('Partitions', 'wilthy-campus', 'Code Cache', 'z'),
   ]) {
     mkdirSync(join(userData, cache), { recursive: true });
     writeFileSync(join(userData, cache, 'big.bin'), 're-generable');
   }
-  mkdirSync(join(userData, 'Partitions', 'dela-campus', 'Local Storage', 'leveldb'), {
+  mkdirSync(join(userData, 'Partitions', 'wilthy-campus', 'Local Storage', 'leveldb'), {
     recursive: true,
   });
   writeFileSync(
-    join(userData, 'Partitions', 'dela-campus', 'Local Storage', 'leveldb', 'w.ldb'),
+    join(userData, 'Partitions', 'wilthy-campus', 'Local Storage', 'leveldb', 'w.ldb'),
     'keep',
   );
   mkdirSync(join(userData, 'pi', 'sessions'), { recursive: true });
   writeFileSync(join(userData, 'pi', 'sessions', 'a.jsonl'), 'keep');
-  mkdirSync(join(state.documents, 'Dela'), { recursive: true });
-  writeFileSync(join(state.documents, 'Dela', 'note.txt'), 'keep');
-  // 用户自己写的 Skill 在 ~/.dela/skills，不在应用数据目录里，得单独带走。
+  mkdirSync(join(state.documents, 'Wilthy'), { recursive: true });
+  writeFileSync(join(state.documents, 'Wilthy', 'note.txt'), 'keep');
+  // 用户自己写的 Skill 在 ~/.wilthy/skills，不在应用数据目录里，得单独带走。
   state.home = join(base, 'home');
   provideTestHostPorts({
     paths: {
       userData: () => state.root,
       home: () => state.home,
       documents: () => state.documents,
-      storage: () => join(state.documents, 'Dela'),
+      storage: () => join(state.documents, 'Wilthy'),
     },
     database: getDatabase,
   });
   openDatabase([{ id: 'settings', schema: settingsSchema }]);
-  mkdirSync(join(state.home, '.dela', 'skills', 'mine'), { recursive: true });
-  writeFileSync(join(state.home, '.dela', 'skills', 'mine', 'SKILL.md'), 'keep');
-  writeFileSync(join(state.home, '.dela', 'config.json'), '{}');
+  mkdirSync(join(state.home, '.wilthy', 'skills', 'mine'), { recursive: true });
+  writeFileSync(join(state.home, '.wilthy', 'skills', 'mine', 'SKILL.md'), 'keep');
+  writeFileSync(join(state.home, '.wilthy', 'config.json'), '{}');
 });
 
 afterEach(() => {
@@ -125,27 +125,27 @@ it('跳过可再生缓存、保留用户数据，并给数据库取一致快照'
     )
     .run();
   // 前提：写入后 WAL 真的落在磁盘上，否则下面「快照不带 -wal」是白测的。
-  expect(existsSync(join(userData, 'dela.db-wal'))).toBe(true);
+  expect(existsSync(join(userData, 'wilthy.db-wal'))).toBe(true);
 
   const result = exported(await exportUserData(null));
   // 文件夹名不能带 Windows 非法字符（时间用 - 而不是 :）。
-  expect(result.path).toMatch(/Dela 备份 \d{4}-\d{2}-\d{2} \d{2}-\d{2}$/);
+  expect(result.path).toMatch(/Wilthy 备份 \d{4}-\d{2}-\d{2} \d{2}-\d{2}$/);
   expect(result.skipped).toEqual([]);
   const data = join(result.path, '应用数据');
 
-  for (const cache of ['Cache', 'Code Cache', join('Partitions', 'dela-campus', 'Code Cache')])
+  for (const cache of ['Cache', 'Code Cache', join('Partitions', 'wilthy-campus', 'Code Cache')])
     expect(existsSync(join(data, cache))).toBe(false);
   expect(
-    existsSync(join(data, 'Partitions', 'dela-campus', 'Local Storage', 'leveldb', 'w.ldb')),
+    existsSync(join(data, 'Partitions', 'wilthy-campus', 'Local Storage', 'leveldb', 'w.ldb')),
   ).toBe(true);
   expect(existsSync(join(data, 'pi', 'sessions', 'a.jsonl'))).toBe(true);
   expect(existsSync(join(result.path, '工作目录', 'note.txt'))).toBe(true);
   expect(existsSync(join(result.path, '技能', 'mine', 'SKILL.md'))).toBe(true);
   expect(existsSync(join(result.path, '配置', 'config.json'))).toBe(true);
 
-  expect(existsSync(join(data, 'dela.db-wal'))).toBe(false);
-  expect(existsSync(join(data, 'dela.db-shm'))).toBe(false);
-  const snapshot = new Database(join(data, 'dela.db'), { readonly: true });
+  expect(existsSync(join(data, 'wilthy.db-wal'))).toBe(false);
+  expect(existsSync(join(data, 'wilthy.db-shm'))).toBe(false);
+  const snapshot = new Database(join(data, 'wilthy.db'), { readonly: true });
   try {
     expect(snapshot.pragma('user_version', { simple: true })).toBe(SCHEMA_VERSION);
     expect(snapshot.prepare('SELECT COUNT(*) AS count FROM consent_records').get()).toEqual({
@@ -161,8 +161,8 @@ it('同一分钟重复导出不覆盖已有备份', async () => {
   const second = exported(await exportUserData(null));
 
   expect(second.path).not.toBe(first.path);
-  expect(existsSync(join(first.path, '应用数据', 'dela.db'))).toBe(true);
-  expect(existsSync(join(second.path, '应用数据', 'dela.db'))).toBe(true);
+  expect(existsSync(join(first.path, '应用数据', 'wilthy.db'))).toBe(true);
+  expect(existsSync(join(second.path, '应用数据', 'wilthy.db'))).toBe(true);
 });
 
 it('目标落在数据目录里面时直接拒绝，不在源目录里建备份文件夹', async () => {
@@ -172,8 +172,8 @@ it('目标落在数据目录里面时直接拒绝，不在源目录里建备份�
   const result = await exportUserData(null);
 
   expect(result).toMatchObject({ status: 'failed', reason: expect.stringContaining('数据目录') });
-  // 读工作目录设置本身要开库（dela.db 因此出现在 userData 里），但导出不该往里写备份。
-  expect(readdirSync(userData).filter((name) => name.startsWith('Dela 备份'))).toEqual([]);
+  // 读工作目录设置本身要开库（wilthy.db 因此出现在 userData 里），但导出不该往里写备份。
+  expect(readdirSync(userData).filter((name) => name.startsWith('Wilthy 备份'))).toEqual([]);
 });
 
 it('单个条目复制失败不影响其余条目，名字如实回报', async () => {
@@ -183,7 +183,7 @@ it('单个条目复制失败不影响其余条目，名字如实回报', async (
 
   expect(result.skipped).toEqual(['Partitions']);
   expect(existsSync(join(result.path, '应用数据', 'pi', 'sessions', 'a.jsonl'))).toBe(true);
-  expect(existsSync(join(result.path, '应用数据', 'dela.db'))).toBe(true);
+  expect(existsSync(join(result.path, '应用数据', 'wilthy.db'))).toBe(true);
   expect(existsSync(join(result.path, '应用数据', 'Partitions'))).toBe(false);
 });
 
@@ -198,7 +198,7 @@ it('excludes snapshot content and its sealed key while keeping database metadata
     .run();
   const result = exported(await exportUserData(null));
   expect(existsSync(join(result.path, '应用数据', 'snapshots'))).toBe(false);
-  const db = new Database(join(result.path, '应用数据', 'dela.db'), { readonly: true });
+  const db = new Database(join(result.path, '应用数据', 'wilthy.db'), { readonly: true });
   expect(
     db.prepare("SELECT value FROM workspace_settings WHERE key='snapshots.meta'").pluck().get(),
   ).toBe('标题');

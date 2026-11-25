@@ -34,11 +34,11 @@ asarUnpack:
   # 引导开场的可选视频；文件不存在时该行无副作用
   - out/renderer/assets/*.mp4
 extraResources:
-  # 远端 helper 的静态二进制：Dela 上传到远端后经 ssh -L 隧道访问（主进程按 resources/dela-helper 探测）
-  - from: vendor/dela-helper
-    to: dela-helper
+  # 远端 helper 的静态二进制：Wilthy 上传到远端后经 ssh -L 隧道访问（主进程按 resources/wilthy-helper 探测）
+  - from: vendor/wilthy-helper
+    to: wilthy-helper
     filter:
-      - 'dela-helper-*'
+      - 'wilthy-helper-*'
   # helper 优先使用的 Linux rg：打包前由 pnpm fetch:remote-rg 下载到 .build，仓库不提交
   - from: .build/remote-rg
     to: remote-rg

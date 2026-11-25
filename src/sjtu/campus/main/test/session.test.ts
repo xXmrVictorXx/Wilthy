@@ -105,7 +105,7 @@ const sender = {} as WebContents;
 const asWindow = (): LoginWindowMock => mock.lastWindow as LoginWindowMock;
 
 beforeEach(() => {
-  mock.userData = mkdtempSync(join(tmpdir(), 'dela-session-'));
+  mock.userData = mkdtempSync(join(tmpdir(), 'wilthy-session-'));
   mock.lastWindow = undefined;
   mock.windows = [];
   mock.parent = {};
@@ -129,7 +129,7 @@ describe.each(['darwin', 'win32'])('校园窗口平台边界（%s）', (platform
     expect(options.frame).not.toBe(false);
     expect(options.closable).not.toBe(false);
     expect(options.webPreferences).toEqual({
-      partition: 'persist:dela-campus',
+      partition: 'persist:wilthy-campus',
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,

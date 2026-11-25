@@ -17,7 +17,7 @@ const CONTEXT_FILE_NAMES = [
 ];
 
 const REPO_SKILL_DIR = '.agents/skills';
-const HOME_SKILL_DIR = '.dela/skills';
+const HOME_SKILL_DIR = '.wilthy/skills';
 
 const MIRROR_FILE_LIMIT = '1048576c';
 const SYNC_TIMEOUT_SECONDS = 30;

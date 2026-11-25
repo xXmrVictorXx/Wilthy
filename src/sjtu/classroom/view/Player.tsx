@@ -42,8 +42,8 @@ import { Spinner } from '../../../ui/spinner';
 import { InlineButton } from '../../../ui/inline-button';
 
 const RATE_OPTIONS = [0.75, 1, 1.25, 1.5, 2];
-const VOLUME_KEY = 'dela.classroom.volume';
-const RATE_KEY = 'dela.classroom.rate';
+const VOLUME_KEY = 'wilthy.classroom.volume';
+const RATE_KEY = 'wilthy.classroom.rate';
 const RESUME_NOTICE_MS = 5000;
 
 function readNumber(key: string, fallback: number): number {

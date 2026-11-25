@@ -5,7 +5,9 @@ import { takePendingReleaseNotes } from './notes';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '../../../ui/dialog';
 
 export function ReleaseNotesDialog() {
-  const [notes] = useState(() => (window.dela ? takePendingReleaseNotes(window.dela.version) : []));
+  const [notes] = useState(() =>
+    window.wilthy ? takePendingReleaseNotes(window.wilthy.version) : [],
+  );
   const [open, setOpen] = useState(notes.length > 0);
   if (!notes.length) return null;
 

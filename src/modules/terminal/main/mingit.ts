@@ -33,7 +33,7 @@ export function locateBash(): string {
   const bash = systemBash() ?? bundledBash();
   if (!bash)
     throw new Error(
-      '未找到 Git Bash：请安装 Git for Windows（https://git-scm.com/download/win）后重启 Dela',
+      '未找到 Git Bash：请安装 Git for Windows（https://git-scm.com/download/win）后重启 Wilthy',
     );
   return bash;
 }

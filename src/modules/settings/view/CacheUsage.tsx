@@ -18,13 +18,13 @@ export function CacheUsage() {
   const size = useQuery({
     queryKey: ['settings', 'cacheSize'],
     queryFn: () => settingsClient.cacheSize(),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
     retry: false,
   });
   const bytes = size.data ?? null;
 
   const clear = async () => {
-    if (!window.dela || busy) return;
+    if (!window.wilthy || busy) return;
     setBusy(true);
     const clearAndReport = async () => {
       const result = await settingsClient.clearCache();
@@ -70,7 +70,7 @@ export function CacheUsage() {
           </div>
         ) : (
           <Button
-            disabled={busy || bytes === null || !window.dela}
+            disabled={busy || bytes === null || !window.wilthy}
             onClick={() => setConfirming(true)}
             size="sm"
             variant="secondary"

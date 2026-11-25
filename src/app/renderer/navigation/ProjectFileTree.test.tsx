@@ -3,7 +3,7 @@ import { act, type ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import type { DelaApi } from '../../preload/api';
+import type { WilthyApi } from '../../preload/api';
 import type { WorkspaceEntry } from '../../../modules/workspace/contract';
 
 // 契约客户端在模块加载时取 bridge，须先于导入视图装好。
@@ -21,7 +21,7 @@ const workspace = vi.hoisted(() => {
       return () => {};
     },
   };
-  window.dela = { bridge } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { bridge } as unknown as NonNullable<typeof window.wilthy>;
   return { handlers, remotes, listeners, bridge };
 });
 import { ProjectFileTree } from './ProjectFileTree';
@@ -78,7 +78,7 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
-  delete window.dela;
+  delete window.wilthy;
   vi.unstubAllGlobals();
 });
 
@@ -199,7 +199,7 @@ it('keeps two connections on the same remote path apart', async () => {
           },
         ],
   );
-  window.dela = { bridge: workspace.bridge } as unknown as DelaApi;
+  window.wilthy = { bridge: workspace.bridge } as unknown as WilthyApi;
   workspace.remotes.list = async () => [];
   workspace.handlers.listRemoteDirectory = listRemoteDirectory;
   const onExpand = vi.fn();
@@ -236,7 +236,7 @@ it('refreshes a remote directory after the tools changed it', async () => {
       ? [{ name: 'src', path: '/home/u/proj/src', directory: true, size: null, modifiedAt: null }]
       : [{ name: 'new.txt', path: `${path}/new.txt`, directory: false, size: 1, modifiedAt: null }],
   );
-  window.dela = { bridge: workspace.bridge } as unknown as DelaApi;
+  window.wilthy = { bridge: workspace.bridge } as unknown as WilthyApi;
   workspace.remotes.list = async () => [];
   workspace.handlers.listRemoteDirectory = listRemoteDirectory;
 

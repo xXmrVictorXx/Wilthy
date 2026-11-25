@@ -12,7 +12,7 @@ const { api, bridge } = vi.hoisted(() => {
     invoke: async (channel: string, input: never) => api[channel]!(input),
     subscribe: () => () => {},
   };
-  window.dela = { bridge } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { bridge } as unknown as NonNullable<typeof window.wilthy>;
   return { api, bridge };
 });
 import { SearchConfigDialog } from '../agent/SearchConfigDialog';
@@ -39,7 +39,7 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount());
   host.remove();
-  delete window.dela;
+  delete window.wilthy;
   vi.unstubAllGlobals();
 });
 
@@ -61,7 +61,7 @@ it('导入 DeepSeek 密钥后切换到 Brave，不应把 DeepSeek 密钥保存�
   ];
   api['capabilities:readWebSearchKey'] = readWebSearchKey;
   api['capabilities:saveWebSearchEntry'] = saveWebSearchEntry;
-  window.dela = { bridge } as unknown as NonNullable<typeof window.dela>;
+  window.wilthy = { bridge } as unknown as NonNullable<typeof window.wilthy>;
 
   await act(async () =>
     root.render(

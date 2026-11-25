@@ -122,7 +122,7 @@ async function saved(topicId = 42): Promise<string> {
 }
 
 beforeEach(() => {
-  userData = mkdtempSync(join(tmpdir(), 'dela-snapshot-'));
+  userData = mkdtempSync(join(tmpdir(), 'wilthy-snapshot-'));
   db = new Database(':memory:');
   for (const table of [
     ...shuiyuanSchema.tables,
@@ -146,7 +146,7 @@ it('deduplicates thumbnail generation and keeps original bytes for the lightbox'
   mkdirSync(dir, { recursive: true });
   const file = '0123456789abcdef0123456789abcdef.jpg';
   await writeSnapshotBytes(join(dir, file), 'original');
-  const url = new URL(`dela-resource://shuiyuan-snapshot/42/${file}?thumbnail=1`);
+  const url = new URL(`wilthy-resource://shuiyuan-snapshot/42/${file}?thumbnail=1`);
   const results = await Promise.all([
     handleShuiyuanSnapshotRequest(url),
     handleShuiyuanSnapshotRequest(url),
@@ -222,9 +222,11 @@ it('stores originals locally, drops avatars and keeps failed external images onl
   expect(first!.cooked).not.toContain('avatar');
   expect(first!.cooked).not.toContain('srcset');
   expect(first!.cooked).not.toContain(`href="${original}"`);
-  expect(first!.cooked).toMatch(/src="dela-resource:\/\/shuiyuan-snapshot\/42\/[0-9a-f]{32}\.jpg"/);
+  expect(first!.cooked).toMatch(
+    /src="wilthy-resource:\/\/shuiyuan-snapshot\/42\/[0-9a-f]{32}\.jpg"/,
+  );
   expect(first!.cooked).toContain(`src="${external}"`);
-  expect(second!.cooked).toMatch(/dela-resource:\/\/shuiyuan-snapshot\/42\//);
+  expect(second!.cooked).toMatch(/wilthy-resource:\/\/shuiyuan-snapshot\/42\//);
   expect(readdirSync(join(userData, 'shuiyuan-snapshots', '42', 'images'))).toHaveLength(2);
 });
 

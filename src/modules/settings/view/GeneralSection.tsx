@@ -16,7 +16,7 @@ export function GeneralSection({ navEntries }: { navEntries: ReactNode }) {
   const openAtLogin = useQuery({
     queryKey: ['settings', 'openAtLogin'],
     queryFn: () => settingsClient.openAtLogin().catch(() => false),
-    enabled: Boolean(window.dela),
+    enabled: Boolean(window.wilthy),
   }).data;
   const [busy, setBusy] = useState(false);
 
@@ -27,7 +27,7 @@ export function GeneralSection({ navEntries }: { navEntries: ReactNode }) {
     const save = async () => {
       queryClient.setQueryData(
         ['settings', 'openAtLogin'],
-        window.dela ? await settingsClient.setOpenAtLogin(next) : next,
+        window.wilthy ? await settingsClient.setOpenAtLogin(next) : next,
       );
     };
     try {
