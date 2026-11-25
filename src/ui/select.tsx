@@ -59,7 +59,8 @@ function SelectContent({
         sideOffset={4}
         {...props}
       >
-        {children}
+        {/* 选项多于可用高度时由 Viewport 负责滚动。 */}
+        <SelectPrimitive.Viewport>{children}</SelectPrimitive.Viewport>
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
   );
