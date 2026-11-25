@@ -13,7 +13,7 @@ import type { DocumentContent } from '../../../../core/protocol/workbench';
 
 const content: DocumentContent = { title: 'Note', format: 'markdown', text: 'old', revision: 'r1' };
 
-function installDela(
+function installWilthy(
   read: (id: string) => Promise<DocumentContent>,
   saveNote: (input: { id: string; text: string; revision: string }) => Promise<string>,
 ) {
@@ -50,7 +50,7 @@ describe('draft relocation', () => {
 
 describe('draft debounce', () => {
   it('saves once with the latest text after 600ms; each edit restarts the timer', async () => {
-    const { saveMock } = installDela(
+    const { saveMock } = installWilthy(
       async () => ({ ...content }),
       vi.fn(async () => 'r2'),
     );
@@ -77,7 +77,7 @@ describe('draft debounce', () => {
 describe('draft save mutex', () => {
   it('shares an in-flight save and persists the latest text observed before it finishes', async () => {
     const finishes: ((revision: string) => void)[] = [];
-    const { saveMock } = installDela(
+    const { saveMock } = installWilthy(
       async () => ({ ...content }),
       () => new Promise<string>((resolve) => finishes.push(resolve)),
     );
@@ -103,7 +103,7 @@ describe('draft save mutex', () => {
   });
 
   it('resolves false on a failed save and retains the dirty draft for retry or recovery', async () => {
-    const { saveMock } = installDela(
+    const { saveMock } = installWilthy(
       async () => ({ ...content }),
       vi.fn(async () => {
         throw new Error('disk full');
@@ -126,7 +126,7 @@ describe('draft save mutex', () => {
 describe('draft acquire', () => {
   it('shares one in-flight load and reuses the existing draft on later acquires', async () => {
     let pending!: (value: typeof content) => void;
-    const { readMock } = installDela(
+    const { readMock } = installWilthy(
       () => new Promise((resolve) => (pending = resolve)),
       vi.fn(async () => 'r2'),
     );
@@ -142,7 +142,7 @@ describe('draft acquire', () => {
 
   it('keeps a newer edit when a forced acquire started before that edit', async () => {
     let finish!: (value: typeof content) => void;
-    const { readMock } = installDela(
+    const { readMock } = installWilthy(
       () => new Promise((resolve) => (finish = resolve)),
       vi.fn(async () => 'r2'),
     );
@@ -165,7 +165,7 @@ describe('draft acquire', () => {
   it('waits for an in-flight save before a forced reload, then replaces clean content', async () => {
     const finishes: ((revision: string) => void)[] = [];
     let reads = 0;
-    installDela(
+    installWilthy(
       async () => {
         reads += 1;
         return reads === 1 ? { ...content } : { ...content, text: 'fresh', revision: 'r9' };
@@ -190,7 +190,7 @@ describe('draft acquire', () => {
 
 describe('draft acquire/release reference counting', () => {
   it('keeps the draft while another entry point still holds it, flushes on the final release', async () => {
-    const { saveMock } = installDela(
+    const { saveMock } = installWilthy(
       async () => ({ ...content }),
       vi.fn(async () => 'r2'),
     );
@@ -207,7 +207,7 @@ describe('draft acquire/release reference counting', () => {
   });
 
   it('returns false and keeps the dirty draft reachable when the release flush fails', async () => {
-    installDela(
+    installWilthy(
       async () => ({ ...content }),
       vi.fn(async () => {
         throw new Error('disk full');

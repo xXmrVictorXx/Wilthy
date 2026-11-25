@@ -18,7 +18,7 @@ import { useWorkspaceStore } from '../store';
 
 const workspaceState = { entries: [], directory: 'C:/wilthy' };
 
-function installDela(handlers: { workspace?: () => Promise<unknown> }) {
+function installWilthy(handlers: { workspace?: () => Promise<unknown> }) {
   const state = vi.fn(handlers.workspace ?? (async () => workspaceState));
   api.state = state;
   bridge.subscribe.mockClear();
@@ -60,7 +60,7 @@ describe('workspace store mirror', () => {
     const right = item('C:/right', null, 'project');
     const file = item('C:/right/file', right.id, 'file');
     const overview = { ...workspaceState, entries: [left, right] };
-    installDela({ workspace: async () => overview });
+    installWilthy({ workspace: async () => overview });
     const list = vi.fn(async (id: string | null) => (id === left.id ? [] : [file]));
     api.listLocalDirectory = list;
     useWorkspaceStore.setState({ workspace: overview, overview, directories: {} });
@@ -83,7 +83,7 @@ describe('workspace store mirror', () => {
   });
 
   it('does not restore directory data after it was released while a request was pending', async () => {
-    installDela({});
+    installWilthy({});
     let resolve!: (entries: WorkspaceEntry[]) => void;
     api.listLocalDirectory = () =>
       new Promise((done) => {
@@ -96,7 +96,7 @@ describe('workspace store mirror', () => {
     expect(useWorkspaceStore.getState().directories['C:/closed']).toBeUndefined();
   });
   it('shares one request between concurrent load callers', async () => {
-    const { state, onChanged } = installDela({});
+    const { state, onChanged } = installWilthy({});
     await Promise.all([useWorkspaceStore.getState().load(), useWorkspaceStore.getState().load()]);
     expect(state).toHaveBeenCalledTimes(1);
     // 外部文件变化订阅只注册一次（模块级去重），变化回调复用 refresh 通道。
@@ -110,7 +110,7 @@ describe('workspace store mirror', () => {
 
   it('leaves loaded false on a failed workspace load so it can be retried', async () => {
     let attempts = 0;
-    installDela({
+    installWilthy({
       workspace: () => {
         attempts += 1;
         return attempts === 1
@@ -129,7 +129,7 @@ describe('workspace store mirror', () => {
   it('coalesces refreshes but reads again for changes received during an active request', async () => {
     let resolveFirst!: (value: typeof workspaceState) => void;
     const next = { ...workspaceState, directory: 'C:/updated' };
-    const { state } = installDela({
+    const { state } = installWilthy({
       workspace: () =>
         new Promise((resolve) => {
           resolveFirst = resolve;
