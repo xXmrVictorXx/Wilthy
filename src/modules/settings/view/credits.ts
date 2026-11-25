@@ -1,4 +1,5 @@
-import authorAvatar from '../../../../assets/credits/changyo/avatar.jpg';
+import wilthyAuthorAvatar from '../../../../assets/credits/xxmrvictorxx/avatar.png';
+import changyoAvatar from '../../../../assets/credits/changyo/avatar.jpg';
 import aizyeeeAvatar from '../../../../assets/credits/aizyeee/avatar.png';
 import aaalpsssAvatar from '../../../../assets/credits/aaalpsss/avatar.png';
 import huangtongAvatar from '../../../../assets/credits/huangtong601-ops/avatar.jpg';
@@ -28,25 +29,30 @@ export interface CreditSection {
   people: CreditPerson[];
 }
 
-// Wilthy 基于 Dela 修改：这里致谢上游项目的作者与贡献者，名单取自 Chang-Yo/Dela 仓库，
-// 头像随源码入库。
+// Wilthy 的作者在前；Wilthy 基于 Dela 修改，其后致谢上游项目的作者与贡献者
+// （名单取自 Chang-Yo/Dela 仓库）。头像随源码入库。
 export const creditSections: CreditSection[] = [
   {
-    title: 'Dela 作者',
+    title: 'Wilthy 作者',
+    people: [
+      {
+        name: 'xXmrVictorXx',
+        avatar: wilthyAuthorAvatar,
+        links: [{ kind: 'github', url: 'https://github.com/xXmrVictorXx' }],
+      },
+    ],
+  },
+  {
+    title: 'Dela 作者和贡献者',
     people: [
       {
         name: 'ChangYo',
-        avatar: authorAvatar,
+        avatar: changyoAvatar,
         links: [
           { kind: 'github', url: 'https://github.com/Chang-Yo' },
           { kind: 'blog', url: 'https://changyo.pages.dev' },
         ],
       },
-    ],
-  },
-  {
-    title: 'Dela 贡献者',
-    people: [
       {
         name: 'aizyeee',
         avatar: aizyeeeAvatar,
