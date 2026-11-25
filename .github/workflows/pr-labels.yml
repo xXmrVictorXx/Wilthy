@@ -66,7 +66,7 @@ jobs:
               ui: { color: 'C5DEF5', description: '涉及 src/ui：Design System' },
               app: { color: '1D76DB', description: '涉及 src/app：Electron 宿主与工作台外壳' },
               modules: { color: '0E8A16', description: '涉及 src/modules：通用功能' },
-              sjtu: { color: 'B60205', description: '涉及 src/sjtu：交大功能' },
+              bnuz: { color: 'B60205', description: '涉及 src/bnuz：BNUZ 功能' },
               helper: { color: '006B75', description: '涉及 helper：Go 远端 helper' },
               bug: {
                 color: 'D73A4A',
@@ -110,7 +110,7 @@ jobs:
               'size/XL',
               'size/XXL',
             ]
-            const AREA_LABELS = ['core', 'ui', 'app', 'modules', 'sjtu', 'helper']
+            const AREA_LABELS = ['core', 'ui', 'app', 'modules', 'bnuz', 'helper']
             const TYPE_LABELS = [
               'bug',
               'enhancement',
@@ -126,14 +126,14 @@ jobs:
               ...TYPE_LABELS,
               'documentation',
             ]
-            // 模块标签随目录增减，按前缀识别：mod:<通用模块>、sjtu:<交大模块>。
-            const MODULE_LABEL = /^(?:mod|sjtu):/
+            // 模块标签随目录增减，按前缀识别：mod:<通用模块>、bnuz:<BNUZ 模块>。
+            const MODULE_LABEL = /^(?:mod|bnuz):/
             const labelDef = (name) => {
               if (LABEL_DEFS[name]) return LABEL_DEFS[name]
               const [prefix, module] = name.split(':')
               return prefix === 'mod'
                 ? { color: 'C2E0C6', description: `涉及 src/modules/${module}` }
-                : { color: 'F9D0C4', description: `涉及 src/sjtu/${module}` }
+                : { color: 'F9D0C4', description: `涉及 src/bnuz/${module}` }
             }
 
             // 生成物与随改动不计入大小；文档与 CHANGELOG 属于核心内容，正常计入。
@@ -219,12 +219,12 @@ jobs:
             for (const file of files) {
               if (isDocs(file.filename)) continue
               if (file.filename.startsWith('helper/')) targets.add('helper')
-              const match = /^src\/(core|ui|app|modules|sjtu)\/(?:([^/]+)\/)?/.exec(file.filename)
+              const match = /^src\/(core|ui|app|modules|bnuz)\/(?:([^/]+)\/)?/.exec(file.filename)
               if (!match) continue
               const [, layer, module] = match
               targets.add(layer)
               if (module && layer === 'modules') targets.add(`mod:${module}`)
-              if (module && layer === 'sjtu') targets.add(`sjtu:${module}`)
+              if (module && layer === 'bnuz') targets.add(`bnuz:${module}`)
             }
 
             // 类型优先取 closing issue 的 labels（Fixes/Closes/Resolves）；

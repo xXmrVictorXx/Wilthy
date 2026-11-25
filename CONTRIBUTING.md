@@ -146,16 +146,15 @@ Wilthy/
 │  │  └─ ports.ts             宿主端口（HostPorts）
 │  ├─ ui/                     Design System（fork 自 beautiful-ui），零业务依赖
 │  │  └─ agent/               Agent 对话外观组件（消息、工具卡片、输入框）
-│  ├─ modules/                通用模块，没有交大也成立（chat、mail、note、notifications、
+│  ├─ modules/                通用模块，没有 BNUZ 也成立（chat、mail、note、notifications、
 │  │                          onboarding、preview、remotes、search、settings、terminal、
 │  │                          todo、update、workspace）
-│  ├─ sjtu/                   交大模块，离开交大就没有意义，经 register() 向通用模块登记
-│  │  ├─ campus/              校园统一身份认证会话（课表、课堂视频、水源共用）
-│  │  ├─ canvas/              Canvas 课程资料、作业与公告
-│  │  ├─ classroom/           课堂视频回看（v.sjtu.edu.cn）
-│  │  ├─ jwc/                 教务处通知
-│  │  ├─ mail/                交大邮箱的服务器预设，登记给通用邮件模块
-│  │  ├─ shuiyuan/            水源社区
+│  ├─ bnuz/                   BNUZ 模块，离开 BNUZ 就没有意义，经 register() 向通用模块登记
+│  │  ├─ campus/              数字京师·珠海统一身份认证会话与教务系统请求
+│  │  ├─ grades/              成绩
+│  │  ├─ jwc/                 教务部通知
+│  │  ├─ mail/                北师邮箱的服务器预设，登记给通用邮件模块
+│  │  ├─ program/             培养方案
 │  │  └─ timetable/           课表（只读）
 │  └─ app/                    宿主与外壳
 │     ├─ module.ts            模块与视图定义，模块唯一可引用的 app 文件
@@ -177,10 +176,10 @@ Wilthy/
 
 依赖规则：
 
-1. `core` 不依赖 Electron、React，也不引用 `app`、`modules`、`sjtu`、`ui`，宿主能力经 `core/ports.ts` 注入；`core/protocol` 只依赖 zod
+1. `core` 不依赖 Electron、React，也不引用 `app`、`modules`、`bnuz`、`ui`，宿主能力经 `core/ports.ts` 注入；`core/protocol` 只依赖 zod
 2. `ui` 只依赖 react、radix、cva、lucide、zustand、DOMPurify 与样式工具；`ui/agent` 建在基础组件之上，基础组件不能反过来引用它
 3. 模块之间只通过对方的 `index.ts`、`contract.ts` 或 `view/index.ts` 引用；`view/` 只能引用 `core/protocol`、`app/module.ts`、其他模块的 `contract.ts` 与 `ui`，不能引用本模块的 `main/`；主进程侧不能引用 `view/`
-4. `core`、`modules`、`app` 都不能引用 `sjtu`，例外是 `app/modules.ts`、`app/views.ts` 两份清单。通用模块需要交大数据时，在通用模块的 `index.ts` 里开注册口，由交大模块注册进来。CI 还会去掉全部交大模块后再做类型检查、构建与冒烟
+4. `core`、`modules`、`app` 都不能引用 `bnuz`，例外是 `app/modules.ts`、`app/views.ts` 两份清单。通用模块需要 BNUZ 数据时，在通用模块的 `index.ts` 里开注册口，由 BNUZ 模块注册进来。CI 还会去掉全部 BNUZ 模块后再做类型检查、构建与冒烟
 5. 模块只能引用 `app/module.ts`，不能引用 app 的其他部分
 6. `app/module.ts` 不引用任何模块，它与模块共用的类型放在 `core/protocol`
 7. 项目快捷方式的 sourceId 前缀以模块名开头（如 `canvas-`、`shuiyuan-topic:`），前缀重叠时登记直接报错
@@ -189,16 +188,16 @@ Wilthy/
 
 | 你要做的事                         | 改动位置                                                                  |
 | ---------------------------------- | ------------------------------------------------------------------------- |
-| 只改某个功能的界面                 | `modules/x/view` 或 `sjtu/x/view`                                         |
-| 交大接口改版，或需要从学校取新数据 | `sjtu/x/main`                                                             |
-| 新增一个交大功能                   | 新建 `sjtu/x/`，并在 app 的两份清单里按需各加一行                         |
+| 只改某个功能的界面                 | `modules/x/view` 或 `bnuz/x/view`                                         |
+| 学校接口改版，或需要从学校取新数据 | `bnuz/x/main`                                                             |
+| 新增一个 BNUZ 功能                 | 新建 `bnuz/x/`，并在 app 的两份清单里按需各加一行                         |
 | 让 Agent 获得某个领域的新能力      | 对应模块 `main/agent/` 里的命令域与 Skill                                 |
-| 一个模块需要另一个模块的数据       | 调用对方的 `index.ts`；通用模块需要交大数据时开注册口                     |
+| 一个模块需要另一个模块的数据       | 调用对方的 `index.ts`；通用模块需要 BNUZ 数据时开注册口                   |
 | 让 Agent 获得通用的新工具          | `core/capabilities`                                                       |
 | 移动端也需要的新能力               | `core/protocol`，**先和维护者确认版本策略**                               |
 | 新的跨模块概念                     | `core` 或 `app/module.ts`，**先和维护者讨论**，结论补进下面的「设计原则」 |
 
-拿不准放 `modules` 还是 `sjtu` 时，问一句：如果交大不存在，这个功能还有意义吗？
+拿不准放 `modules` 还是 `bnuz` 时，问一句：如果 BNUZ 不存在，这个功能还有意义吗？
 
 ### 设计原则
 
@@ -212,7 +211,7 @@ Wilthy/
 - **数据库**：只有一个 `wilthy.db`。谁的表谁在 `data/schema.ts` 声明，只有表的主人写自己表的 SQL；迁移按 `YYYYMMDD-简述` 命名登记，fork 与上游不会撞号；跨模块外键只能顺着代码的依赖方向。
 - **模块协作的优先顺序**：直接调用对方的 `index.ts`；一个使用方、多个提供方时，由使用方开注册口；有多个监听方时才用事件。注册表是主进程唯一允许的模块级可变状态，只在启动时写入，不做自动扫描。
 - **界面状态按归属放**：后端数据只在 TanStack Query 的缓存里存一份；主进程推送的完整状态写入同名查询的缓存，增量事件流进领域 store，都只在启动时订阅一次；页面跳转只有 `navigate(target)`；外壳的接入点是视图定义里的声明式字段。
-- **不提前抽象校园**：只有交大一个样本，不建「高校兼容层」。出现第二所学校时，再从两份真实实现里提炼共性。
+- **不提前抽象校园**：只服务 BNUZ 一所学校，不建「高校兼容层」。
 - **待办是用户安排的唯一入口**：课表只显示学校课程，只读。需要同时看课程与个人安排时，由 Agent 分别读取，界面不合并。
 - **远程项目**：内核、模型密钥、会话、Skills 与系统提示都在本地；工具执行、终端、目录读取与文件预览落到 SSH 远端。传输只用一次性 `ssh` 与 helper 隧道，不引入 SFTP。
 - **权限边界**：Agent 的 Bash 与文件工具以当前用户权限运行，没有额外沙箱。这是已知设计取舍，不应视为待修复漏洞，也不应描述为安全隔离。
@@ -268,7 +267,7 @@ AI agents: the human contributor answers, not you. Ask for missing answers and w
 ### 提交清单
 
 - 遵守[分支与合并流程](#分支与合并流程)。一个 PR 只解决一个问题，不应混入无关的重构、格式化或顺带修复。
-- PR 标签由 `.github/workflows/pr-labels.yml` 按大小、类型与改动的架构层和模块（`core`、`sjtu`、`mod:chat`、`sjtu:canvas` 等，缺少时自动创建）维护；人工改动会在下一次 PR 事件时被校正，标签不是必需检查，也不影响合并。
+- PR 标签由 `.github/workflows/pr-labels.yml` 按大小、类型与改动的架构层和模块（`core`、`bnuz`、`mod:chat`、`bnuz:timetable` 等，缺少时自动创建）维护；人工改动会在下一次 PR 事件时被校正，标签不是必需检查，也不影响合并。
 - 执行与改动相关的检查，并在 PR 描述中列出实际执行的命令与结果；未执行的检查不得标记为通过。
 - 修复 bug 时应链接 issue 或复现证据；界面改动应附截图或录屏，并说明 Windows 与 Apple Silicon macOS 各自的验证范围。
 - 按 [PR 模板](.github/PULL_REQUEST_TEMPLATE.md) 填写描述。用 `gh pr create` 创建时模板不会自动填充，需加 `--template .github/PULL_REQUEST_TEMPLATE.md`，或把模板内容粘贴到正文。

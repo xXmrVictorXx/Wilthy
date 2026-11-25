@@ -2,7 +2,7 @@
 import { defineView } from '../../../app/module';
 import { registerMailPreset } from '../../../modules/mail/view';
 
-export const sjtuMailView = defineView({
+export const bnuzMailView = defineView({
   pages: {},
   start() {
     registerMailPreset({

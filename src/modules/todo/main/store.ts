@@ -16,12 +16,12 @@ export type SourceTask = Pick<
   'title' | 'time' | 'status' | 'statusLabel' | 'completedAt' | 'url' | 'bodyHtml' | 'createdAt'
 > & { externalId: string };
 
-/** 外部来源（如 Canvas 作业）。按分组逐个同步，一组失败不影响其他组。 */
+/** 外部来源，由校园模块登记。按分组逐个同步，一组失败不影响其他组。 */
 export interface TaskSource {
   id: string;
-  /** 筛选标签与通知里的名字，例如「Canvas 作业」。 */
+  /** 筛选标签与通知里的名字，例如「课程作业」。 */
   label: string;
-  /** 打开条目原页面的按钮文字，例如「在 Canvas 中打开」。 */
+  /** 打开条目原页面的按钮文字，例如「在网页中打开」。 */
   openLabel?: string;
   /** 当前账号的指纹，未登录时为 null；换账号后旧账号的条目不再显示。 */
   owner(): string | null;

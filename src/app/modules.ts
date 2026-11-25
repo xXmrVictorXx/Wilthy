@@ -11,11 +11,8 @@ import { terminalModule } from '../modules/terminal';
 import { todoModule } from '../modules/todo';
 import { updateModule } from '../modules/update';
 import { workspaceModule } from '../modules/workspace';
-import { canvasModule } from '../sjtu/canvas';
-import { classroomModule } from '../sjtu/classroom';
-import { jwcModule } from '../sjtu/jwc';
-import { shuiyuanModule } from '../sjtu/shuiyuan';
-import { timetableModule } from '../sjtu/timetable';
+import { jwcModule } from '../bnuz/jwc';
+import { timetableModule } from '../bnuz/timetable';
 
 export const modules: ModuleDefinition[] = [
   workspaceModule,
@@ -30,9 +27,6 @@ export const modules: ModuleDefinition[] = [
   searchModule,
   todoModule,
   notificationsModule,
-  canvasModule,
-  shuiyuanModule,
-  classroomModule,
   timetableModule,
   jwcModule,
 ];

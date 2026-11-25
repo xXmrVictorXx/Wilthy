@@ -14,23 +14,11 @@ import { mailView } from '../modules/mail/view';
 import { notificationsView } from '../modules/notifications/view';
 import { todoView } from '../modules/todo/view';
 import { updateView } from '../modules/update/view';
-import { canvasView } from '../sjtu/canvas/view';
-import { classroomView } from '../sjtu/classroom/view';
-import { jwcView } from '../sjtu/jwc/view';
-import { sjtuMailView } from '../sjtu/mail/view';
-import { shuiyuanView } from '../sjtu/shuiyuan/view';
-import { timetableView } from '../sjtu/timetable/view';
+import { jwcView } from '../bnuz/jwc/view';
+import { bnuzMailView } from '../bnuz/mail/view';
+import { timetableView } from '../bnuz/timetable/view';
 
-const moduleViews = [
-  mailView,
-  sjtuMailView,
-  todoView,
-  timetableView,
-  classroomView,
-  shuiyuanView,
-  canvasView,
-  jwcView,
-];
+const moduleViews = [mailView, bnuzMailView, todoView, timetableView, jwcView];
 
 export const views: ViewDefinition[] = [
   ...moduleViews,

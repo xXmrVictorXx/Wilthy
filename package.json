@@ -38,7 +38,6 @@
     "smoke:runtime": "node scripts/run-ts-smoke.ts runtime-smoke",
     "smoke:desktop": "electron scripts/desktop-smoke.cjs",
     "smoke:workspace": "node scripts/run-ts-smoke.ts workspace-smoke",
-    "smoke:shuiyuan": "electron scripts/shuiyuan-smoke.cjs && electron scripts/shuiyuan-auth-smoke.cjs",
     "smoke:remote": "node scripts/run-ts-smoke.ts remote-smoke",
     "prepare:runtime": "node scripts/prepare-runtime.ts"
   },

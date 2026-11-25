@@ -10,7 +10,7 @@
   },
   "overrides": [
     {
-      "files": ["src/{core,modules,sjtu,ui,app}/**"],
+      "files": ["src/{core,modules,bnuz,ui,app}/**"],
       "rules": {
         "react/set-state-in-effect": "error",
         "react/refs": "error"
@@ -28,7 +28,7 @@
                 "message": "模块之间只通过对方的 index.ts、contract.ts 或 view/index.ts 引用。"
               },
               {
-                "group": ["**/sjtu/**"],
+                "group": ["**/bnuz/**"],
                 "message": "只有 app 的两份清单（modules、views）可以引用交大模块：通用模块需要交大数据时开注册口。"
               }
             ]
@@ -44,7 +44,7 @@
           {
             "patterns": [
               {
-                "group": ["**/modules/**", "**/sjtu/**"],
+                "group": ["**/modules/**", "**/bnuz/**"],
                 "message": "app/module.ts 不引用任何模块：它与模块共用的类型放在 core/protocol。"
               }
             ]
@@ -84,7 +84,7 @@
                 "message": "core 不认识具体业务：在 core/capabilities 开注册表，由模块注册进来。"
               },
               {
-                "group": ["**/sjtu/**"],
+                "group": ["**/bnuz/**"],
                 "message": "只有 app 的两份清单（modules、views）可以引用交大模块：通用模块需要交大数据时开注册口。"
               }
             ]
@@ -124,7 +124,7 @@
                 "message": "core 不认识具体业务：在 core/capabilities 开注册表，由模块注册进来。"
               },
               {
-                "group": ["**/sjtu/**"],
+                "group": ["**/bnuz/**"],
                 "message": "只有 app 的两份清单（modules、views）可以引用交大模块：通用模块需要交大数据时开注册口。"
               },
               {
@@ -278,7 +278,7 @@
                 "message": "core 的测试可以用宿主实现做集成夹具，但不能依赖 Electron 与界面。"
               },
               {
-                "group": ["**/sjtu/**"],
+                "group": ["**/bnuz/**"],
                 "message": "只有 app 的两份清单（modules、views）可以引用交大模块：通用模块需要交大数据时开注册口。"
               }
             ]
@@ -298,7 +298,7 @@
                 "message": "模块之间只通过对方的 index.ts、contract.ts 或 view/index.ts 引用。"
               },
               {
-                "group": ["**/sjtu/**"],
+                "group": ["**/bnuz/**"],
                 "message": "只有 app 的两份清单（modules、views）可以引用交大模块：通用模块需要交大数据时开注册口。"
               },
               {
@@ -353,7 +353,7 @@
                 "message": "模块之间只通过对方的 index.ts、contract.ts 或 view/index.ts 引用。"
               },
               {
-                "group": ["**/sjtu/**"],
+                "group": ["**/bnuz/**"],
                 "message": "只有 app 的两份清单（modules、views）可以引用交大模块：通用模块需要交大数据时开注册口。"
               },
               {
@@ -381,7 +381,7 @@
       }
     },
     {
-      "files": ["src/sjtu/**"],
+      "files": ["src/bnuz/**"],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -392,9 +392,9 @@
                   "**/modules/*/main/**",
                   "**/modules/*/view/*",
                   "**/modules/*/data/**",
-                  "**/sjtu/*/main/**",
-                  "**/sjtu/*/view/*",
-                  "**/sjtu/*/data/**"
+                  "**/bnuz/*/main/**",
+                  "**/bnuz/*/view/*",
+                  "**/bnuz/*/data/**"
                 ],
                 "message": "模块之间只通过对方的 index.ts、contract.ts 或 view/index.ts 引用。"
               },
@@ -428,7 +428,7 @@
       }
     },
     {
-      "files": ["src/{modules,sjtu}/*/view/**"],
+      "files": ["src/{modules,bnuz}/*/view/**"],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -439,7 +439,7 @@
                 "message": "模块之间只通过对方的 index.ts、contract.ts 或 view/index.ts 引用。"
               },
               {
-                "group": ["**/sjtu/**"],
+                "group": ["**/bnuz/**"],
                 "message": "只有 app 的两份清单（modules、views）可以引用交大模块：通用模块需要交大数据时开注册口。"
               },
               {
@@ -486,7 +486,7 @@
       }
     },
     {
-      "files": ["src/{modules,sjtu}/*/view/test/**"],
+      "files": ["src/{modules,bnuz}/*/view/test/**"],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -497,7 +497,7 @@
                 "message": "模块之间只通过对方的 index.ts、contract.ts 或 view/index.ts 引用。"
               },
               {
-                "group": ["**/sjtu/**"],
+                "group": ["**/bnuz/**"],
                 "message": "只有 app 的两份清单（modules、views）可以引用交大模块：通用模块需要交大数据时开注册口。"
               },
               {
@@ -567,7 +567,7 @@
                 "message": "模块之间只通过对方的 index.ts、contract.ts 或 view/index.ts 引用。"
               },
               {
-                "group": ["**/sjtu/**"],
+                "group": ["**/bnuz/**"],
                 "message": "只有 app 的两份清单（modules、views）可以引用交大模块：通用模块需要交大数据时开注册口。"
               },
               {
@@ -591,7 +591,7 @@
                   "**/modules/*/main/**",
                   "**/modules/*/view/*",
                   "**/modules/*/data/**",
-                  "**/sjtu/*/*/**"
+                  "**/bnuz/*/*/**"
                 ],
                 "message": "清单只引用模块的 index.ts 或 contract.ts。"
               }

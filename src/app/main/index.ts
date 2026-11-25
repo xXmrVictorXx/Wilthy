@@ -293,7 +293,7 @@ async function createWindow(): Promise<void> {
     }
   });
   const session = window.webContents.session;
-  // 仅放行剪贴板读写与全屏（终端粘贴、课堂视频），其余权限一律拒绝。
+  // 仅放行剪贴板读写与全屏（终端粘贴、视频全屏），其余权限一律拒绝。
   const allowClipboardAndFullscreen = (_contents: unknown, permission: string) =>
     permission === 'clipboard-sanitized-write' ||
     permission === 'clipboard-read' ||

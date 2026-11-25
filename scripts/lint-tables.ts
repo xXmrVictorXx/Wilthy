@@ -8,7 +8,7 @@ const shared = new Set(['workspace_settings']);
 
 function ownerOf(file: string): string {
   const [area, name] = relative(join(root, 'src'), file).split(sep);
-  return area === 'modules' || area === 'sjtu' ? name! : area!;
+  return area === 'modules' || area === 'bnuz' ? name! : area!;
 }
 
 function sourceFiles(dir: string): string[] {
