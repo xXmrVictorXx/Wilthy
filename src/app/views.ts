@@ -14,11 +14,21 @@ import { mailView } from '../modules/mail/view';
 import { notificationsView } from '../modules/notifications/view';
 import { todoView } from '../modules/todo/view';
 import { updateView } from '../modules/update/view';
+import { gradesView } from '../bnuz/grades/view';
 import { jwcView } from '../bnuz/jwc/view';
 import { bnuzMailView } from '../bnuz/mail/view';
+import { programView } from '../bnuz/program/view';
 import { timetableView } from '../bnuz/timetable/view';
 
-const moduleViews = [mailView, bnuzMailView, todoView, timetableView, jwcView];
+const moduleViews = [
+  mailView,
+  bnuzMailView,
+  todoView,
+  timetableView,
+  gradesView,
+  programView,
+  jwcView,
+];
 
 export const views: ViewDefinition[] = [
   ...moduleViews,

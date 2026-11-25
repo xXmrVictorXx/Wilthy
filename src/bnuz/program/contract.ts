@@ -68,6 +68,7 @@ export const programContract = defineContract('program', {
   plan: { input: z.undefined(), output: z.custom<PlannedCourse[]>() },
   progress: { input: z.undefined(), output: z.custom<ModuleCourse[]>() },
   sync: { input: z.undefined(), output: z.custom<ProgramResult>() },
+  connect: { input: z.undefined(), output: z.custom<ProgramResult>() },
 });
 
 declare module '../../app/module' {

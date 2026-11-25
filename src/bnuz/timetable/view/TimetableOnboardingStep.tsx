@@ -39,7 +39,7 @@ export function TimetableOnboardingStep({ onDone }: { onDone: () => void }) {
       <header className="grid gap-2">
         <h2 className="text-2xl font-semibold tracking-tight">连接数字京师·珠海</h2>
         <p className="text-sm leading-relaxed text-ink-3">
-          登录在独立窗口完成，Wilthy 只读取你的个人课表。
+          登录在独立窗口完成，Wilthy 只读取你的课表、成绩与培养方案。
         </p>
       </header>
       {error && <ErrorText size="sm">{error}</ErrorText>}

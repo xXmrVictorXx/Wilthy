@@ -50,6 +50,7 @@ export const gradesContract = defineContract('grades', {
   state: { input: z.undefined(), output: z.custom<GradesState>() },
   list: { input: z.undefined(), output: z.custom<GradeRecord[]>() },
   sync: { input: z.undefined(), output: z.custom<GradesResult>() },
+  connect: { input: z.undefined(), output: z.custom<GradesResult>() },
 });
 
 declare module '../../app/module' {
