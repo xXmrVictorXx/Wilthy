@@ -47,6 +47,7 @@
 ### Task 1: 身份层与自动更新
 
 **Files:**
+
 - Modify: `package.json`（`name: "wilthy"`，`author: "Wilthy contributors"`，`description`），`electron-builder.yml`（`appId`、`productName`、图标文件名，删除两处 `publish`），`src/modules/update/main/updater.ts`（`updatesAvailable` 返回 false，删除 `DOWNLOAD_PAGE_URL` 及其用途），`src/core/config-files.ts`、`src/core/capabilities/skills.ts`（`.wilthy`），数据库文件名 `dela.db` 出现的所有位置
 - Rename: `assets/Dela_*` → `assets/Wilthy_*`，同步改所有 import 和 `src/app/main/index.ts` 里的 `` `Dela_${…}_bg.png` ``
 
@@ -58,6 +59,7 @@
 ### Task 2: 内部标识批量改名
 
 **Files:**
+
 - Create: `scripts/rename-to-wilthy.ts`（一次性脚本，提交后删除）
 - Modify: 所有包含 `dela`、`Dela`、`DELA` 的源码、脚本、Go helper、CI 工作流
 
@@ -72,6 +74,7 @@
 ### Task 3: 删除无对应系统的模块，sjtu 改名为 bnuz
 
 **Files:**
+
 - Delete: `src/sjtu/canvas/`、`src/sjtu/classroom/`、`src/sjtu/shuiyuan/`、`scripts/run-shuiyuan-perf.ts`、`scripts/shuiyuan-*`，以及 `package.json` 里的 `smoke:shuiyuan`
 - Rename: `src/sjtu/` → `src/bnuz/`；`scripts/strip-sjtu.ts` → `scripts/strip-bnuz.ts`（正则改成匹配 `../bnuz/`）
 - Modify: `src/app/modules.ts`、`src/app/views.ts`（去掉三个模块，路径改为 `../bnuz/`），`.github/workflows/test.yml`，`scripts/lint-*.ts` 和 `tsconfig*.json` 里的 `sjtu` 路径，`CONTRIBUTING.md` 的「架构」一节（目录树、依赖规则第 4 条，以及「交大」改成「BNUZ」）
@@ -86,11 +89,13 @@
 ### Task 4: CAS 会话与教务请求
 
 **Files:**
+
 - Modify: `src/bnuz/campus/main/session.ts`、`src/bnuz/campus/index.ts`
 - Create: `src/bnuz/campus/main/jwxt.ts`
 - Test: `src/bnuz/campus/main/test/jwxt.test.ts`
 
 **Interfaces（Produces）：**
+
 - `campusCookie` 的判断改为：域名是 `bnuzh.edu.cn` 或以 `.bnuzh.edu.cn` 结尾。
 - `CampusRequestOptions` 增加可选字段 `encoding?: 'utf8' | 'gbk'`。
 - `jwxt.ts` 导出：
@@ -129,11 +134,13 @@
 ### Task 7: 课表解析
 
 **Files:**
+
 - Create: `src/bnuz/timetable/main/parse.ts`
 - Test: `src/bnuz/timetable/main/test/parse.test.ts`
 - Delete: `src/bnuz/timetable/main/graduate.ts`，以及只测它的测试
 
 **Interfaces（Produces）：**
+
 - `parseBnuzSlots(text: string): Array<{ weeksText: string; weekNumbers: number[]; weekday: number | null; startPeriod: number; endPeriod: number; classroom: string | null }>`：解析「上课时间、地点」一格。
 - `parseTimetableList(html: string, semester: string): ParsedLesson[]`：`ParsedLesson` 的字段和 `api.ts` 现有插入语句的命名参数一致。
 - 继续沿用 `api.ts` 里的 `parseWeekNumbers`。
@@ -152,10 +159,12 @@
 ### Task 8: 课表同步、校历与节次
 
 **Files:**
+
 - Modify: `src/bnuz/timetable/main/api.ts`、`src/bnuz/timetable/contract.ts`（`classPeriods`）、`src/bnuz/timetable/main/schedule.ts`（支持第 99 节）、`src/bnuz/timetable/index.ts`（设置搜索关键词）、`src/bnuz/timetable/view/*`（文案：教学信息服务网 → 教务系统，jAccount → 数字京师·珠海）
 - Test: `src/bnuz/timetable/main/test/schedule.test.ts`（改写现有测试）
 
 **Interfaces：**
+
 - Consumes：Task 4 的 `jwxtRequest`、`currentTerm`、`toJwxtTerm`、`openJwxtLoginWindow`；Task 7 的 `parseTimetableList`。
 - Produces：
   - `fetchSemesterStart(semester): Promise<string | null>`，调用 `getDateByTeachingWeek.action?hidOption=FOW&xn&xq&zc=1&xnq=1`。
@@ -175,10 +184,12 @@
 ### Task 9: 教务部通知源
 
 **Files:**
+
 - Modify: `src/bnuz/jwc/main/jwc.ts`、`src/bnuz/jwc/contract.ts`（删除 `captcha` 和 `download`，`noticeId` 改为 `/^jwc:[0-9a-f]{32}$/`），`src/bnuz/jwc/view/JwcNoticeView.tsx`（附件直接用外部链接打开，删除验证码界面）
 - Test: `src/bnuz/jwc/main/test/jwc.test.ts`（改写）
 
 **Interfaces：**
+
 - `parseJwcList(html, pageUrl)`：每一行是 `li.line > a[href][title]` 加 `span.text-muted`（日期）。`id` 为 `jwc:<32 位十六进制>`；标题取 `title` 属性；日期格式 `YYYY-MM-DD`；下一页链接是文字为「下一页」的 `<a>`。链接指向其他栏目时（如 `../sjjx/...`），一样收录。
 - `getJwcNotice`：正文取 `.contenttxt`，附件取正文里指向 `.pdf/.doc/.docx/.xls/.xlsx/.zip` 的链接。
 - `origin = 'https://jwb.bnuzh.edu.cn'`，`listUrl = ${origin}/tzgg/index.htm`。
@@ -192,6 +203,7 @@
 ### Task 10: 成绩模块（主进程）
 
 **Files:**
+
 - Create: `src/bnuz/grades/{index.ts,contract.ts,data/schema.ts,main/api.ts,main/parse.ts,main/agent/index.ts,main/agent/query-grades.ts,main/agent/skill/SKILL.md}`
 - Test: `src/bnuz/grades/main/test/parse.test.ts`
 - Modify: `src/app/modules.ts`
@@ -200,18 +212,35 @@
 
 ```ts
 export interface GradeRecord {
-  readonly semester: string; readonly courseCode: string; readonly courseName: string;
-  readonly credits: number; readonly earnedCredits: number | null; readonly category: string;
-  readonly nature: string; readonly assessment: string; readonly status: string;
-  readonly score: string; readonly gradePoint: number | null; readonly minor: boolean;
+  readonly semester: string;
+  readonly courseCode: string;
+  readonly courseName: string;
+  readonly credits: number;
+  readonly earnedCredits: number | null;
+  readonly category: string;
+  readonly nature: string;
+  readonly assessment: string;
+  readonly status: string;
+  readonly score: string;
+  readonly gradePoint: number | null;
+  readonly minor: boolean;
   readonly note: string | null;
-  readonly components: { usual: string | null; midterm: string | null; final: string | null } | null;
+  readonly components: {
+    usual: string | null;
+    midterm: string | null;
+    final: string | null;
+  } | null;
 }
-export interface GradesState { readonly lastSyncedAt: string | null }
+export interface GradesState {
+  readonly lastSyncedAt: string | null;
+}
 export const gradesContract = defineContract('grades', {
   state: { input: z.undefined(), output: z.custom<GradesState>() },
   list: { input: z.undefined(), output: z.custom<GradeRecord[]>() },
-  sync: { input: z.undefined(), output: z.custom<{ ok: boolean; error?: string; reason?: 'auth' }>() },
+  sync: {
+    input: z.undefined(),
+    output: z.custom<{ ok: boolean; error?: string; reason?: 'auth' }>(),
+  },
 });
 // NavTargets: grades: {}
 ```
@@ -234,6 +263,7 @@ export const gradesContract = defineContract('grades', {
 ### Task 11: 培养方案模块（主进程）
 
 **Files:**
+
 - Create: `src/bnuz/program/{index.ts,contract.ts,data/schema.ts,main/api.ts,main/parse.ts,main/agent/index.ts,main/agent/query-program.ts,main/agent/skill/SKILL.md}`
 - Test: `src/bnuz/program/main/test/parse.test.ts`
 - Modify: `src/app/modules.ts`
@@ -242,20 +272,31 @@ export const gradesContract = defineContract('grades', {
 
 ```ts
 export interface PlannedCourse {
-  readonly semester: string; readonly courseCode: string; readonly courseName: string;
-  readonly credits: number; readonly category: string; readonly assessment: string;
+  readonly semester: string;
+  readonly courseCode: string;
+  readonly courseName: string;
+  readonly credits: number;
+  readonly category: string;
+  readonly assessment: string;
   readonly hours: number;
 }
 export interface ModuleCourse {
-  readonly module: string; readonly courseCode: string; readonly courseName: string;
-  readonly credits: number; readonly term: string; readonly score: string | null;
+  readonly module: string;
+  readonly courseCode: string;
+  readonly courseName: string;
+  readonly credits: number;
+  readonly term: string;
+  readonly score: string | null;
   readonly selected: boolean;
 }
 export const programContract = defineContract('program', {
   state: { input: z.undefined(), output: z.custom<{ lastSyncedAt: string | null }>() },
   plan: { input: z.undefined(), output: z.custom<PlannedCourse[]>() },
   progress: { input: z.undefined(), output: z.custom<ModuleCourse[]>() },
-  sync: { input: z.undefined(), output: z.custom<{ ok: boolean; error?: string; reason?: 'auth' }>() },
+  sync: {
+    input: z.undefined(),
+    output: z.custom<{ ok: boolean; error?: string; reason?: 'auth' }>(),
+  },
 });
 // NavTargets: program: {}
 ```
@@ -270,13 +311,14 @@ export const programContract = defineContract('program', {
 - [ ] 写失败的测试：
   - 带 `showTotalRecord('2508','2')` 的两行片段，解析出 2 行。
   - 条数写成 `'3'` 时抛错。
-  - 对比表一行「通识课程/体育与健康类/必修 | KCZ012 | 三自选项课程（23版） | 3.00 | 48 | 一 |  | 」能映射成 `ModuleCourse`。
+  - 对比表一行「通识课程/体育与健康类/必修 | KCZ012 | 三自选项课程（23版） | 3.00 | 48 | 一 | | 」能映射成 `ModuleCourse`。
 - [ ] 运行测试，预期失败；实现后再跑，通过。
 - [ ] 提交：`feat(program): sync BNUZ training program and expose query_program`
 
 ### Task 12: 成绩和培养方案页面
 
 **Files:**
+
 - Create: `src/bnuz/grades/view/{index.ts,GradesView.tsx,use-grades.ts}`、`src/bnuz/program/view/{index.ts,ProgramView.tsx,use-program.ts}`
 - Modify: `src/app/views.ts`
 
@@ -297,6 +339,7 @@ export const programContract = defineContract('program', {
 ### Task 13: 对外文档、关于页与致谢
 
 **Files:**
+
 - Modify: `README.md`、`CONTRIBUTING.md`、`SECURITY.md`、`docs/terms.md`、`docs/privacy.md`、`docs/what-we-not-do.md`、`src/modules/settings/view/AboutSection.tsx`、`src/modules/settings/view/credits.ts`
 - Delete: `assets/sponsors/`，以及其他只属于原作者的赞助素材和二维码
 
