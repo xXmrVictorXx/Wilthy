@@ -10,12 +10,7 @@
 
 <div align="center">
 
-**An Agent Harness designed for SJTUer**
-</div>
-
-<div align="center">
-
-_The world keeps changing. Wilthy stays with you._
+**An Agent Harness designed for BNUZ students**
 
 </div>
 
@@ -24,12 +19,10 @@ _The world keeps changing. Wilthy stays with you._
 > [!IMPORTANT]
 > 下载、安装或使用 Wilthy，即视为你已阅读并同意本项目的[使用条款](docs/terms.md)与[隐私条款](docs/privacy.md)。
 > 如果你不同意其中部分内容，可以跳过对应服务的配置、不提供该项凭据，从而仅使用其余功能；如果你不同意全部条款，请停止使用并卸载本软件。
->
-> Demo 演示与下载见 [Dela 官网](https://dela.changyo.me)。
 
-Wilthy 是一款专门面向 SJTUer 的 Agent 产品。
+Wilthy 是一款面向北京师范大学珠海校区（BNUZ）同学的个人 Agent 应用，基于 [Dela](https://github.com/Chang-Yo/Dela) 修改而来，与学校没有隶属关系。
 
-Wilthy 的内核基于 Pi 构建，所有的校园服务功能都通过交大公开 API 和学校服务器交互。账号凭据经系统钥匙串加密后保存在本机；模型服务相关信息以 JSON 文件保存在 `~/.wilthy`。所有数据保存在本地，不上传服务器。
+Wilthy 的内核基于 Pi 构建，校园服务都由你在学校官方的「数字京师·珠海」登录窗口中自行登录后访问。账号会话经系统钥匙串加密后保存在本机；模型服务相关信息以 JSON 文件保存在 `~/.wilthy`。所有数据保存在本地，不上传服务器。
 
 ## 功能概览
 
@@ -37,20 +30,20 @@ Wilthy 的内核基于 Pi 构建，所有的校园服务功能都通过交大公
 
 ### 校园信息服务
 
-- **Canvas 课程资料快捷预览**：利用 access token 同步课程资料，快捷查看和切换不同课件，还支持一键批量下载；「添加到项目」可将课件引用放入所选本地项目的根目录，支持批量导出课件
-- **校园邮箱**：支持交大邮箱和任意第三方 IMAP/SMTP 邮箱的收信与写信功能，还可以本地保存草稿
-- **课堂视频回看**：支持在应用内查看自己的课堂视频回放，支持语音识别文稿跳转和录音稿导出，还支持将课堂视频全量缓存到本地；重新打开时从上次播放位置继续
-- **课表**：通过教学信息网获取个人课表，只读显示学校的课程
-- **水源社区（beta）**：通过 Discourse User API Key 安全授权，为您提供水源的另一种阅读体验，并且可以接入 Agent 被调用
-- **全局搜索**：搜索内容跨项目、会话、邮件、课程资料和设置
-- **TODO**：个人安排的唯一入口，每条可设截止、时段或全天；支持 Canvas 课程作业完成状态提醒；月视图支持“滑拽式”新建，可以在月历图和列表两种视图中切换
+- **课表**：从教务系统同步个人课表，按学校校历与作息时间换算成每周日程，只读显示
+- **成绩**：同步有效成绩与平时、期中、期末分项，显示教务系统给出的学分与平均学分绩
+- **培养方案**：按课程模块查看已获学分与每门课的修读状态，也可以按学期查看计划课程
+- **教务通知**：读取教务部网站的通知，新通知进入通知中心，可在应用内阅读正文
+- **校园邮箱**：内置北师邮箱（网易企业邮）预设，也支持任意 IMAP/SMTP 邮箱的收信与写信，可以本地保存草稿；北师邮箱需要先在网页邮箱设置里开启 IMAP/SMTP 并生成客户端授权码
+- **全局搜索**：搜索内容跨项目、会话、邮件和设置
+- **TODO**：个人安排的唯一入口，每条可设截止、时段或全天；月视图支持“滑拽式”新建，可以在月历图和列表两种视图中切换
 
 ### Agent 功能
 
 Wilthy Harness 基于 Pi 构建，可以作为一款通用 agent 产品使用，并且 Wilthy 在 Coding 领域进行了特别加强。
 
 - **第三方接入**：支持导入第三方 skills、接入 MCP 服务器
-- **内置校园 skills**：Agent 可以直接读取 Canvas 课程状态与资料、个人邮件、课表、水源讯息，按时间范围读取与批量保存课堂语音文稿等，详见应用内的内置校园 skills
+- **内置校园 skills**：Agent 可以直接读取个人邮件、课表、成绩与培养方案进度，详见应用内的内置校园 skills
 - **联网**：提供自定义的 `web_search` 工具接入（如 DeepSeek、Brave、Google，默认关闭，需自备 API KEY）与免费的 `web_fetch` 工具（默认开启）
 - **文档读取**：填入自己的 MinerU Token 后，`read_document` 工具可以读取 PDF、Word、PowerPoint 与 Excel，保留公式与表格（文档会上传到 MinerU 解析，默认关闭）
 - **上下文**：`@` 引用项目文件、`#` 引用同一项目里的其他会话，Agent 按需读取而不是整段塞进上下文；支持上传附件和选中回复添加评论，旁问可以带着当前上下文临时提问而不进入主对话，也可以从任意一条回复分支出新会话
@@ -78,7 +71,7 @@ Wilthy Harness 基于 Pi 构建，可以作为一款通用 agent 产品使用，
 
 ## 下载安装
 
-从 [Dela 官网](https://dela.changyo.me) 或 [GitHub Releases](https://github.com/Chang-Yo/Dela/releases/latest) 下载对应平台的安装包。Dela 支持应用内更新。
+Wilthy 暂未发布安装包，也不会自动检查更新；请按下面的步骤从源码构建。
 
 ## 本地开发
 
@@ -103,39 +96,16 @@ pnpm dev
 
 ## 文档
 
-| 文档                                          | 内容                               | 读者           |
-| --------------------------------------------- | ---------------------------------- | -------------- |
-| [使用条款](docs/terms.md)                     | 软件性质、责任划分与免责范围       | 使用者         |
-| [隐私条款](docs/privacy.md)                   | 数据存放位置与联网去向             | 使用者         |
-| [更新日志](CHANGELOG.md)                      | 按版本分节的变更记录               | 贡献者         |
-| [贡献指南](CONTRIBUTING.md)                   | 环境准备、测试、提交规范与发布流程 | 贡献者（先读） |
-| [功能边界](docs/what-we-not-do.md)            | 明确不做与需先讨论的功能           | 贡献者         |
-| [安全策略](SECURITY.md)                       | 漏洞报告渠道、支持范围与安全边界   | 使用者、贡献者 |
-| [Wiki](https://github.com/Chang-Yo/Dela/wiki) | 校园接口等开发资料                 | 贡献者         |
+| 文档                        | 内容                               | 读者           |
+| --------------------------- | ---------------------------------- | -------------- |
+| [使用条款](docs/terms.md)   | 软件性质、责任划分与免责范围       | 使用者         |
+| [隐私条款](docs/privacy.md) | 数据存放位置与联网去向             | 使用者         |
+| [更新日志](CHANGELOG.md)    | 按版本分节的变更记录               | 贡献者         |
+| [贡献指南](CONTRIBUTING.md) | 环境准备、测试、提交规范与发布流程 | 贡献者（先读） |
+| [安全策略](SECURITY.md)     | 漏洞报告渠道、支持范围与安全边界   | 使用者、贡献者 |
 
-## 贡献者
+## 许可与致谢
 
-![Contributors](https://contrib.rocks/image?repo=Chang-Yo/Dela 'Contributors')
+本项目以 GNU General Public License v3.0（GPL-3.0-or-later）发布，全文见 [LICENSE](LICENSE)。
 
-## 许可
-
-本项目以 GNU General Public License v3.0（GPL-3.0-or-later）发布，全文见 [LICENSE](LICENSE)。代码与素材版权归原作者所有。
-
-## 赞助鸣谢
-
-您可以前往 “设置 > 关于” 页面为作者提供赞助 🙏
-
-<table>
-  <tr>
-    <td width="80" align="center" valign="middle">
-      <img src="assets/sponsors/FRAMENEO_logo_black.png" width="44" alt="FRAMENEO logo">
-    </td>
-    <td valign="middle">
-      <a href="https://www.frameneo.com/"><strong>FRAMENEO</strong></a><br>
-      为 Wilthy 的软件包分发提供免费的高速 CDN 服务。
-    </td>
-    <td valign="middle">
-      <a href="https://www.frameneo.com/">FRAMENEO Website</a>
-    </td>
-  </tr>
-</table>
+Wilthy 基于 [Dela](https://github.com/Chang-Yo/Dela)（GPL-3.0-or-later）修改，自 2026-11-25 起独立维护。感谢 Dela 的作者与贡献者，原有的版权声明随源码保留，名单见应用内「设置 › 关于」。

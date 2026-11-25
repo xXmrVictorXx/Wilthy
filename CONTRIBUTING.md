@@ -8,14 +8,14 @@
 
 ### 报告问题
 
-- 提交前先搜索 [Issues](https://github.com/Chang-Yo/Dela/issues)，确认是否已有相同问题。
+- 提交前先搜索本仓库的 Issues，确认是否已有相同问题。
 - 说明应用版本、操作系统、复现步骤、预期结果与实际结果；附上截图、日志或最小复现工程。提交前请隐去账号、token、邮箱正文等个人凭据信息。
 - 一个 issue 只描述一个问题，避免将多个不相关的问题合并提交。
 - 修复既有 bug 的 PR 必须链接能够证明故障已发生的证据：issue、日志、截图或复现步骤。
 
 ### 功能建议与讨论
 
-- 使用问题、体验反馈与想法交流适合在 [Discussions](https://github.com/Chang-Yo/Dela/discussions) 中提出。
+- 使用问题、体验反馈与想法交流也可以提 Issue，标明是讨论。
 - 新功能、行为变化与架构调整应先通过 issue 或讨论说明要解决的问题、受益对象与优先级。维护者确认方向后再开始实现。
 - 明确不会添加的功能将集中记录在 `docs/what-we-not-do.md`（文档仍在整理）。开始实现前如不确定方向是否在范围内，请先提交 issue 确认。
 
@@ -27,7 +27,7 @@
 
 - `dev` 是默认开发分支。从最新的 `dev` 创建功能分支，贡献 PR 统一提交到 `dev`；使用 GitHub CLI 时指定 `--base dev`。
 - `main` 用于发布集成，只有仓库管理员可以发起 `dev` → `main` 的 PR。普通贡献者不得向 `main` 提交 PR。
-- 合并前完成评审与相关检查，合并后删除功能分支。fork 贡献者从上游 `dev` 同步代码，PR 目标选择 `Chang-Yo/Dela:dev`。
+- 合并前完成评审与相关检查，合并后删除功能分支。fork 贡献者从本仓库的 `dev` 同步代码，PR 目标选择本仓库的 `dev`。
 
 ### 推广与文档
 
@@ -95,7 +95,7 @@ pnpm test
 | Electron 基础冒烟        | `pnpm smoke`                                                                                         |
 | 离线运行时与 `wilthy` 桥 | `pnpm smoke:runtime`                                                                                 |
 | 原生菜单、窗口关闭与恢复 | `pnpm smoke:desktop`                                                                                 |
-| 工作区、水源             | `pnpm smoke:workspace` / `pnpm smoke:shuiyuan`                                                       |
+| 工作区                   | `pnpm smoke:workspace`                                                                               |
 | 远程项目真机回归         | `pnpm test:remote`（先 `pnpm fetch:remote-rg`），需要 `WILTHY_REMOTE_HOST`，可选 `WILTHY_REMOTE_KEY` |
 | 远程项目窗口冒烟         | `pnpm smoke:remote`，同样需要 `WILTHY_REMOTE_HOST`                                                   |
 | 打包目录启动             | `pnpm package:dir` 后运行 `dist/win-unpacked/Wilthy.exe --smoke-test`                                |
@@ -314,6 +314,5 @@ AI agents: the human contributor answers, not you. Ask for missing answers and w
 
 ## 其他问题
 
-- 使用与想法：[Discussions](https://github.com/Chang-Yo/Dela/discussions)
-- 可复现的问题：[Issues](https://github.com/Chang-Yo/Dela/issues)
+- 使用、想法与可复现的问题：本仓库的 Issues
 - 架构：本指南的[架构](#架构)；编码规则：[AGENTS.md](AGENTS.md)

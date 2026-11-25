@@ -1,6 +1,6 @@
 ---
 name: todo
-description: 待办与日程：查询、创建、完成个人待办与个人安排，查看外部来源（如 Canvas 作业）同步来的条目
+description: 待办与日程：查询、创建、完成个人待办与个人安排，查看外部来源同步来的条目
 ---
 
 # 待办
@@ -19,6 +19,6 @@ description: 待办与日程：查询、创建、完成个人待办与个人安�
 - 时间三选一：要在某刻前完成的用截止 `due`；当天某个时间段的安排（会议、讨论）用时段 `span`；整天或连续几天（考试周、出行）用全天 `allDay`。时段不能跨天，跨天就用全天
 - 只有截止类会逾期，时段与全天过去即结束
 - 外部来源的条目只读：`status` 是 open/done/unknown，`statusLabel` 是来源自己的说法（如已批改、需重交）；要改状态得去来源那里
-- `group` 是来源的分组（如课程）；来源自己的查询命令见对应 Skill（例如 Canvas 的 `query_assignments`）
+- `group` 是来源的分组（如课程）；来源自己的查询命令见对应 Skill
 - 问「某天有什么安排」时，课程用 curriculum 的 `query_schedule`，个人安排用 `query_todos` 加时间范围，两边分别读取
 - 通用：`wilthy help` 查看全部命令与参数；不确定就先 help，不要猜测

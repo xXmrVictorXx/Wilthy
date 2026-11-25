@@ -26,7 +26,7 @@ export const notificationsSchema: Schema = {
     )`,
   ],
   migrations: {
-    // 来源由模块登记（registerNoticeSource），表里不再写死交大的来源名。
+    // 来源由模块登记（registerNoticeSource），表里不写死学校的来源名。
     '20261121-open-sources': (db) => {
       db.exec(`CREATE TABLE notifications_next (
         id TEXT PRIMARY KEY,

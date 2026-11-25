@@ -1,7 +1,4 @@
-import alipayQr from '../../../../assets/credits/changyo/alipay.png';
 import authorAvatar from '../../../../assets/credits/changyo/avatar.jpg';
-import wechatQr from '../../../../assets/credits/changyo/wechat.png';
-import icebeerAvatar from '../../../../assets/credits/icebeer/avatar.jpg';
 import aizyeeeAvatar from '../../../../assets/credits/aizyeee/avatar.png';
 import aaalpsssAvatar from '../../../../assets/credits/aaalpsss/avatar.png';
 import huangtongAvatar from '../../../../assets/credits/huangtong601-ops/avatar.jpg';
@@ -11,10 +8,8 @@ import sbsjkmAvatar from '../../../../assets/credits/sbsjkm/avatar.jpg';
 import slayerwaltAvatar from '../../../../assets/credits/slayerwalt/avatar.jpg';
 import aletheiarAvatar from '../../../../assets/credits/aletheiar/avatar.png';
 import yixuanwang4Avatar from '../../../../assets/credits/yixuanwang4/avatar.png';
-import frameneoLogoBlack from '../../../../assets/sponsors/FRAMENEO_logo_black.png';
-import frameneoLogoWhite from '../../../../assets/sponsors/FRAMENEO_logo_white.png';
 
-export type SocialLinkKind = 'github' | 'blog' | 'zhihu' | 'website' | 'bilibili';
+export type SocialLinkKind = 'github' | 'blog' | 'website' | 'bilibili';
 
 export interface SocialLink {
   kind: SocialLinkKind;
@@ -22,23 +17,10 @@ export interface SocialLink {
   label?: string;
 }
 
-export type SponsorChannelKind = 'wechat' | 'alipay';
-
-export interface SponsorChannel {
-  kind: SponsorChannelKind;
-  qr: string;
-  label?: string;
-}
-
 export interface CreditPerson {
   name: string;
   avatar?: string;
-  logo?: { light: string; dark: string };
   links?: SocialLink[];
-  sponsor?: {
-    channels: SponsorChannel[];
-    note?: string;
-  };
 }
 
 export interface CreditSection {
@@ -46,11 +28,11 @@ export interface CreditSection {
   people: CreditPerson[];
 }
 
-// 名单取自 GitHub API（/repos/Chang-Yo/Dela/contributors），头像随源码入库，
-// 与 Author 用同一套展示结构；更新名单走 PR + 发版，用户端不可改。
+// Wilthy 基于 Dela 修改：这里致谢上游项目的作者与贡献者，名单取自 Chang-Yo/Dela 仓库，
+// 头像随源码入库。
 export const creditSections: CreditSection[] = [
   {
-    title: 'Author',
+    title: 'Dela 作者',
     people: [
       {
         name: 'ChangYo',
@@ -59,18 +41,11 @@ export const creditSections: CreditSection[] = [
           { kind: 'github', url: 'https://github.com/Chang-Yo' },
           { kind: 'blog', url: 'https://changyo.pages.dev' },
         ],
-        sponsor: {
-          channels: [
-            { kind: 'wechat', qr: wechatQr },
-            { kind: 'alipay', qr: alipayQr },
-          ],
-          note: '请作者喝一杯',
-        },
       },
     ],
   },
   {
-    title: 'Contributors',
+    title: 'Dela 贡献者',
     people: [
       {
         name: 'aizyeee',
@@ -118,21 +93,6 @@ export const creditSections: CreditSection[] = [
       {
         name: 'YixuanWang4',
         avatar: yixuanwang4Avatar,
-      },
-    ],
-  },
-  {
-    title: 'Sponsors',
-    people: [
-      {
-        name: 'FRAMENEO',
-        logo: { light: frameneoLogoBlack, dark: frameneoLogoWhite },
-        links: [{ kind: 'website', url: 'https://www.frameneo.com/' }],
-      },
-      {
-        name: '冰啤史莱姆',
-        avatar: icebeerAvatar,
-        links: [{ kind: 'zhihu', url: 'https://www.zhihu.com/people/66-72-53-62-30' }],
       },
     ],
   },

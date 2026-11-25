@@ -5,7 +5,7 @@
 @import './palette.css';
 @source '../../../../node_modules/streamdown/dist/*.js';
 @source '../../../modules';
-@source '../../../sjtu';
+@source '../../../bnuz';
 @source '../../../ui';
 
 .wilthy-brand-dark {

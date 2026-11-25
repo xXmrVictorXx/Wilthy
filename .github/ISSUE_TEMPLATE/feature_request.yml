@@ -13,7 +13,7 @@ body:
     attributes:
       label: 使用场景与受众范围
       description: 谁会在什么情况下遇到什么问题？主要针对哪一类用户的共同需求？
-      placeholder: 例如：在用 Canvas 下载课程资料的时候，无法批量下载和管理，预览也很麻烦；面向需要集中管理 Canvas 课程资料的学生。
+      placeholder: 例如：每次查成绩都要先登录门户再进教务系统，很麻烦；面向想随时看成绩和绩点的同学。
     validations:
       required: true
   - type: textarea
@@ -21,7 +21,7 @@ body:
     attributes:
       label: 期望结果
       description: 希望 Wilthy 做到什么？最终解决什么样的问题？
-      placeholder: 例如：可以在 Wilthy 的资料界面，批量下载 Canvas 课程资料。
+      placeholder: 例如：在 Wilthy 的成绩页面直接显示各学期的成绩与绩点。
     validations:
       required: true
   - type: textarea
