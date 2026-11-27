@@ -24,6 +24,11 @@ function prepareMacosIcons(outputDirectory: string) {
 
 export default defineConfig({
   envDir: false,
+  // 主进程打成 CJS，ESM 依赖（pdfjs）里的 import.meta.url 换成当前文件地址；
+  // 不用 require，pdfjs 在同一行声明了自己的 const require。
+  define: {
+    'import.meta.url': 'process.getBuiltinModule("node:url").pathToFileURL(__filename).href',
+  },
   plugins: [
     {
       name: 'macos-icons',
