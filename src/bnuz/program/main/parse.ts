@@ -35,8 +35,14 @@ function fillDown(rows: string[][], column: number): string[][] {
   });
 }
 
+/** 教务系统把可在多个学期修读的课程逐学期各列一行，这里只留首次出现的那行。 */
+function firstPerCourse<T extends { courseCode: string }>(courses: T[]): T[] {
+  const seen = new Set<string>();
+  return courses.filter(({ courseCode }) => !seen.has(courseCode) && Boolean(seen.add(courseCode)));
+}
+
 export function planFromRows(rows: string[][]): PlannedCourse[] {
-  return fillDown(rows, 1).flatMap((cells) => {
+  const courses = fillDown(rows, 1).flatMap((cells) => {
     const semester = semesterFromText(cells[1] ?? '');
     const course = /^\[([^\]]+)\](.+)$/.exec(cells[2] ?? '');
     if (!semester || !course) return [];
@@ -52,10 +58,11 @@ export function planFromRows(rows: string[][]): PlannedCourse[] {
       },
     ];
   });
+  return firstPerCourse(courses);
 }
 
 export function progressFromRows(rows: string[][]): ModuleCourse[] {
-  return fillDown(rows, 0).flatMap((cells) =>
+  const courses = fillDown(rows, 0).flatMap((cells) =>
     cells[0] && cells[1]
       ? [
           {
@@ -71,4 +78,5 @@ export function progressFromRows(rows: string[][]): ModuleCourse[] {
         ]
       : [],
   );
+  return firstPerCourse(courses);
 }

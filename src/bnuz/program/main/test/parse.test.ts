@@ -67,6 +67,7 @@ const progressRows = [
   ['通识课程/思想政治理论类/必修', 'GEN01102', '课程乙', '3.00', '64', '一', '88', ''],
   ['', 'GEN09001', '课程丙', '0.25', '8', '一', '不及格', ''],
   ['专业课程/专业核心课/必修', 'SAI13001', '课程丁', '2.00', '32', '五', '', ''],
+  ['', 'SAI13001', '课程丁', '2.00', '32', '七', '', ''],
 ];
 
 describe('parseDataTable', () => {
@@ -94,12 +95,21 @@ describe('planFromRows', () => {
       hours: 64,
     });
   });
+
+  it('同一课程在多个学期各列一行时只保留最早的学期', () => {
+    const repeated = [...planRows, ['3', '2023-2024学年春季学期', '[EDU30001]课程甲', '0.50']];
+    const plan = planFromRows(parseDataTable(table('2508', '3', repeated), '2508'));
+    expect(plan.map((course) => [course.courseCode, course.semester])).toEqual([
+      ['EDU30001', '2023-2024-1'],
+      ['GEN01102', '2023-2024-1'],
+    ]);
+  });
 });
 
 describe('progressFromRows', () => {
-  it('课程模块沿用上一行，未出成绩为 null', () => {
+  it('课程模块沿用上一行，未出成绩为 null，重复列出的课程只算一次', () => {
     const progress = progressFromRows(
-      parseDataTable(table('5327008', '3', progressRows), '5327008'),
+      parseDataTable(table('5327008', '4', progressRows), '5327008'),
     );
     expect(progress.map((course) => [course.module, course.courseCode, course.score])).toEqual([
       ['通识课程/思想政治理论类/必修', 'GEN01102', '88'],
@@ -110,7 +120,7 @@ describe('progressFromRows', () => {
 
   it('按模块汇总已获学分，不及格与未修不计入', () => {
     const progress = progressFromRows(
-      parseDataTable(table('5327008', '3', progressRows), '5327008'),
+      parseDataTable(table('5327008', '4', progressRows), '5327008'),
     );
     expect(summarizeModules(progress)).toEqual([
       { module: '通识课程/思想政治理论类/必修', earnedCredits: 3, passed: 1, total: 2 },
