@@ -20,7 +20,6 @@ export function TimetableOnboardingStep({ onDone }: { onDone: () => void }) {
   }
 
   const submit = async () => {
-    if (state === 'success') return onDone();
     if (state === 'busy') return;
     setState('busy');
     setError(null);
@@ -30,7 +29,7 @@ export function TimetableOnboardingStep({ onDone }: { onDone: () => void }) {
       setState('idle');
       return;
     }
-    setState('success');
+    onDone();
   };
 
   return (
@@ -47,7 +46,6 @@ export function TimetableOnboardingStep({ onDone }: { onDone: () => void }) {
         idleLabel="登录并同步"
         onClick={() => void submit()}
         state={state}
-        successLabel="连接成功，下一步"
         type="button"
       />
     </div>

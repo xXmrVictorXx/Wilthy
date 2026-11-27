@@ -27,7 +27,6 @@ export function PluginStep({ onDone }: { onDone: () => void }) {
         state="idle"
         idleLabel="完成配置"
         busyLabel="完成配置"
-        successLabel="完成配置"
         type="button"
         onClick={onDone}
       />

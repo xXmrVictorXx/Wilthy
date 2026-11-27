@@ -26,13 +26,12 @@ export function DocumentStep({ onDone }: { onDone: () => void }) {
   }
 
   const submit = async () => {
-    if (state === 'success') return onDone();
     if (state === 'busy') return;
     setState('busy');
     setError(null);
     try {
       await capabilitiesClient.saveDocumentToken(token);
-      setState('success');
+      onDone();
     } catch (cause) {
       setError(errorMessage(cause));
       setState('idle');
@@ -93,12 +92,7 @@ export function DocumentStep({ onDone }: { onDone: () => void }) {
                   value={token}
                 />
                 {error && <ErrorText size="sm">{error}</ErrorText>}
-                <StepButton
-                  busyLabel="正在验证…"
-                  idleLabel="保存并开启"
-                  state={state}
-                  successLabel="已开启，下一步"
-                />
+                <StepButton busyLabel="正在验证…" idleLabel="保存并开启" state={state} />
               </form>
             ),
           },

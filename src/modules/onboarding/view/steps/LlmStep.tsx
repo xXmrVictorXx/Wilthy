@@ -104,7 +104,6 @@ export function LlmStep({ onDone }: { onDone: () => void }) {
   };
 
   const save = async () => {
-    if (state === 'success') return onDone();
     if (state === 'busy' || !window.wilthy || !selected) return;
     setState('busy');
     setError(null);
@@ -125,7 +124,7 @@ export function LlmStep({ onDone }: { onDone: () => void }) {
         };
     try {
       await llmClient.save(provider);
-      setState('success');
+      onDone();
     } catch (cause) {
       setError(errorMessage(cause));
       setState('idle');
@@ -309,7 +308,6 @@ export function LlmStep({ onDone }: { onDone: () => void }) {
                   disabled={options.length === 0}
                   idleLabel="保存并完成"
                   state={state}
-                  successLabel="已保存，完成设置"
                 />
               </div>
             ),

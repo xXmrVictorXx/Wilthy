@@ -1,16 +1,14 @@
 import type { ComponentProps } from 'react';
-import { Check } from 'lucide-react';
 import { Button } from '../../../ui/button';
 import { Select, SelectContent, SelectTrigger, SelectValue } from '../../../ui/select';
 import { Spinner } from '../../../ui/spinner';
 
-export type StepButtonState = 'idle' | 'busy' | 'success';
+export type StepButtonState = 'idle' | 'busy';
 
 type StepButtonProps = {
   state: StepButtonState;
   idleLabel: string;
   busyLabel: string;
-  successLabel: string;
   disabled?: boolean;
   type?: ComponentProps<typeof Button>['type'];
   /** 仅独立的 type="button" 使用；表单内提交按钮走 form onSubmit，保证 required 校验对点击和回车一致。 */
@@ -21,23 +19,20 @@ export function StepButton({
   state,
   idleLabel,
   busyLabel,
-  successLabel,
   disabled,
   type = 'submit',
   onClick,
 }: StepButtonProps) {
   return (
     <Button
-      className="w-full data-[state=success]:bg-accent"
-      data-state={state}
+      className="w-full"
       disabled={disabled || state === 'busy'}
       onClick={onClick}
       size="lg"
       type={type}
     >
       {state === 'busy' && <Spinner />}
-      {state === 'success' && <Check aria-hidden="true" />}
-      {state === 'idle' ? idleLabel : state === 'busy' ? busyLabel : successLabel}
+      {state === 'busy' ? busyLabel : idleLabel}
     </Button>
   );
 }

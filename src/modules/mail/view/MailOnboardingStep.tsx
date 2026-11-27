@@ -20,7 +20,6 @@ export function MailOnboardingStep({ onDone }: { onDone: () => void }) {
   }
 
   const submit = async (input: MailConfigureInput) => {
-    if (state === 'success') return onDone();
     if (state === 'busy') return;
     setState('busy');
     setError(null);
@@ -33,7 +32,7 @@ export function MailOnboardingStep({ onDone }: { onDone: () => void }) {
       }
       // 同步进度由 syncStatus 事件展示，向导里不等它完成。
       void mailClient.sync().catch(() => {});
-      setState('success');
+      onDone();
     } catch (cause) {
       setError(errorMessage(cause));
       setState('idle');
@@ -46,14 +45,7 @@ export function MailOnboardingStep({ onDone }: { onDone: () => void }) {
       <MailAccountForm
         error={error}
         onSubmit={(input) => void submit(input)}
-        submit={
-          <StepButton
-            busyLabel="正在连接…"
-            idleLabel="连接并同步"
-            state={state}
-            successLabel="连接成功，下一步"
-          />
-        }
+        submit={<StepButton busyLabel="正在连接…" idleLabel="连接并同步" state={state} />}
         variant="wizard"
       />
     </div>
