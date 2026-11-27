@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode, type RefObject } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, GitCompare, History, MessageCircleQuestion, SquarePen } from 'lucide-react';
 import type { ChatComment, ChatSessionSummary, WorkspaceChat } from '../../../core/protocol/agent';
@@ -6,7 +6,7 @@ import { chatClient } from './client';
 import { Button } from '../../../ui/button';
 import { cn } from '../../../ui/lib/cn';
 import { SubagentBanner, type SubagentStatus } from '../../../ui/agent/subagent-banner';
-import { ChatComposer } from './ChatComposer';
+import { ChatComposer, type ChatComposerHandle } from './ChatComposer';
 import { composerContext } from './composer-context';
 import { ChatSessions } from './ChatSessions';
 import { ChatThread } from './ChatThread';
@@ -74,7 +74,9 @@ function ChatComposerArea({
   files,
   sessionId,
   hero = false,
+  composerRef,
 }: {
+  composerRef: RefObject<ChatComposerHandle | null>;
   /** 会话快照；IPC 返回前为 null，模型信息按空值降级。 */
   chat: WorkspaceChat | null;
   chatState: ReturnType<typeof useChat>;
@@ -95,6 +97,7 @@ function ChatComposerArea({
   return (
     <div className={cn('mx-auto w-full shrink-0 p-3', hero ? 'max-w-3xl' : 'max-w-chat')}>
       <ChatComposer
+        ref={composerRef}
         hero={hero}
         attachments={chatState.attachments}
         comments={comments}
@@ -163,6 +166,8 @@ function ChatSessionView({
   const { chat, busy, editLast, fork } = chatState;
   const [sessionsOpen, setSessionsOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const composerRef = useRef<ChatComposerHandle>(null);
   const sidechatOpen = useSidechats((state) => Boolean(state.views[active]));
   const sidechatFromQuote = (quote: string) => void openSidechat(active, { quote });
   // 工作区改动入口的可见性：轻探测会话目录是否为可审阅的 Git 仓库
@@ -214,6 +219,7 @@ function ChatSessionView({
   const composer = (hero: boolean) =>
     withReferences((files) => (
       <ChatComposerArea
+        composerRef={composerRef}
         chat={chat}
         chatState={chatState}
         error={chatState.error}
@@ -223,11 +229,34 @@ function ChatSessionView({
       />
     ));
 
+  // 子会话只读，没有输入框可接文件。
+  const acceptsFiles = !subagent;
   return (
     <div
       aria-label="对话"
       className="relative flex min-h-0 min-w-0 flex-1 flex-col bg-surface @container"
+      onDragOver={(event) => {
+        if (!acceptsFiles || !event.dataTransfer.types.includes('Files')) return;
+        event.preventDefault();
+        setDragging(true);
+      }}
+      onDragLeave={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false);
+      }}
+      // 落在输入框里的由输入框自己处理并截住冒泡；捕获阶段先收起遮罩。
+      onDropCapture={() => setDragging(false)}
+      onDrop={(event) => {
+        const files = [...event.dataTransfer.files];
+        if (!acceptsFiles || !files.length) return;
+        event.preventDefault();
+        composerRef.current?.addFiles(files);
+      }}
     >
+      {dragging && (
+        <div className="pointer-events-none absolute inset-0 z-20 grid place-items-center border-2 border-dashed border-line-strong bg-page/80 text-sm text-ink-3">
+          松开以添加图片或附件
+        </div>
+      )}
       <div className="flex h-10 shrink-0 items-center gap-1 px-3">
         <Button
           variant="ghost"

@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   AtSign,
@@ -68,6 +68,11 @@ import { showToast } from '../../../ui/toast';
 
 type MenuState = { kind: 'slash' | 'mention' | 'session'; query: string; start: number } | null;
 
+/** 整个对话面板都能接住拖入的文件：面板把落在输入框外的文件交给这里。 */
+export interface ChatComposerHandle {
+  addFiles: (files: File[]) => void;
+}
+
 /** 检测光标前的 /、@ 或 # 触发词；单独输入也打开候选（空查询）。「# 」是 Markdown 标题，不触发。 */
 function detectMenu(text: string, caret: number): MenuState {
   const before = text.slice(0, caret);
@@ -129,7 +134,9 @@ export function ChatComposer({
   onWithdrawQueued,
   tasks = [],
   onStopTask,
+  ref,
 }: {
+  ref?: Ref<ChatComposerHandle>;
   /** 运行中插队、还没送达的消息；非空时显示在输入框上方，可整体撤回。 */
   queued?: string[];
   onWithdrawQueued?: () => void;
@@ -333,6 +340,10 @@ export function ChatComposer({
     hintLocalPdf(documents);
   };
 
+  useImperativeHandle(ref, () => ({
+    addFiles: (files) => void addFiles(files, editorRef.current?.selectionStart() ?? value.length),
+  }));
+
   const pickFiles = () => {
     if (!window.wilthy) return;
     void chatClient
@@ -457,6 +468,7 @@ export function ChatComposer({
           const files = [...(event.dataTransfer?.files ?? [])];
           if (!files.length) return;
           event.preventDefault();
+          event.stopPropagation();
           void addFiles(files, editorRef.current?.selectionStart() ?? value.length);
         }}
       >
