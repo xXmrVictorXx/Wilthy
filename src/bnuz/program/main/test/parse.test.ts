@@ -1,6 +1,6 @@
 // 培养方案两张表都走通用 DataTable：分组列只在组内首行填写；行数必须和页面声明的总条数一致。
 import { describe, expect, it } from 'vitest';
-import { summarizeModules } from '../../contract';
+import { buildOverview } from '../../contract';
 import { parseDataTable, planFromRows, progressFromRows } from '../parse';
 
 const table = (id: string, total: string, rows: string[][]) =>
@@ -117,14 +117,50 @@ describe('progressFromRows', () => {
       ['专业课程/专业核心课/必修', 'SAI13001', null],
     ]);
   });
+});
 
-  it('按模块汇总已获学分，不及格与未修不计入', () => {
-    const progress = progressFromRows(
-      parseDataTable(table('5327008', '4', progressRows), '5327008'),
-    );
-    expect(summarizeModules(progress)).toEqual([
-      { module: '通识课程/思想政治理论类/必修', earnedCredits: 3, passed: 1, total: 2 },
-      { module: '专业课程/专业核心课/必修', earnedCredits: 0, passed: 0, total: 1 },
+describe('buildOverview', () => {
+  const grade = (courseCode: string, category: string, earnedCredits: number, minor = false) => ({
+    courseCode,
+    courseName: courseCode,
+    category,
+    credits: 3,
+    earnedCredits,
+    score: earnedCredits > 0 ? '80' : '40',
+    minor,
+  });
+
+  it('按类别统计已获与在修学分：同一课程号只算一次，辅修不计入，在修课按培养方案归类', () => {
+    const overview = buildOverview({
+      progress: progressFromRows(parseDataTable(table('5327008', '4', progressRows), '5327008')),
+      plan: [],
+      grades: [
+        grade('GEN01102', '通识课程/思想政治理论类', 0),
+        grade('GEN01102', '通识课程/思想政治理论类', 3),
+        grade('ECO01001', '通识课程/思想政治理论类', 2, true),
+        grade('GEN04221', '通识课程/数理基础与科学素养', 2),
+      ],
+      ongoing: [{ courseCode: 'SAI13001', courseName: '课程丁', credits: null }],
+      requirements: [
+        { category: '通识课程/思想政治理论类', credits: 17, note: null, filledBy: 'user' },
+        { category: '通识课程/艺术鉴赏与审美体验', credits: 2, note: null, filledBy: 'agent' },
+      ],
+      total: null,
+    });
+    expect(
+      overview.categories.map((item) => [
+        item.category,
+        item.requirement?.credits ?? null,
+        item.earnedCredits,
+        item.ongoingCredits,
+      ]),
+    ).toEqual([
+      ['通识课程/思想政治理论类', 17, 3, 0],
+      ['专业课程/专业核心课', null, 0, 2],
+      ['通识课程/数理基础与科学素养', null, 2, 0],
+      ['通识课程/艺术鉴赏与审美体验', 2, 0, 0],
     ]);
+    expect(overview.earnedCredits).toBe(5);
+    expect(overview.ongoingCredits).toBe(2);
   });
 });

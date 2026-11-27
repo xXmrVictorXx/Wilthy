@@ -1,4 +1,4 @@
-import { hostPorts } from '../../../core/ports';
+import { emit, hostPorts } from '../../../core/ports';
 import {
   CampusAuthError,
   currentTerm,
@@ -6,7 +6,19 @@ import {
   jwxtRequest,
   toJwxtTerm,
 } from '../../campus';
-import type { ModuleCourse, PlannedCourse, ProgramResult, ProgramState } from '../contract';
+import { listGrades } from '../../grades';
+import { currentSemester, listLessons } from '../../timetable';
+import {
+  buildOverview,
+  programContract,
+  type CreditRequirement,
+  type FilledBy,
+  type ModuleCourse,
+  type PlannedCourse,
+  type ProgramOverview,
+  type ProgramResult,
+  type ProgramState,
+} from '../contract';
 import { parseDataTable, planFromRows, progressFromRows } from './parse';
 
 const PLAN_TABLE = '2508';
@@ -104,4 +116,65 @@ export function getProgramState(): ProgramState {
     .prepare('SELECT last_synced_at FROM program_sync WHERE id = 1')
     .get() as { last_synced_at: string } | undefined;
   return { lastSyncedAt: row?.last_synced_at ?? null };
+}
+
+export function listRequirements(): CreditRequirement[] {
+  return hostPorts()
+    .database()
+    .prepare(
+      'SELECT category, credits, note, filled_by AS filledBy FROM program_requirements ORDER BY rowid',
+    )
+    .all() as CreditRequirement[];
+}
+
+export function getOverview(): ProgramOverview {
+  const total = hostPorts()
+    .database()
+    .prepare('SELECT credits, filled_by AS filledBy FROM program_total WHERE id = 1')
+    .get() as ProgramOverview['total'] | undefined;
+  return buildOverview({
+    progress: listProgress(),
+    plan: listPlan(),
+    grades: listGrades(),
+    ongoing: listLessons(currentSemester()),
+    requirements: listRequirements(),
+    total: total ?? null,
+  });
+}
+
+/** 写入后推送给页面：Agent 填写时培养方案页面也跟着更新。 */
+function publish(): ProgramOverview {
+  const overview = getOverview();
+  emit(programContract, 'overview', overview);
+  return overview;
+}
+
+export function writeRequirements(
+  items: readonly { category: string; credits: number | null; note?: string | null }[],
+  filledBy: FilledBy,
+): ProgramOverview {
+  const db = hostPorts().database();
+  const upsert = db.prepare(
+    `INSERT INTO program_requirements (category, credits, note, filled_by) VALUES (?, ?, ?, ?)
+     ON CONFLICT(category) DO UPDATE SET credits = excluded.credits,
+       note = COALESCE(excluded.note, program_requirements.note), filled_by = excluded.filled_by`,
+  );
+  const remove = db.prepare('DELETE FROM program_requirements WHERE category = ?');
+  db.transaction(() => {
+    for (const item of items)
+      if (item.credits === null) remove.run(item.category);
+      else upsert.run(item.category, item.credits, item.note ?? null, filledBy);
+  })();
+  return publish();
+}
+
+export function writeTotal(credits: number | null, filledBy: FilledBy): ProgramOverview {
+  const db = hostPorts().database();
+  if (credits === null) db.prepare('DELETE FROM program_total WHERE id = 1').run();
+  else
+    db.prepare(
+      `INSERT INTO program_total (id, credits, filled_by) VALUES (1, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET credits = excluded.credits, filled_by = excluded.filled_by`,
+    ).run(credits, filledBy);
+  return publish();
 }

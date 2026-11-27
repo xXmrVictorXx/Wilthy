@@ -7,11 +7,11 @@ export const programClient = createClient(programContract, window.wilthy?.bridge
 export function useProgram() {
   const state = useQuery({ queryKey: ['program', 'state'], queryFn: () => programClient.state() });
   const plan = useQuery({ queryKey: ['program', 'plan'], queryFn: () => programClient.plan() });
-  const progress = useQuery({
-    queryKey: ['program', 'progress'],
-    queryFn: () => programClient.progress(),
+  const overview = useQuery({
+    queryKey: ['program', 'overview'],
+    queryFn: () => programClient.overview(),
   });
-  return { state, plan, progress };
+  return { state, plan, overview };
 }
 
 /** 同步失败且是登录失效时，转入登录窗口后再同步一次。 */

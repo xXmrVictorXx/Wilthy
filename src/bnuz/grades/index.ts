@@ -10,6 +10,8 @@ import { gradesSchema } from './data/schema';
 import { gradesDomain } from './main/agent';
 import { getGradesState, listGrades, syncGrades } from './main/api';
 
+export { listGrades } from './main/api';
+
 export const gradesModule = defineModule({
   id: 'grades',
   schema: gradesSchema,

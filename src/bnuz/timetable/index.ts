@@ -17,6 +17,8 @@ import {
   syncTimetable,
 } from './main/api';
 
+export { currentSemester, listLessons } from './main/api';
+
 export const timetableModule = defineModule({
   id: 'timetable',
   schema: timetableSchema,
