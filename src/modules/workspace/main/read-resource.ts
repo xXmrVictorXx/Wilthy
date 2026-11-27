@@ -29,7 +29,7 @@ export function documentHint(ref: ResourceAddress, title: string, format: string
     readable: false,
     totalCharacters: null,
     nextOffset: null,
-    hint: '二进制文档用 read_document 工具读取正文，ref 原样传入；工具未开启时在 设置 › 内置能力 › 文档 配置 MinerU Token。',
+    hint: '二进制文档用 read_document 工具读取正文，ref 原样传入；没有 MinerU Token 时只能读 PDF 的文字层。',
   };
 }
 

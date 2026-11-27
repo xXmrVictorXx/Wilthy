@@ -20,6 +20,7 @@ import {
 } from '../protocol/chat-input';
 import type { ChatMediaView } from '../protocol/agent';
 import { SNIFF_BYTES } from '../protocol/files';
+import { hasDocumentToken } from '../capabilities/documents';
 import { readDisabledTools } from '../capabilities/tools';
 import { hostPorts } from '../ports';
 
@@ -29,7 +30,14 @@ const attachments = new Map<string, { name: string } & ({ bytes: Buffer } | { pa
 
 function assertDocumentTool(): void {
   if (readDisabledTools().has('read_document'))
-    throw new Error('请先在 设置 › 内置能力 › 文档 配置 MinerU Token');
+    throw new Error('读取文档已关闭，请在 设置 › 内置能力 › 文档 中开启');
+}
+
+/** 没有 MinerU 时只能在本机读 PDF，其他文档在添加时就拦下，免得发出去才失败。 */
+function assertReadableDocument(bytes: Buffer): void {
+  assertDocumentTool();
+  if (bytes.subarray(0, 5).toString('latin1') !== '%PDF-' && !hasDocumentToken())
+    throw new Error('Word、PowerPoint 与 Excel 需要先在 设置 › 内置能力 › 文档 配置 MinerU Token');
 }
 
 function mediaDir(): string {
@@ -59,7 +67,7 @@ function isUuid(value: string): boolean {
 export function stageChatMedia(name: string, bytes: Buffer): ChatMediaView {
   const kind = chatFileKind(name, bytes);
   if (kind === 'document') {
-    assertDocumentTool();
+    assertReadableDocument(bytes);
     if (bytes.length > CHAT_DOCUMENT_MAX_BYTES) throw new Error('文档附件超过 128 MiB 上限');
     const id = randomUUID();
     const path = join(mediaDir(), id + safeExtension(name));

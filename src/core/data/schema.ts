@@ -67,5 +67,11 @@ export const coreSchema: Schema = {
         `UPDATE workspace_settings SET value=(SELECT json_group_array(value) FROM json_each(workspace_settings.value) WHERE value != 'document-reading') WHERE key='skills-disabled'`,
       );
     },
+    // 没有 Token 也能在本机读 PDF：撤掉上一条迁移和删除 Token 时代为关闭的 read_document。
+    '20261127-local-pdf': (db) => {
+      db.exec(
+        `UPDATE workspace_settings SET value=(SELECT json_group_array(value) FROM json_each(workspace_settings.value) WHERE value != 'read_document') WHERE key='tools-disabled'`,
+      );
+    },
   },
 };

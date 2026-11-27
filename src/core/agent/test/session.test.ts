@@ -300,8 +300,8 @@ it('模型请求不等目录快照，工具执行前才等它拍完', async () =
 
 it('sends document-only messages as file references instead of decoding binary bytes into the prompt', async () => {
   state.configured = true;
-  const bytes = Buffer.from([80, 75, 3, 4, 255, 0]);
-  const document = stageChatMedia('汇报.pptx.pptx', bytes);
+  const bytes = Buffer.from([37, 80, 68, 70, 45, 255, 0]);
+  const document = stageChatMedia('汇报.pdf.pdf', bytes);
   const attachment = readChatAttachment(document.id);
   if (!('path' in attachment)) throw new Error('expected document file');
   const chat = newSession(null);
@@ -333,7 +333,7 @@ it('文档附件按会话归属判断远程：本地路径落在远程项目根�
   const ask = (sessionId: string) =>
     askSession(sessionId, {
       text: '',
-      attachments: [stageChatMedia('汇报.pptx', Buffer.from([80, 75, 3, 4])).id],
+      attachments: [stageChatMedia('汇报.pdf', Buffer.from([37, 80, 68, 70, 45])).id],
       context: [],
       comments: [],
     });

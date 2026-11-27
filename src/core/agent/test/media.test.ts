@@ -17,6 +17,7 @@ vi.mock('electron', () => ({
 vi.mock('../../capabilities/tools', () => ({
   readDisabledTools: () => new Set(state.disabled ? ['read_document'] : []),
 }));
+vi.mock('../../capabilities/documents', () => ({ hasDocumentToken: () => false }));
 import { provideTestHostPorts } from '../../test/host-mock';
 import { gcChatMedia, readChatAttachment, releaseChatAttachments, stageChatMedia } from '../media';
 
@@ -31,8 +32,8 @@ beforeEach(() => {
 afterAll(() => rmSync(state.root, { recursive: true, force: true }));
 
 it('stages documents as files, retains sent files referenced by sessions, and collects orphan files', () => {
-  const bytes = Buffer.from([80, 75, 3, 4, 255, 0]);
-  const view = stageChatMedia('PRP结项汇报_v3(1).pptx.pptx', bytes);
+  const bytes = Buffer.from([37, 80, 68, 70, 45, 255, 0]);
+  const view = stageChatMedia('PRP结项汇报_v3(1).pdf.pdf', bytes);
   const attachment = readChatAttachment(view.id);
   expect('path' in attachment).toBe(true);
   if (!('path' in attachment)) throw new Error('document was decoded as text');
@@ -55,5 +56,12 @@ it('keeps text attachments in memory and refuses documents while read_document i
   releaseChatAttachments([view.id]);
   expect(() => readChatAttachment(view.id)).toThrow('不存在');
   state.disabled = true;
+  expect(() => stageChatMedia('file.pdf', Buffer.from('%PDF-1.7'))).toThrow('读取文档已关闭');
+});
+
+it('accepts PDFs without a MinerU token but refuses Office files', () => {
+  const view = stageChatMedia('plan.pdf', Buffer.from('%PDF-1.7'));
+  expect(view.kind).toBe('attachment');
+  releaseChatAttachments([view.id]);
   expect(() => stageChatMedia('file.pptx', Buffer.from('PK'))).toThrow('MinerU Token');
 });

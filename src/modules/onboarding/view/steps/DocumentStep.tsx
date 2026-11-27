@@ -44,7 +44,8 @@ export function DocumentStep({ onDone }: { onDone: () => void }) {
         <h2 className="text-2xl font-semibold tracking-tight">连接 MinerU</h2>
         <p className="text-sm leading-relaxed text-ink-3">
           MinerU 能够为 Agent 提供高精度的文档解析功能（pdf, pptx, docx, xlsx
-          等），支持识别复杂数学公式，混合图文排版。使用该服务时文档会上传至 MinerU 服务器。
+          等），支持识别复杂数学公式，混合图文排版。使用该服务时文档会上传至 MinerU
+          服务器。可以跳过：不配置时，Agent 仍能在本机读取 PDF 的文字。
         </p>
       </header>
       <StepGuide

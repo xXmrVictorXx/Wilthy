@@ -51,7 +51,9 @@ export function DocumentTokenDialog({
         >
           <DialogTitle>MinerU Token</DialogTitle>
           <DialogDescription>
-            read_document 会把文档上传到 MinerU 解析；Token 加密保存在本机，保存后自动开启。
+            配置后 read_document 会把文档上传到 MinerU 解析，保留表格与公式，也能读
+            Word、PowerPoint、Excel 和扫描件；不配置时只在本机读取 PDF 的文字。Token
+            加密保存在本机。
           </DialogDescription>
           <div className="mt-4 flex flex-col gap-3">
             <Button

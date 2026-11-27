@@ -64,6 +64,7 @@ import {
   onWebSearchChanged,
 } from './client';
 import { errorMessage } from '../../../core/protocol/contract';
+import { showToast } from '../../../ui/toast';
 
 type MenuState = { kind: 'slash' | 'mention' | 'session'; query: string; start: number } | null;
 
@@ -175,6 +176,21 @@ export function ChatComposer({
   const [dragging, setDragging] = useState(false);
   const [fileError, setFileError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const hasDocumentToken = useQuery({
+    queryKey: ['capabilities', 'documentToken'],
+    queryFn: () => capabilitiesClient.hasDocumentToken(),
+    enabled: Boolean(window.wilthy),
+  }).data;
+  // 没有 MinerU 时 PDF 照常添加，只提示一次本机读取的局限和提升途径。
+  const hintLocalPdf = (names: readonly string[]) => {
+    if (hasDocumentToken !== false || !names.some((name) => /\.pdf$/i.test(name))) return;
+    showToast({
+      variant: 'neutral',
+      title: 'PDF 将在本机读取文字',
+      description:
+        '表格与公式只保留文字，扫描件读不出。在 设置 › 内置能力 › 文档 配置 MinerU Token 可提升效果',
+    });
+  };
   const customCommands = useQuery({
     queryKey: ['settings', 'commands'],
     queryFn: () => agentClient['list-commands']({}),
@@ -287,6 +303,7 @@ export function ChatComposer({
     // 闭包里的 value 不含本轮已插入的 token，循环内自计数防止批量拖入绕过上限。
     let imageCount = matchChatImageTokens(value).length;
     let attachmentCount = attachments.length;
+    const documents: string[] = [];
     for (const file of files) {
       const kind = await chatFileKindOfFile(file);
       if (kind === 'image' && imageCount >= INLINE_IMAGE_MAX) {
@@ -306,12 +323,14 @@ export function ChatComposer({
         } else {
           await onAddAttachmentFile(file);
           attachmentCount += 1;
+          documents.push(file.name);
         }
         setFileError(null);
       } catch (e) {
         setFileError(errorMessage(e));
       }
     }
+    hintLocalPdf(documents);
   };
 
   const pickFiles = () => {
@@ -322,6 +341,7 @@ export function ChatComposer({
         let insertPos = editorRef.current?.selectionStart() ?? value.length;
         let imageCount = matchChatImageTokens(value).length;
         let attachmentCount = attachments.length;
+        const documents: string[] = [];
         for (const view of views) {
           try {
             if (view.kind === 'image') {
@@ -338,12 +358,14 @@ export function ChatComposer({
             } else {
               onAddAttachmentView(view);
               attachmentCount += 1;
+              documents.push(view.name);
             }
           } catch (error) {
             releaseChatMedia([view.id]);
             setFileError(errorMessage(error));
           }
         }
+        hintLocalPdf(documents);
       })
       .catch((e) => setFileError(errorMessage(e)));
   };

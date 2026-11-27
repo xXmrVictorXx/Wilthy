@@ -161,7 +161,7 @@ const capabilities = implement(capabilitiesContract, {
   removeDocumentToken: () =>
     invalidating(() => {
       removeDocumentToken();
-      return setBuiltinCapabilities(['read_document'], false);
+      return listBuiltinCapabilities();
     }),
   subagentLimit: () => readSubagentLimit(),
   setSubagentLimit,

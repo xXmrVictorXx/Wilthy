@@ -135,7 +135,7 @@ export const capabilitiesContract = defineContract(
     listBuiltinCapabilities: { input: z.undefined(), output: builtins },
     setBuiltinCapability: { input: z.object({ name, enabled: z.boolean() }), output: builtins },
     setBuiltinDomain: { input: z.object({ domain: name, enabled: z.boolean() }), output: builtins },
-    /** Token 只进不出：界面只知道是否已配置；保存先向 MinerU 校验，保存即开启 read_document，删除即关闭。 */
+    /** Token 只进不出：界面只知道是否已配置；保存先向 MinerU 校验并开启 read_document，删除后回到本机读 PDF。 */
     hasDocumentToken: { input: z.undefined(), output: z.boolean() },
     saveDocumentToken: { input: z.string(), output: builtins },
     removeDocumentToken: { input: z.undefined(), output: builtins },

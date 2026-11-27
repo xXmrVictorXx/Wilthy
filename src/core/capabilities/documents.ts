@@ -1,6 +1,5 @@
-// 文档读取：PDF 与 Office 上传到 MinerU 精准解析，Token 由用户自备并加密保存。
-// 图片不在这里解析：多模态模型直接看图，不支持图片的模型如实说明读不了。
-// 结果按文件内容缓存在临时目录，续读与重读不再上传，也不再消耗用户的解析额度。
+// 文档读取：配置了 MinerU Token 时 PDF 与 Office 上传精准解析，结果按文件内容缓存，续读不再上传；
+// 没有 Token 时只在本机读 PDF 的文字层。图片不在这里解析，多模态模型直接看图。
 import { createHash, randomUUID } from 'node:crypto';
 import { createReadStream, existsSync, openAsBlob } from 'node:fs';
 import { mkdir, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
@@ -11,6 +10,7 @@ import { fileTypeFromBlob } from 'file-type';
 import { fromBufferPromise } from 'yauzl';
 import { z } from 'zod';
 import { CredentialDecryptionError, hostPorts, registerSecretLabel } from '../ports';
+import { extractPdfText } from './pdf-text';
 import { resourceAddressSchema, withResourceFile } from './resources';
 
 const API = 'https://mineru.net/api/v4';
@@ -22,6 +22,8 @@ const PARSE_TIMEOUT_MS = 15 * 60 * 1000;
 const CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 const EXTENSIONS = new Set(['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx']);
 const TOKEN_HINT = '请在 设置 › 内置能力 › 文档 中配置 MinerU Token';
+const LOCAL_NOTE =
+  '本机提取的文字层：表格与公式只剩文字，阅读顺序可能错乱；读不准时可以建议用户在 设置 › 内置能力 › 文档 配置 MinerU Token';
 
 registerSecretLabel(TOKEN, 'MinerU 凭据');
 
@@ -183,10 +185,16 @@ const inputSchema = z
   .object({ ref: resourceAddressSchema, offset: z.number().int().min(0).optional() })
   .strict();
 
+/** 没有 Token 时只读 PDF；Office 的结构只有 MinerU 能还原。 */
+async function parseLocally(path: string, name: string) {
+  if ((await extension(path, name)) !== 'pdf')
+    throw new Error(`本机只能读取 PDF；Word、PowerPoint 与 Excel ${TOKEN_HINT}`);
+  return extractPdfText(new Uint8Array(await readFile(path)));
+}
+
 export async function readDocument(input: unknown, signal?: AbortSignal) {
   const { ref, offset = 0 } = inputSchema.parse(input);
   const token = hostPorts().secrets.read(TOKEN);
-  if (!token) throw new Error(`未配置 MinerU Token，${TOKEN_HINT}`);
   const root = join(hostPorts().paths.temp(), 'wilthy-documents');
   await mkdir(root, { recursive: true });
   for (const entry of await readdir(root)) {
@@ -194,19 +202,24 @@ export async function readDocument(input: unknown, signal?: AbortSignal) {
     if (Date.now() - (await stat(path)).mtimeMs > CACHE_MAX_AGE_MS)
       await rm(path, { recursive: true, force: true });
   }
-  const [title, { directory, markdown }] = await withResourceFile(
-    ref,
-    async (path) =>
-      [basename(path), await parseCached(token, root, path, basename(path), signal)] as const,
-  );
-  const images = (await readdir(join(directory, 'images'))).length;
+  const [title, { markdown, images }] = await withResourceFile(ref, async (path) => {
+    const name = basename(path);
+    if (!token) return [name, { markdown: await parseLocally(path, name), images: 0 }] as const;
+    const { directory, markdown } = await parseCached(token, root, path, name, signal);
+    return [name, { markdown, images: (await readdir(join(directory, 'images'))).length }] as const;
+  });
   const nextOffset = offset + TEXT_LIMIT < markdown.length ? offset + TEXT_LIMIT : null;
+  const empty = !markdown.replace(/--- 第 \d+ 页 ---/g, '').trim();
   const notes = [
-    !markdown.trim() && '没有识别出正文，不能声称已读完',
+    !token && LOCAL_NOTE,
+    empty &&
+      (token
+        ? '没有识别出正文，不能声称已读完'
+        : `没有识别出正文，可能是扫描件，不能声称已读完；扫描件需要 OCR，${TOKEN_HINT}`),
     images > 0 &&
       `正文中的 ${images} 张图片链接指向本机文件，图片内容未解读；需要时用 read 打开对应路径`,
     nextOffset !== null &&
-      `正文共 ${markdown.length} 字符，本次返回第 ${offset}–${nextOffset} 字符；传 offset=${nextOffset} 续读，不会重新解析`,
+      `正文共 ${markdown.length} 字符，本次返回第 ${offset}–${nextOffset} 字符；传 offset=${nextOffset} 续读`,
   ].filter(Boolean);
   return {
     title,

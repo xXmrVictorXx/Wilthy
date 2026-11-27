@@ -94,11 +94,6 @@ export function CapabilitiesSection() {
   const [busy, setBusy] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [documentOpen, setDocumentOpen] = useState(false);
-  const hasDocumentToken = useQuery({
-    queryKey: ['capabilities', 'documentToken'],
-    queryFn: () => capabilitiesClient.hasDocumentToken(),
-    enabled: Boolean(window.wilthy),
-  }).data;
 
   useEffect(
     () =>
@@ -226,15 +221,12 @@ export function CapabilitiesSection() {
                             disabled={busy}
                             aria-label={capability.label}
                             onCheckedChange={(next) =>
-                              // 没有 Token 时开启读取文档没有意义，直接引导去配置。
-                              next && capability.name === 'read_document' && !hasDocumentToken
-                                ? setDocumentOpen(true)
-                                : void run(() =>
-                                    capabilitiesClient.setBuiltinCapability({
-                                      name: capability.name,
-                                      enabled: next,
-                                    }),
-                                  )
+                              void run(() =>
+                                capabilitiesClient.setBuiltinCapability({
+                                  name: capability.name,
+                                  enabled: next,
+                                }),
+                              )
                             }
                           />
                         )}
