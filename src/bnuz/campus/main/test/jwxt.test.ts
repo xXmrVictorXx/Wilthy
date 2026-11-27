@@ -1,4 +1,4 @@
-// 教务系统会话过期时返回 200 加 405 错误页，或者跳回 CAS 登录页；二者都必须识别为登录失效。
+// 教务系统会话过期时返回 200 加 405 错误页、跳回 CAS 登录页，或者把用户降成访客；都必须识别为登录失效。
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../session', () => ({
@@ -25,6 +25,14 @@ describe('isJwxtLoginPage', () => {
     expect(
       isJwxtLoginPage(
         '<form id="fm1" action="https://cas.bnuzh.edu.cn/cas/login?service=x"><title>数字京师·珠海</title></form>',
+      ),
+    ).toBe(true);
+  });
+
+  it('把访客身份的学期信息识别为登录失效', () => {
+    expect(
+      isJwxtLoginPage(
+        '{"docStatus":"New","istop":"1","userCode":"kingo.guest","version":0,"xn":"2026","xqM":"0","xqName":"秋季学期"}',
       ),
     ).toBe(true);
   });

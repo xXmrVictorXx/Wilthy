@@ -15,8 +15,13 @@ export const CAS_LOGIN_URL =
   'https://cas.bnuzh.edu.cn/cas/login?service=https%3A%2F%2Fjwxt.bnuzh.edu.cn%2Fcaslogin';
 const LOGIN_ERROR = '数字京师·珠海登录已失效，请重新登录';
 
+/** 会话过期后，学期接口不报错也不跳转，只是把用户换成访客 kingo.guest。 */
 export function isJwxtLoginPage(html: string): boolean {
-  return html.includes('无效访问请求') || html.includes('cas.bnuzh.edu.cn/cas/login');
+  return (
+    html.includes('无效访问请求') ||
+    html.includes('cas.bnuzh.edu.cn/cas/login') ||
+    html.includes('"userCode":"kingo.guest"')
+  );
 }
 
 export function toJwxtTerm(semester: string): { xn: string; xn1: string; xq: string } {
